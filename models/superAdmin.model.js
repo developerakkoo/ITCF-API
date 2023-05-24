@@ -1,32 +1,7 @@
 const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
 
-const TeamAdminSchema = mongoose.Schema({
-superAdminID:{
-    type: mongoose.Types.ObjectId,
-    ref: "superAdmin"
-    
-},
-UID:{
-    type:String,
-    
-},
-fName:{
-    type:String,
-    required: true
-},
-lName:{
-    type:String,
-    required: true
-},
-age:{
-    type:String,
-    required: true
-},
-DOB:{
-    type:String,
-    required: true
-},
+
+const superAdminSchema = mongoose.Schema({
 email: {
     type: String,
     required: [true, 'Email is required'],
@@ -40,8 +15,9 @@ Phone:{
     unique: true,
     minLength:10
 },
-Skills: {
+password: {
     type: String,
+    require:true
 },
 isActive: {
     type: Boolean,
@@ -61,5 +37,5 @@ updatedAt: {
 },
 },);
 
-TeamAdminSchema.plugin(mongoosePaginate);
-module.exports = mongoose.model("TeamAdmin",TeamAdminSchema);
+
+module.exports = mongoose.model("superAdmin",superAdminSchema);

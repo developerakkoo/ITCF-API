@@ -15,9 +15,9 @@ let msg = nodemailer.createTransport({
 }); 
 
 async function  signUp(req,res){
-    // console.log(">>>>>>",req.body)
+try{
 const AdminUserObj ={
-    UID:req.body.fName+Math.ceil(Math.random() * 100000+1984567),
+    UID:req.body.fName.split('')[0]+req.body.lName.split('')[0]+Math.ceil(Math.random() * 100000+1984567),
     fName: req.body.fName,
     lName: req.body.lName,
     age: req.body.age,
@@ -26,7 +26,6 @@ const AdminUserObj ={
     Phone: req.body.Phone,
     email: req.body.email
     }
-try{
     const admin = await TeamAdmin.findOne({email:req.body.email});
     if(admin){
     return res.status(400).json({message: `user already exist with email adders!${req.body.email}`})
@@ -81,7 +80,7 @@ async function signIn(req, res){
 
 async function UpdateTeamAdmin(req,res){
     try{
-        const ID = req.params.Id;
+        const ID = req.params.teamAdID;
         console.log(req.body)
         const savedTeamAdmin = await TeamAdmin.findOne({_id:ID});
         if (!savedTeamAdmin){
@@ -94,6 +93,7 @@ async function UpdateTeamAdmin(req,res){
         savedTeamAdmin.email=req.body.email ? req.body.email : savedTeamAdmin.email;  
         savedTeamAdmin.Phone=req.body.Phone ? req.body.Phone : savedTeamAdmin.Phone;
         savedTeamAdmin.Skills=req.body.Skills ? req.body.Skills : savedTeamAdmin.Skills;
+        savedTeamAdmin.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedTeamAdmin.isBlocked;
         console.log(savedTeamAdmin.fName)
         const updateUser = await savedTeamAdmin.save()
 
@@ -152,11 +152,11 @@ async function getTeamAdminByUid(req,res){
 
 async function DeleteTeamAdmin(req,res){
     try{
-        const savedTeamAdmin= await TeamAdmin.findOne({_id:req.params.Id})
+        const savedTeamAdmin= await TeamAdmin.findOne({_id:req.params.teamAdID})
         if (!savedTeamAdmin){
             return res.status(400).json({message: "Users Not found"});
         }
-        const deletedTeamAdmin = await TeamAdmin.deleteOne({_id:req.params.Id})
+        const deletedTeamAdmin = await TeamAdmin.deleteOne({_id:req.params.teamAdID})
         res.status(200).json({ message: `User  Deleted Successfully with ID: ${req.params.Id}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
@@ -169,7 +169,7 @@ async function teamAdminSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(TeamAdmin.find(), req.query)
+        const features = await new APIFeatures(TeamAdmin.find().lean().populate('superAdminID','email'), req.query)
         .filter()
         .sort()
 

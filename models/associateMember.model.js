@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
 
 const associateMemberSchema = mongoose.Schema({
-
+superAdminID:{
+    type: mongoose.Types.ObjectId,
+    ref: "superAdmin"
+    
+},
 fName:{
     type:String,
     required: true

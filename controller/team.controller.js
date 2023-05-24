@@ -16,7 +16,7 @@ try{
     if(!admin){
     return res.status(400).json({message: `team Admin UID is not valid`})
     }
-    const savedAdmin = await TeamAdmin.findOne({_id:AdminID});
+    const savedAdmin = await TeamAdmin.findOne({_id:teamObj.AdminID});
     if(!savedAdmin){
     return res.status(400).json({message: `team Admin  is not valid`})
     }
@@ -37,7 +37,7 @@ try{
 
 async function UpdateTeam(req,res){
     try{
-        const ID = req.params.Id;
+        const ID = req.params.teamId;
         // console.log(req.body)
         const savedTeam = await Team.findOne({_id:ID});
         if (!savedTeam){
@@ -45,6 +45,7 @@ async function UpdateTeam(req,res){
         }
         savedTeam.teamName=req.body.name ? req.body.name : savedTeam.teamName;
         savedTeam.teamCity=req.body.city ? req.body.city : savedTeam.teamCity;
+        savedTeam.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedTeam.isBlocked;
         
         const updateTeam = await savedTeam.save()
 
@@ -91,11 +92,11 @@ async function getTeamById(req,res){
 
 async function DeleteTeam(req,res){
     try{
-        const savedTeam= await Team.findOne({_id:req.params.Id})
+        const savedTeam= await Team.findOne({_id:req.params.teamId})
         if (!savedTeam){
             return res.status(404).json({message: "Team Not found"});
         }
-        const deletedTeam = await Team.deleteOne({_id:req.params.Id})
+        const deletedTeam = await Team.deleteOne({_id:req.params.teamId})
         res.status(200).json({ message: `Team  Deleted Successfully with ID: ${req.params.Id}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
@@ -108,7 +109,7 @@ async function teamSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(Team.find().populate('AdminID'), req.query)
+        const features = await new APIFeatures(Team.find().populate('AdminID') .lean().populate('superAdminID','email'), req.query)
         .filter()
         .sort()
 

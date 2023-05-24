@@ -17,8 +17,6 @@ routes.get('/getById/team/:Id',TeamAController.getTeamById);
 
 routes.delete('/delete/team/:Id',TeamAController.DeleteTeam);
 
-routes.get('/totalTeamReport',TeamAController.totalTeamReport);
 
-routes.get('/totalTeam',TeamAController.totalTeamCount);
 
 module.exports = {TeamRoutes : routes}

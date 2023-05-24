@@ -4,6 +4,11 @@ const mongoosePaginate = require('mongoose-paginate');
 const Schema = mongoose.Schema;
 
 const SubMatterExSchema = new Schema({
+    superAdminID:{
+        type: mongoose.Types.ObjectId,
+        ref: "superAdmin"
+        
+    },
 Name:{
     type:String,
     required: true

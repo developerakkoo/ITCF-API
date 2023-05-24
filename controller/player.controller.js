@@ -143,7 +143,7 @@ async function PlayerSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(Player.find().populate('teamID')  .populate('AdminID'), req.query)
+        const features = await new APIFeatures(Player.find().populate('teamID')  .populate('AdminID') .lean().populate('superAdminID','email'), req.query)
         .filter()
         .sort()
 

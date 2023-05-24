@@ -9,7 +9,7 @@ routes.post('/App/api/v1/signUp',[Validate.validateTeamAdmin],TeamAdminControlle
 
 routes.post('/App/api/v1/auth/signIn',[Validate.validateTeamAdminSignIn],TeamAdminController.signIn);
 
-routes.put('/update/teamAdmin/:Id',TeamAdminController.UpdateTeamAdmin);
+routes.put('/update/teamAdmin/:teamAdID',TeamAdminController.UpdateTeamAdmin);
 
 routes.get('/getAll/teamAdmin',TeamAdminController.getAllTeamAdmin);
 
@@ -19,11 +19,9 @@ routes.get('/getById/teamAdmin/:Id',TeamAdminController.getTeamAdminById);
 
 routes.get('/getByUid/teamAdmin/:Id',TeamAdminController.getTeamAdminByUid);
 
-routes.delete('/delete/teamAdmin/:Id',TeamAdminController.DeleteTeamAdmin);
+routes.delete('/delete/teamAdmin/:teamAdID',TeamAdminController.DeleteTeamAdmin);
 
-routes.get('/totalTeamAdmin',TeamAdminController.totalTeamAdmin);
 
-routes.get('/totalTeamAdminReport',TeamAdminController.totalTeamAdminReport);
 
 
 

@@ -4,6 +4,11 @@ const mongoosePaginate = require('mongoose-paginate');
 const Schema = mongoose.Schema;
 
 const PlayerSchema = new Schema({
+    superAdminID:{
+        type: mongoose.Types.ObjectId,
+        ref: "superAdmin"
+        
+    },
 teamAdminUID:{
     type:String,
     required: true

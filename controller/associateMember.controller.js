@@ -60,7 +60,7 @@ async function postAssociateMember(req,res){
 
 async function UpdateAssociateMember(req,res){
     try{
-        const ID = req.params.Id;
+        const ID = req.params.associateMemberId;
         // console.log(req.body)
         const savedAssociateMembers = await associateMember.findOne({_id:ID});
         if (!savedAssociateMembers){
@@ -76,7 +76,7 @@ async function UpdateAssociateMember(req,res){
         savedAssociateMembers.OfficeAddress=req.body.OfficeAddress ? req.body.OfficeAddress : savedAssociateMembers.OfficeAddress;
         savedAssociateMembers.ResidentialAddress=req.body.ResidentialAddress ? req.body.ResidentialAddress : savedAssociateMembers.ResidentialAddress;
         savedAssociateMembers.CricketingExperience=req.body.CricketingExperience ? req.body.CricketingExperience : savedAssociateMembers.CricketingExperience;
-        
+        savedAssociateMembers.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedAssociateMembers.isBlocked;
         const updatedAssociateMembers= await savedAssociateMembers.save()
         return res.status(202).json({ updatedAssociateMembers,message: "AssociateMembers  Updated Successfully"})
     }catch(err){
@@ -109,11 +109,11 @@ async function getAllAssociateMember(req,res){
 
 async function DeleteAssociateMember(req,res){
     try{
-        const savedAssociateMember= await associateMember.findOne({_id:req.params.Id})
+        const savedAssociateMember= await associateMember.findOne({_id:req.params.associateMemberId})
         if (!savedAssociateMember){
             return res.status(404).json({message: "associateMember Not found"});
         }
-        await associateMember.deleteOne({_id:req.params.Id})
+        await associateMember.deleteOne({_id:req.params.associateMemberId})
         res.status(200).json({ message: `associateMember  Deleted Successfully with ID: ${req.params.Id}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
@@ -127,7 +127,7 @@ async function AssociateMemberSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(associateMember.find(), req.query)
+        const features = await new APIFeatures(associateMember.find().lean().populate('superAdminID','email'), req.query)
         .filter()
         .sort()
 

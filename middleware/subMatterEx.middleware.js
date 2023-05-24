@@ -6,7 +6,6 @@ const SubMatterEx = async (req,res,next) => {
         email: req.body.email,
         Phone: req.body.Phone,
         address: req.body.address,
-        Documents:links,  
     }
     if (!dataObj.Name ){
         return res.status(403).send({
@@ -34,10 +33,6 @@ const SubMatterEx = async (req,res,next) => {
     else if (!dataObj.address ){
         return res.status(403).send({
             message: "address  is require"
-        })
-    }else if (!dataObj.Documents){
-        return res.status(403).send({
-            message: "Documents is require"
         })
     }
     else{

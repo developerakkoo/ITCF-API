@@ -12,7 +12,7 @@ let msg = nodemailer.createTransport({
 });
 
 
-async function postSubMatterExRoutes(req,res){
+async function postSubMatterEx(req,res){
     console.log(req.body)
     const doc= req.files
     let links = [];
@@ -63,19 +63,20 @@ async function postSubMatterExRoutes(req,res){
 
 async function UpdateSubMatterEx(req,res){
     try{
-        const ID = req.params.Id;
+        const ID = req.params.subMatterExId;
         // console.log(req.body)
         const savedSubMatterEx = await subMatterEx.findOne({_id:ID});
         if (!savedSubMatterEx){
             return res.status(404).json({message: "subMatterEx Not found"});
         }
-        savedSubMatterEx.Name=req.body.Name ? req.body.Name : savedSubMatterEx.lName;
+        savedSubMatterEx.Name=req.body.Name ? req.body.Name : savedSubMatterEx.Name;
         savedSubMatterEx.Specialization=req.body.Specialization ? req.body.Specialization : savedSubMatterEx.Specialization;
         savedSubMatterEx.DOB=req.body.DOB ? req.body.DOB : savedSubMatterEx.DOB;
         savedSubMatterEx.email=req.body.email ? req.body.email : savedSubMatterEx.email;  
         savedSubMatterEx.Phone=req.body.Phone ? req.body.Phone : savedSubMatterEx.Phone;
         savedSubMatterEx.address=req.body.address ? req.body.address : savedSubMatterEx.address;
-        
+        savedSubMatterEx.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedSubMatterEx.isBlocked;  
+
         const updateSubMatterEx= await savedSubMatterEx.save()
         return res.status(202).json({ updateSubMatterEx,message: "subMatterEx  Updated Successfully"})
     }catch(err){
@@ -108,11 +109,11 @@ async function getAllSubMatterEx(req,res){
 
 async function DeleteSubMatterEx(req,res){
     try{
-        const savedSubMatterEx= await subMatterEx.findOne({_id:req.params.Id})
+        const savedSubMatterEx= await subMatterEx.findOne({_id:req.params.subMatterExId})
         if (!savedSubMatterEx){
             return res.status(404).json({message: "subMatterEx Not found"});
         }
-        await subMatterEx.deleteOne({_id:req.params.Id})
+        await subMatterEx.deleteOne({_id:req.params.subMatterExId})
         res.status(200).json({ message: `subMatterEx  Deleted Successfully with ID: ${req.params.Id}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
@@ -126,7 +127,7 @@ async function subMatterExSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(subMatterEx.find(), req.query)
+        const features = await new APIFeatures(subMatterEx.find().lean().populate('superAdminID','email'), req.query)
         .filter()
         .sort()
 
@@ -219,7 +220,7 @@ async function totalSubMatterExReport(req,res){
 
 
 module.exports={
-    postSubMatterExRoutes,
+    postSubMatterEx,
     UpdateSubMatterEx,
     getAllSubMatterEx,
     DeleteSubMatterEx,

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const express= require('express');
 require('dotenv').config();
-const {TeamAdminRoutes,TeamRoutes,associateMemberRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
+const {TeamAdminRoutes,TeamRoutes,associateMemberRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
 const path= require('path');
 const app = express();
 app.use(express.json());
@@ -19,8 +19,9 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(TeamAdminRoutes);
 app.use(TeamRoutes);
 app.use(playerRoutes);
-app.use(subMatterExRoutes)
-app.use(associateMemberRoutes)
+app.use(subMatterExRoutes);
+app.use(associateMemberRoutes);
+app.use(superAdminRoutes)
 
 mongoose.connect(process.env.DB_URL,{
     useUnifiedTopology: true,
