@@ -4,30 +4,20 @@ const mongoosePaginate = require('mongoose-paginate');
 const Schema = mongoose.Schema;
 
 const NotificationSchema = new Schema({
-superAdminID:{
-    type: mongoose.Types.ObjectId,
-    ref: "superAdmin"
+    superAdminID:{
+        type: mongoose.Types.ObjectId,
+        ref: "superAdmin"
+        
+    },
+    subAdminID:{
+        type: mongoose.Types.ObjectId,
+        ref: "subAdmin"
+        
+    },
+userID:{
+    type: String,
+    require:true
     
-},
-teamAdminID:{
-    type: Schema.Types.ObjectId,
-    ref: "TeamAdmin"
-},
-teamID:{
-    type:Schema.Types.ObjectId,
-    ref: "Team"
-},
-PlayerID:{
-    type:Schema.Types.ObjectId,
-    ref: "Player"
-},
-SubMatterExID:{
-    type:Schema.Types.ObjectId,
-    ref: "SubMatterEx"
-},
-associateMemberID:{
-    type:Schema.Types.ObjectId,
-    ref: "associateMember"
 },
 message:{
     type:String,

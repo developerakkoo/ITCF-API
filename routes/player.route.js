@@ -1,7 +1,7 @@
 const express = require('express');
 const routes = express.Router();
-const playerController = require('../controller/player.controller')
-const Validate = require('../middleware/player.middleware')
+const playerController = require('../controller/player.controller');
+const Validate = require('../middleware/player.middleware');
 
 
 
@@ -22,7 +22,7 @@ routes.get('/count/player',playerController.totalPlayer);
 
 routes.get('/get',playerController.get)
 
-routes.get('/totalPlayerReport',playerController.totalPlayerReport)
+
 
 
 

@@ -67,20 +67,21 @@ try{
 
 async function UpdatePlayer(req,res){
     try{
-        const ID = req.params.Id;
+        const ID = req.params.playerId;
         // console.log(req.body)
         const savedPlayer = await Player.findOne({_id:ID});
         if (!savedPlayer){
             return res.status(404).json({message: "Player Not found"});
         }
-        savedPlayer.Name=req.body.Name ? req.body.Name : savedPlayer.lName;
+        savedPlayer.Name=req.body.Name ? req.body.Name : savedPlayer.Name;
         savedPlayer.age=req.body.age ? req.body.age : savedPlayer.age;
         savedPlayer.DOB=req.body.DOB ? req.body.DOB : savedPlayer.DOB;
         savedPlayer.email=req.body.email ? req.body.email : savedPlayer.email;  
         savedPlayer.Phone=req.body.Phone ? req.body.Phone : savedPlayer.Phone;
         savedPlayer.Skills=req.body.Skills ? req.body.Skills : savedPlayer.Skills;
+        savedPlayer.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedPlayer.isBlocked;
         
-        const updatePlayer= await savedPlayer.save()
+        const updatePlayer= await savedPlayer.save();
 
         return res.status(202).json({ updatePlayer,message: "Player  Updated Successfully"})
     }catch(err){
@@ -125,11 +126,11 @@ async function getPlayerById(req,res){
 
 async function DeletePlayer(req,res){
     try{
-        const savedPlayer= await Player.findOne({_id:req.params.Id})
+        const savedPlayer= await Player.findOne({_id:req.params.playerId})
         if (!savedPlayer){
             return res.status(404).json({message: "Player Not found"});
         }
-        const deletedPlayer = await Player.deleteOne({_id:req.params.Id})
+        const deletedPlayer = await Player.deleteOne({_id:req.params.playerId})
         res.status(200).json({ message: `Player  Deleted Successfully with ID: ${req.params.Id}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });

@@ -7,9 +7,14 @@ superAdminID:{
     ref: "superAdmin"
     
 },
+subAdminID:{
+    type: mongoose.Types.ObjectId,
+    ref: "subAdmin"
+    
+},
 UID:{
     type:String,
-    
+    require:true
 },
 fName:{
     type:String,

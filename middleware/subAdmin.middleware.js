@@ -1,6 +1,6 @@
-const superAdmin =  require('../models/superAdmin.model');
+const subAdmin =  require('../models/subAdmin.model');
 
-const validateSuperAdmin = async (req,res,next) => {
+const validateSubAdmin = async (req,res,next) => {
     if (!req.body.email ){
         return res.status(403).send({
             message: "email  is require"
@@ -21,18 +21,18 @@ const validateSuperAdmin = async (req,res,next) => {
     }
 }
 
-const isSuperAdmin = async (req,res,next) => {
-    const supperAdmin = await superAdmin.findOne({ _id: req.params.Id})
-        if(!supperAdmin){
+const isSubAdmin = async (req,res,next) => {
+    const savedAdmin = await subAdmin.findOne({ _id: req.params.Id})
+        if(!savedAdmin){
             res.status(400).json({
             status: false,
-            message: `Sorry, You doe's not have a supperAdmin rights!`
+            message: `Sorry, You doe's not have a subAdmin rights!`
         });
     } else{
         next();
     }
 }
 module.exports ={
-    validateSuperAdmin,
-    isSuperAdmin
+    validateSubAdmin,
+    isSubAdmin
 }

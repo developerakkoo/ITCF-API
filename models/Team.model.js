@@ -7,6 +7,11 @@ const TeamSchema = new Schema({
         ref: "superAdmin"
         
     },
+    subAdminID:{
+        type: mongoose.Types.ObjectId,
+        ref: "subAdmin"
+        
+    },
 teamAdminUID:{
     type:String,
     required: true

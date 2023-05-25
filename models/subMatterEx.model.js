@@ -7,6 +7,10 @@ const SubMatterExSchema = new Schema({
     superAdminID:{
         type: mongoose.Types.ObjectId,
         ref: "superAdmin"
+    },
+    subAdminID:{
+        type: mongoose.Types.ObjectId,
+        ref: "subAdmin"
         
     },
 Name:{

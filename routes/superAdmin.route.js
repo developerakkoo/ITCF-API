@@ -4,12 +4,17 @@ const superAdminController = require('../controller/superAdmin.controller');
 const TeamAdminController = require('../controller/TeamAdmin.controller');
 const associateMemberController = require('../controller/associateMember.controller');
 const TeamAController = require('../controller/team.controller');
+const playerController = require('../controller/player.controller');
 const subMatterExController = require('../controller/subMatterEx');
+const subAdminController = require('../controller/subAdminController');
+//middleware
 const Validate = require('../middleware/superAdmin.middleware');
+const validateSubAdmin = require('../middleware/subAdmin.middleware');
 const validateTeamAdmin = require('../middleware/TeamAdmin.middleware');
-const ValidateAssociateMember = require('../middleware/associateMember.middleware')
+const ValidateAssociateMember = require('../middleware/associateMember.middleware');
 const validateTeam = require('../middleware/team.middleware');
 const validateSubMatterEx =require('../middleware/subMatterEx.middleware');
+const validatePlayer = require('../middleware/player.middleware');
 const Upload = require('../middleware/upload');
 
 
@@ -17,9 +22,17 @@ routes.post('/superAdmin/signup',Validate.validateSuperAdmin,superAdminControlle
 
 routes.post('/superAdmin/login',superAdminController.postLogin);
 
+routes.post('/superAdmin/notifyUsers/:Id',Validate.isSuperAdmin,superAdminController.sendNotification);
+
 routes.put('/update/superAdmin/:Id',Validate.isSuperAdmin,superAdminController.UpdateSuperAdmin);
 
 routes.delete('/delete/superAdmin/:Id',superAdminController.DeleteSuperAdmin);
+
+routes.delete('/superAdmin/delete/notification/:Id/:notificationId',Validate.isSuperAdmin,superAdminController.deleteNotification);
+
+routes.get('/superAdmin/searchNotification/:Id',Validate.isSuperAdmin,superAdminController.NotificationSearchOption);
+
+routes.put('/superAdmin/update/notification/:Id/:notificationId',Validate.isSuperAdmin,superAdminController.updateNotification);
 
 //teamAdmin operations by superAdmin
 
@@ -101,6 +114,33 @@ routes.get('/superAdmin/totalSubMatterEx/:Id',Validate.isSuperAdmin,subMatterExC
 routes.get('/superAdmin/totalSubMatterExReport/:Id',Validate.isSuperAdmin,subMatterExController.totalSubMatterExReport);
 
 
+
+//player  operations by super admin
+
+routes.post('/superAdmin/player/:Id',Validate.isSuperAdmin,validatePlayer.validatePlayer,superAdminController.singUpPlayer);
+
+routes.get('/superAdmin/player/search/:Id',Validate.isSuperAdmin,playerController.PlayerSearchOption);
+
+routes.put('/superAdmin/update/player/:Id/:playerId',Validate.isSuperAdmin,playerController.UpdatePlayer);
+
+routes.put('/superAdmin/block/player/:Id/:playerId',Validate.isSuperAdmin,playerController.UpdatePlayer);
+
+routes.get('/superAdmin/getAll/player/:Id/',Validate.isSuperAdmin,playerController.getAllPlayer);
+
+routes.delete('/superAdmin/delete/player/:Id/:playerId',Validate.isSuperAdmin,playerController.DeletePlayer);
+
+routes.get('/superAdmin/totalPlayerReport/:Id',playerController.totalPlayerReport)
+
+
+//subAdmin  operations by super admin
+
+routes.post('/superAdmin/subAdmin/signup/:Id',Validate.isSuperAdmin,validateSubAdmin.validateSubAdmin,superAdminController.singUpSubAdmin);
+
+routes.get('/superAdmin/subAdmin/search/:Id',Validate.isSuperAdmin,subAdminController.subAdminSearchOption);
+
+routes.put('/superAdmin/update/subAdmin/:Id/:subAdminId',Validate.isSuperAdmin,superAdminController.UpdateSubAdminBySuperAdmin);
+
+routes.delete('/superAdmin/delete/subAdmin/:Id/:subAdminId',Validate.isSuperAdmin,subAdminController.DeleteSubAdmin);
 
 module.exports = {superAdminRoutes : routes}
 
