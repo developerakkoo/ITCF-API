@@ -1,4 +1,5 @@
 const TeamAdmin = require('../models/TeamAdmin.model');
+const Notification = require('../models/Notification.model');
 const APIFeatures = require('../utils/ApiFeature')
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
@@ -258,6 +259,50 @@ async function totalTeamAdminReport(req,res){
     }
 }
 
+async function getAllTeamAdminNotification(req,res){
+    try{
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.userID});
+        if (!savedTeamAdmin){
+            return res.status(404).json({message: "TeamAdmin Not found"});
+        }
+        const message = await Notification.find({userID:req.params.userID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+}
+    
+async function getTeamAdminNotification(req,res){
+    try{
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.userID});
+        if (!savedTeamAdmin){
+            return res.status(404).json({message: "TeamAdmin Not found"});
+        }
+        const message = await Notification.findOne({_id:req.params.msgID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+
+async function deleteTeamAdminNotification(req,res){
+    try{
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.userID});
+        if (!savedTeamAdmin){
+            return res.status(404).json({message: "TeamAdmin Not found"});
+        }
+        const savedNotification = await Notification.findOne({_id:req.params.msgID})
+        if (!savedNotification){
+            return res.status(404).json({message: "message Not found"});
+        }
+        await savedNotification.deleteOne({_id:req.params.msgID});
+        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+}
+
+
 //transporter contain our mail sender and password
 
 //sending mail about rest password with rest password page link
@@ -293,7 +338,7 @@ async function forgotPassword(req,res){
     });
     res.send('Password reset link has been sent to your email..!')
     
-    }
+}
 
 //user rest password page for getting the new password from user
 
@@ -350,5 +395,9 @@ module.exports={
     getResetPassword,
     ResetPassword,
     totalTeamAdmin,
-    totalTeamAdminReport
+    totalTeamAdminReport,
+    getAllTeamAdminNotification,
+    getTeamAdminNotification,
+    deleteTeamAdminNotification
+    
 }

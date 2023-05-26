@@ -1,4 +1,5 @@
 const associateMember =require('../models/associateMember.model');
+const Notification = require('../models/Notification.model');
 const APIFeatures =require('../utils/ApiFeature');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
@@ -64,7 +65,7 @@ async function UpdateAssociateMember(req,res){
         // console.log(req.body)
         const savedAssociateMembers = await associateMember.findOne({_id:ID});
         if (!savedAssociateMembers){
-            return res.status(404).json({message: "subMatterEx Not found"});
+            return res.status(404).json({message: "associateMember Not found"});
         }
         savedAssociateMembers.fName=req.body.fName ? req.body.fName : savedAssociateMembers.fName;
         savedAssociateMembers.mName=req.body.mName ? req.body.mName : savedAssociateMembers.mName;
@@ -120,6 +121,49 @@ async function DeleteAssociateMember(req,res){
     }
 }
 
+
+async function getAllAssociateMemberNotification(req,res){
+try{
+    const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
+    if (!savedAssociateMembers){
+        return res.status(404).json({message: "associateMember Not found"});
+    }
+    const message = await Notification.find({userID:req.params.userID})
+    return res.status(404).json({count: message.length ,Notification:message});
+}catch(err){
+    res.status(500).json({message: err.message,Status:`ERROR`});
+}
+}
+
+async function getAssociateMemberNotification(req,res){
+    try{
+        const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
+        if (!savedAssociateMembers){
+            return res.status(404).json({message: "associateMember Not found"});
+        }
+        const message = await Notification.findOne({_id:req.params.msgID})
+        return res.status(404).json({Notification:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+
+async function deleteAssociateMemberNotification(req,res){
+    try{
+        const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
+        if (!savedAssociateMembers){
+            return res.status(404).json({message: "User Not found"});
+        }
+        const savedNotification = await Notification.findOne({_id:req.params.msgID})
+        if (!savedNotification){
+            return res.status(404).json({message: "message Not found"});
+        }
+        await savedNotification.deleteOne({_id:req.params.msgID});
+        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+}
 
 async function AssociateMemberSearchOption (req, res, next) {
 
@@ -224,5 +268,8 @@ module.exports={
     DeleteAssociateMember,
     AssociateMemberSearchOption,
     totalAssociateMember,
-    totalAssociateMemberReport
+    totalAssociateMemberReport,
+    deleteAssociateMemberNotification,
+    getAssociateMemberNotification,
+    getAllAssociateMemberNotification
 }

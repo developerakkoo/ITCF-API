@@ -16,6 +16,12 @@ routes.delete('/delete/associateMember/:Id',associateMemberController.DeleteAsso
 
 routes.get('/totalAssociateMember',associateMemberController.totalAssociateMember);
 
+routes.get('/getAll/AssociateMember/notification/:userID',associateMemberController.getAllAssociateMemberNotification);
+
+routes.get('/get/AssociateMember/notification/:userID/:msgID',associateMemberController.getAssociateMemberNotification);
+
+routes.delete('/delete/AssociateMember/notification/:userID/:msgID',associateMemberController.deleteAssociateMemberNotification);
+
 routes.get('/totalAssociateMemberReport',associateMemberController.totalAssociateMemberReport);
 
 

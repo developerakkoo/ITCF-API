@@ -19,6 +19,11 @@ routes.delete('/delete/player/:Id',playerController.DeletePlayer);
 
 routes.get('/count/player',playerController.totalPlayer);
 
+routes.get('/getAll/player/notification/:userID',playerController.getAllPlayersNotification);
+
+routes.get('/get/player/notification/:userID/:msgID',playerController.getPlayerNotification);
+
+routes.delete('/delete/player/notification/:userID/:msgID',playerController.deletePlayerNotification);
 
 routes.get('/get',playerController.get)
 

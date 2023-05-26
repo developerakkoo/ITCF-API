@@ -1,4 +1,5 @@
 const Player =  require('../models/player.mode');
+const Notification = require('../models/Notification.model');
 const Team =  require('../models/Team.model');
 const APIFeatures = require('../utils/ApiFeature');
 const TeamAdmin = require('../models/TeamAdmin.model');
@@ -233,9 +234,51 @@ async function totalPlayerReport(req,res){
     }
 }
 
+async function getAllPlayersNotification(req,res){
+    try{
+        const savedPlayer = await Player.findOne({_id:req.params.userID});
+        if (!savedPlayer){
+            return res.status(404).json({message: "Player Not found"});
+        }
+        const message = await Notification.find({userID:req.params.userID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+    
+async function getPlayerNotification(req,res){
+    try{
+        const savedPlayer = await Player.findOne({_id:req.params.userID});
+        if (!savedPlayer){
+            return res.status(404).json({message: "Player Not found"});
+        }
+        const message = await Notification.findOne({_id:req.params.msgID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+    
+async function deletePlayerNotification(req,res){
+    try{
+        const savedPlayer = await Player.findOne({_id:req.params.userID});
+        if (!savedPlayer){
+            return res.status(404).json({message: "Player Not found"});
+        }
+        const savedNotification = await Notification.findOne({_id:req.params.msgID})
+        if (!savedNotification){
+            return res.status(404).json({message: "message Not found"});
+        }
+        await savedNotification.deleteOne({_id:req.params.msgID});
+        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
 
 async  function get(req,res){
-    const sub =  await Team.updateMany({isActive:false})
+    const sub =  await Team.updateMany({canUpdateSubAdmin:true})
     res.status(200).json("ok")
 }
 
@@ -248,5 +291,8 @@ module.exports={
     PlayerSearchOption,
     totalPlayer,
     totalPlayerReport,
+    getAllPlayersNotification,
+    deletePlayerNotification,
+    getPlayerNotification,
     get
 }

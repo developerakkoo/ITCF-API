@@ -6,6 +6,10 @@ const subAdminSchema = new Schema({
         type: mongoose.Types.ObjectId,
         ref: "superAdmin"
     },
+    subAdminID:{
+        type: mongoose.Types.ObjectId,
+        ref: "subAdmin"
+    },
     email:{
         type: String,
         required: [true, 'Password is required'],
@@ -194,5 +198,5 @@ const subAdminSchema = new Schema({
 
 
 
-module.exports = mongoose.model('SubAdmin', subAdminSchema);
+module.exports = mongoose.model('subAdmin', subAdminSchema);
 

@@ -1,4 +1,5 @@
 const Team =  require('../models/Team.model');
+const Notification = require('../models/Notification.model');
 const TeamAdmin = require('../models/TeamAdmin.model')
 const APIFeatures =  require('../utils/ApiFeature')
 const mongoosePaginate = require('mongoose-paginate');
@@ -96,7 +97,7 @@ async function DeleteTeam(req,res){
         if (!savedTeam){
             return res.status(404).json({message: "Team Not found"});
         }
-        const deletedTeam = await Team.deleteOne({_id:req.params.teamId})
+        await Team.deleteOne({_id:req.params.teamId})
         res.status(200).json({ message: `Team  Deleted Successfully with ID: ${req.params.Id}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
@@ -197,6 +198,49 @@ async function totalTeamReport(req,res){
     }
 }
 
+async function getAllTeamNotification(req,res){
+    try{
+        const savedTeam = await Team.findOne({_id:req.params.userID});
+        if (!savedTeam){
+            return res.status(404).json({message: "Team Not found"});
+        }
+        const message = await Notification.find({userID:req.params.userID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+    
+async function getTeamNotification(req,res){
+    try{
+        const savedTeam = await Team.findOne({_id:req.params.userID});
+        if (!savedTeam){
+            return res.status(404).json({message: "Team Not found"});
+        }
+        const message = await Notification.findOne({_id:req.params.msgID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+    
+async function deleteTeamNotification(req,res){
+    try{
+        const savedTeam = await Team.findOne({_id:req.params.userID});
+        if (!savedTeam){
+            return res.status(404).json({message: "Team Not found"});
+        }
+        const savedNotification = await Notification.findOne({_id:req.params.msgID})
+        if (!savedNotification){
+            return res.status(404).json({message: "message Not found"});
+        }
+        await savedNotification.deleteOne({_id:req.params.msgID});
+        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+
 module.exports={
     postTeam,
     UpdateTeam,
@@ -205,6 +249,9 @@ module.exports={
     DeleteTeam,
     teamSearchOption,
     totalTeamReport,
-    totalTeamCount
+    totalTeamCount,
+    getAllTeamNotification,
+    getTeamNotification,
+    deleteTeamNotification
 
 }

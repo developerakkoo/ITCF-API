@@ -21,6 +21,14 @@ routes.get('/getByUid/teamAdmin/:Id',TeamAdminController.getTeamAdminByUid);
 
 routes.delete('/delete/teamAdmin/:teamAdID',TeamAdminController.DeleteTeamAdmin);
 
+routes.get('/getAll/teamAdmin/notification/:userID',TeamAdminController.getAllTeamAdminNotification);
+
+routes.get('/get/teamAdmin/notification/:userID/:msgID',TeamAdminController.getTeamAdminNotification);
+
+routes.delete('/delete/teamAdmin/notification/:userID/:msgID',TeamAdminController.deleteTeamAdminNotification);
+
+
+
 
 
 

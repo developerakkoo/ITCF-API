@@ -1,4 +1,5 @@
 const subMatterEx =  require('../models/subMatterEx.model');
+const Notification = require('../models/Notification.model');
 const APIFeatures =require('../utils/ApiFeature');
 require('dotenv').config();
 const mongoosePaginate = require('mongoose-paginate');
@@ -216,7 +217,48 @@ async function totalSubMatterExReport(req,res){
     }
 }
 
-
+async function getAllSubMatterExNotification(req,res){
+    try{
+        const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
+        if (!savedSubMatterEx){
+            return res.status(404).json({message: "SubMatterEx Not found"});
+        }
+        const message = await Notification.find({userID:req.params.userID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+    
+async function getSubMatterExNotification(req,res){
+    try{
+        const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
+        if (!savedSubMatterEx){
+            return res.status(404).json({message: "SubMatterEx Not found"});
+        }
+        const message = await Notification.findOne({_id:req.params.msgID})
+        return res.status(404).json({count:message.length ,messages:message});
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
+    
+async function deleteSubMatterExNotification(req,res){
+    try{
+        const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
+        if (!savedSubMatterEx){
+            return res.status(404).json({message: "SubMatterEx Not found"});
+        }
+        const savedNotification = await Notification.findOne({_id:req.params.msgID})
+        if (!savedNotification){
+            return res.status(404).json({message: "message Not found"});
+        }
+        await savedNotification.deleteOne({_id:req.params.msgID});
+        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+    }catch(err){
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+    }
 
 
 module.exports={
@@ -226,5 +268,8 @@ module.exports={
     DeleteSubMatterEx,
     subMatterExSearchOption,
     totalSubMatterEx,
-    totalSubMatterExReport
+    totalSubMatterExReport,
+    getAllSubMatterExNotification,
+    getSubMatterExNotification,
+    deleteSubMatterExNotification
 }
