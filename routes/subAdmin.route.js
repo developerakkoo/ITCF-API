@@ -61,7 +61,7 @@ routes.delete('/subAdmin/delete/teamAdmin/:Id/:teamAdID',[Validate.isSubAdmin,Va
 //Team  operations by sub admin
 
 
-routes.post('/subAdmin/team/:Id',[Validate.isSubAdmin,Validate.canCreateTeam],validateTeam.validateTeam,subAdminController.signUpTeamBySubAdmin)
+routes.post('/subAdmin/post/team/:Id',[Validate.isSubAdmin,Validate.canCreateTeam],validateTeam.validateTeam,subAdminController.signUpTeamBySubAdmin)
 
 routes.put('/subAdmin/update/team/:Id/:teamId',[Validate.isSubAdmin,Validate.canUpdateTeam],TeamAController.UpdateTeam);
 
@@ -94,11 +94,15 @@ routes.get('/subAdmin/getAll/associateMember/:Id',[Validate.isSubAdmin,Validate.
 
 routes.delete('/subAdmin/delete/associateMember/:Id/:associateMemberId',[Validate.isSubAdmin,Validate.canDeleteAssociateMember],associateMemberController.DeleteAssociateMember);
 
-// routes.get('/subAdmin/totalAssociateMember/:Id',[Validate.isSubAdmin,Validate.],associateMemberController.totalAssociateMember);
+routes.get('/subAdmin/totalAssociateMember/:Id',[Validate.isSubAdmin],associateMemberController.totalAssociateMember);
 
-// routes.get('/subAdmin/totalAssociateMemberReport/:Id',[Validate.isSubAdmin],Validate.,associateMemberController.totalAssociateMemberReport);
+routes.get('/subAdmin/totalAssociateMemberReport/:Id',[Validate.isSubAdmin],associateMemberController.totalAssociateMemberReport);
 
+routes.get('/subAdmin/getAll/AssociateMember/notification/:Id/:userID',Validate.isSubAdmin,associateMemberController.getAllAssociateMemberNotification)
 
+routes.get('/subAdmin/get/AssociateMember/notification/:Id/:userID/:msgID',Validate.isSubAdmin,associateMemberController.getAssociateMemberNotification);
+
+routes.delete('/subAdmin/delete/AssociateMember/notification/:Id/:userID/:msgID',Validate.isSubAdmin,associateMemberController.deleteAssociateMemberNotification);
 
 //subMatterEx  operations by super admin
 
@@ -114,9 +118,10 @@ routes.get('/subAdmin/getAll/subMatterEx/:Id',[Validate.isSubAdmin,Validate.canG
 
 routes.delete('/subAdmin/delete/subMatterEx/:Id/:subMatterExId',[Validate.isSubAdmin,Validate.canDeleteSubMatterEx],subMatterExController.DeleteSubMatterEx);
 
-// routes.get('/subAdmin/totalSubMatterEx/:Id',[Validate.isSubAdmin,Validate.],subMatterExController.totalSubMatterEx);
 
-// routes.get('/subAdmin/totalSubMatterExReport/:Id',[Validate.isSubAdmin,Validate.],subMatterExController.totalSubMatterExReport);
+routes.get('/subAdmin/totalSubMatterEx/:Id',[Validate.isSubAdmin],subMatterExController.totalSubMatterEx);
+
+routes.get('/subAdmin/totalSubMatterExReport/:Id',[Validate.isSubAdmin],subMatterExController.totalSubMatterExReport);
 
 
 

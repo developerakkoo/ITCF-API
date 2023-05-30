@@ -40,7 +40,7 @@ async function UpdateTeam(req,res){
     try{
         const ID = req.params.teamId;
         // console.log(req.body)
-        const savedTeam = await Team.findOne({_id:ID});
+        const savedTeam = await Team.findOne({_id:teamId});
         if (!savedTeam){
             return res.status(404).json({message: "Team Not found"});
         }

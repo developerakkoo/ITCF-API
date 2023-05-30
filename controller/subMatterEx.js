@@ -64,6 +64,7 @@ async function postSubMatterEx(req,res){
 
 async function UpdateSubMatterEx(req,res){
     try{
+    
         const ID = req.params.subMatterExId;
         // console.log(req.body)
         const savedSubMatterEx = await subMatterEx.findOne({_id:ID});
@@ -76,8 +77,17 @@ async function UpdateSubMatterEx(req,res){
         savedSubMatterEx.email=req.body.email ? req.body.email : savedSubMatterEx.email;  
         savedSubMatterEx.Phone=req.body.Phone ? req.body.Phone : savedSubMatterEx.Phone;
         savedSubMatterEx.address=req.body.address ? req.body.address : savedSubMatterEx.address;
-        savedSubMatterEx.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedSubMatterEx.isBlocked;  
-
+        savedSubMatterEx.isActive = req.body.isActive != undefined
+        ? req.body.isActive
+        : savedSubMatterEx.isActive
+        savedSubMatterEx.isBlocked = req.body.isBlocked != undefined
+        ? req.body.isBlocked
+        : savedSubMatterEx.isBlocked
+        
+        // if(req.body.isBlocked){
+        //     req.body.isBlocked=savedSubMatterEx.isBlocked;
+        // }
+        
         const updateSubMatterEx= await savedSubMatterEx.save()
         return res.status(202).json({ updateSubMatterEx,message: "subMatterEx  Updated Successfully"})
     }catch(err){
@@ -128,7 +138,7 @@ async function subMatterExSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(subMatterEx.find().lean().populate('superAdminID','email'), req.query)
+        const features = await new APIFeatures(subMatterEx.find().lean().populate('superAdminID','email') .lean().populate('subAdminID' ,'email'), req.query)
         .filter()
         .sort()
 

@@ -128,6 +128,7 @@ try{
     if (!savedAssociateMembers){
         return res.status(404).json({message: "associateMember Not found"});
     }
+    
     const message = await Notification.find({userID:req.params.userID})
     return res.status(404).json({count: message.length ,Notification:message});
 }catch(err){
@@ -171,7 +172,7 @@ async function AssociateMemberSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(associateMember.find().lean().populate('superAdminID','email'), req.query)
+        const features = await new APIFeatures(associateMember.find().lean().populate('superAdminID' ,'email') .lean().populate('subAdminID' ,'email'), req.query)
         .filter()
         .sort()
 

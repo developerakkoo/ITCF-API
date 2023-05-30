@@ -1,4 +1,8 @@
 const subAdmin = require('../models/subAdmin.model');
+const Team =  require('../models/Team.model');
+const TeamAdmin = require('../models/TeamAdmin.model');
+const associateMember =require('../models/associateMember.model');
+const subMatterEx =  require('../models/subMatterEx.model');
 const Notification = require('../models/Notification.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -125,7 +129,7 @@ async function subAdminSearchOption (req, res, next) {
         const query = req.query.query;
         const term = req.query.term;
         console.log(query + term);
-        const features = await new APIFeatures(subAdmin.find() .lean().populate('subAdminID','email'), req.query)
+        const features = await new APIFeatures(subAdmin.find() .lean().populate('subAdminID','email') .lean().populate('subAdminID' ,'email'), req.query)
         .filter()
         .sort()
 
@@ -507,6 +511,7 @@ async function deleteSubAdminNotification(req,res){
             if (!savedSubAdmin){
                 return res.status(400).json({message: "User Not found"});
             }
+            console.log(req.body);
             savedSubAdmin.email=req.body.email ? req.body.email : savedSubAdmin.email;  
             savedSubAdmin.Phone=req.body.Phone ? req.body.Phone : savedSubAdmin.Phone;
             // console.log(req.body);
@@ -521,7 +526,10 @@ async function deleteSubAdminNotification(req,res){
             /*Team Admin Access*/
             savedSubAdmin.canCreateTeamAdmin=req.body.canCreateTeamAdmin   ? req.body.canCreateTeamAdmin : savedSubAdmin.canCreateTeamAdmin;
             savedSubAdmin.canUpdateTeamAdmin=req.body.canUpdateTeamAdmin   ? req.body.canUpdateTeamAdmin : savedSubAdmin.canUpdateTeamAdmin;
-            savedSubAdmin.canNotifyTeamAdmin=req.body.canNotifyTeamAdmin   ? req.body.canNotifyTeamAdmin : savedSubAdmin.canNotifyTeamAdmin;
+            // savedSubAdmin.canNotifyTeamAdmin=req.body.canNotifyTeamAdmin   ? req.body.canNotifyTeamAdmin : savedSubAdmin.canNotifyTeamAdmin;
+            savedSubAdmin.canNotifyTeamAdmin = req.body.canNotifyTeamAdmin != undefined
+            ? req.body.canNotifyTeamAdmin
+            : savedSubAdmin.canNotifyTeamAdmin
             savedSubAdmin.canGetTeamAdmin=req.body.canGetTeamAdmin         ? req.body.canGetTeamAdmin : savedSubAdmin.canGetTeamAdmin;
             savedSubAdmin.canDeleteTeamAdmin=req.body.canDeleteTeamAdmin   ? req.body.canDeleteTeamAdmin : savedSubAdmin.canDeleteTeamAdmin;
             savedSubAdmin.canBlockTeamAdmin=req.body.canBlockTeamAdmin     ? req.body.canBlockTeamAdmin : savedSubAdmin.canBlockTeamAdmin;

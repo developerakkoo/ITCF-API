@@ -7,7 +7,7 @@ const Validate = require('../middleware/team.middleware')
 
 routes.post('/team',Validate.validateTeam,TeamController.postTeam)
 
-routes.put('/update/team/:Id',TeamController.UpdateTeam);
+routes.put('/update/team/:teamId',TeamController.UpdateTeam);
 
 routes.get('/team/search',TeamController.teamSearchOption);
 

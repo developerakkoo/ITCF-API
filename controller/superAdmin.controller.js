@@ -515,7 +515,10 @@ async function UpdateSubAdminBySuperAdmin(req,res){
         /*Team Admin Access*/
         savedSubAdmin.canCreateTeamAdmin=req.body.canCreateTeamAdmin   ? req.body.canCreateTeamAdmin : savedSubAdmin.canCreateTeamAdmin;
         savedSubAdmin.canUpdateTeamAdmin=req.body.canUpdateTeamAdmin   ? req.body.canUpdateTeamAdmin : savedSubAdmin.canUpdateTeamAdmin;
-        savedSubAdmin.canNotifyTeamAdmin=req.body.canNotifyTeamAdmin   ? req.body.canNotifyTeamAdmin : savedSubAdmin.canNotifyTeamAdmin;
+        // savedSubAdmin.canNotifyTeamAdmin=req.body.canNotifyTeamAdmin   ? req.body.canNotifyTeamAdmin : savedSubAdmin.canNotifyTeamAdmin;
+        savedSubAdmin.canNotifyTeamAdmin = req.body.canNotifyTeamAdmin != undefined
+        ? req.body.canNotifyTeamAdmin
+        : savedSubAdmin.canNotifyTeamAdmin
         savedSubAdmin.canGetTeamAdmin=req.body.canGetTeamAdmin         ? req.body.canGetTeamAdmin : savedSubAdmin.canGetTeamAdmin;
         savedSubAdmin.canDeleteTeamAdmin=req.body.canDeleteTeamAdmin   ? req.body.canDeleteTeamAdmin : savedSubAdmin.canDeleteTeamAdmin;
         savedSubAdmin.canBlockTeamAdmin=req.body.canBlockTeamAdmin     ? req.body.canBlockTeamAdmin : savedSubAdmin.canBlockTeamAdmin;
