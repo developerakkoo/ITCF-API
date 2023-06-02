@@ -140,7 +140,7 @@ const canGetTeamAdmin = async (req,res,next) => {
         if(!savedAdmin.canGetTeamAdmin === true){
             res.status(400).json({
             status: false,
-            message: `Sorry, You doe's not have a subAdmin rights!`
+            message: `Sorry, You doe's not have a sub Admin rights!`
         });
     } else{
         next();

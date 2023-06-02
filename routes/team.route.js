@@ -13,9 +13,9 @@ routes.get('/team/search',TeamController.teamSearchOption);
 
 routes.get('/getAll/team',TeamController.getAllTeam);
 
-routes.get('/getById/team/:Id',TeamController.getTeamById);
+routes.get('/getById/team/:teamId',TeamController.getTeamById);
 
-routes.delete('/delete/team/:Id',TeamController.DeleteTeam);
+routes.delete('/delete/team/:teamId',TeamController.DeleteTeam);
 
 routes.get('/getAll/team/notification/:userID',TeamController.getAllTeamNotification);
 

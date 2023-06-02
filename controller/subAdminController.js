@@ -1,4 +1,5 @@
 const subAdmin = require('../models/subAdmin.model');
+const Player =  require('../models/player.mode');
 const Team =  require('../models/Team.model');
 const TeamAdmin = require('../models/TeamAdmin.model');
 const associateMember =require('../models/associateMember.model');
@@ -166,8 +167,12 @@ async function getAllSubAdminNotification(req,res){
         if (!savedSubAdmin){
             return res.status(404).json({message: "subAdmin Not found"});
         }
-        const message = await Notification.find({userID:req.params.userID})
-        return res.status(404).json({count:message.length ,messages:message});
+        const message = await Notification.find({userID:req.params.userID});
+        if(!message){
+            return res.status(400).json({message:"message  Not found"});
+        
+        }
+        return res.status(200).json({count:message.length ,messages:message});
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
@@ -180,6 +185,10 @@ async function getSubAdminNotification(req,res){
             return res.status(404).json({message: "subAdmin Not found"});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
+        if(!message){
+            return res.status(400).json({message:"message  Not found"});
+        
+        }
         return res.status(404).json({count:message.length ,messages:message});
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
@@ -440,6 +449,20 @@ async function deleteSubAdminNotification(req,res){
     }
     }
     
+    async function subAdminUpdateNotification(req,res){
+        try{
+            const savedNotification = await Notification.findOne({_id:req.params.notificationId});
+            if(!savedNotification){
+                return res.status(404).json({message: "Message Not found"});
+            }
+            savedNotification.message=req.body.message ? req.body.message : savedNotification.message;
+            const updateNotification= await savedNotification.save();
+            return res.status(202).json({ message: "Message  Updated Successfully",updateNotification})
+        }catch(err){
+            res.status(500).json({message: err.message,Status:`ERROR`});
+        }
+    }
+
     async function sendNotificationBySubAdmin(req,res){
         try{
             const userObj={
@@ -511,60 +534,164 @@ async function deleteSubAdminNotification(req,res){
             if (!savedSubAdmin){
                 return res.status(400).json({message: "User Not found"});
             }
-            console.log(req.body);
-            savedSubAdmin.email=req.body.email ? req.body.email : savedSubAdmin.email;  
-            savedSubAdmin.Phone=req.body.Phone ? req.body.Phone : savedSubAdmin.Phone;
-            // console.log(req.body);
-            /*Sub Admin Access*/
-            savedSubAdmin.canCreateSubAdmin=req.body.canCreateSubAdmin   ? req.body.canCreateSubAdmin : savedSubAdmin.canCreateSubAdmin;
-            savedSubAdmin.canUpdateSubAdmin=req.body.canUpdateSubAdmin   ? req.body.canUpdateSubAdmin : savedSubAdmin.canUpdateSubAdmin;
-            savedSubAdmin.canNotifySubAdmin=req.body.canNotifySubAdmin   ? req.body.canNotifySubAdmin : savedSubAdmin.canNotifySubAdmin;
-            savedSubAdmin.canGetSubAdmin=req.body.canGetSubAdmin         ? req.body.canGetSubAdmin : savedSubAdmin.canGetSubAdmin;
-            savedSubAdmin.canDeleteSubAdmin=req.body.canDeleteSubAdmin   ? req.body.canDeleteSubAdmin : savedSubAdmin.canDeleteSubAdmin;
-            savedSubAdmin.canBlockSubAdmin=req.body.canBlockSubAdmin     ? req.body.canBlockSubAdmin : savedSubAdmin.canBlockSubAdmin;
-            
-            /*Team Admin Access*/
-            savedSubAdmin.canCreateTeamAdmin=req.body.canCreateTeamAdmin   ? req.body.canCreateTeamAdmin : savedSubAdmin.canCreateTeamAdmin;
-            savedSubAdmin.canUpdateTeamAdmin=req.body.canUpdateTeamAdmin   ? req.body.canUpdateTeamAdmin : savedSubAdmin.canUpdateTeamAdmin;
-            // savedSubAdmin.canNotifyTeamAdmin=req.body.canNotifyTeamAdmin   ? req.body.canNotifyTeamAdmin : savedSubAdmin.canNotifyTeamAdmin;
-            savedSubAdmin.canNotifyTeamAdmin = req.body.canNotifyTeamAdmin != undefined
-            ? req.body.canNotifyTeamAdmin
-            : savedSubAdmin.canNotifyTeamAdmin
-            savedSubAdmin.canGetTeamAdmin=req.body.canGetTeamAdmin         ? req.body.canGetTeamAdmin : savedSubAdmin.canGetTeamAdmin;
-            savedSubAdmin.canDeleteTeamAdmin=req.body.canDeleteTeamAdmin   ? req.body.canDeleteTeamAdmin : savedSubAdmin.canDeleteTeamAdmin;
-            savedSubAdmin.canBlockTeamAdmin=req.body.canBlockTeamAdmin     ? req.body.canBlockTeamAdmin : savedSubAdmin.canBlockTeamAdmin;
+            savedSubAdmin.email = req.body.email != undefined
+            ? req.body.email
+            : savedSubAdmin.email
     
-            /*Team  Access*/
-            savedSubAdmin.canCreateTeam=req.body.canCreateTeam    ? req.body.canCreateTeam : savedSubAdmin.canCreateTeam;
-            savedSubAdmin.canUpdateTeam=req.body.canUpdateTeam    ? req.body.canUpdateTeam : savedSubAdmin.canUpdateTeam;  
-            savedSubAdmin.canNotifyTeam=req.body.canNotifyTeam    ? req.body.canNotifyTeam : savedSubAdmin.canNotifyTeam;
-            savedSubAdmin.canGetTeam=req.body.canGetTeam          ? req.body.canGetTeam : savedSubAdmin.canGetTeam;
-            savedSubAdmin.canDeleteTeam=req.body.canDeleteTeam    ? req.body.canDeleteTeam : savedSubAdmin.canDeleteTeam;
-            savedSubAdmin.canBlockTeam=req.body.canBlockTeam      ? req.body.canBlockTeam : savedSubAdmin.canBlockTeam;
-    
-            /*Player Access*/
-            savedSubAdmin.canCreatePlayer=req.body.canCreatePlayer  ? req.body.canCreatePlayer : savedSubAdmin.canCreatePlayer; 
-            savedSubAdmin.canUpdatePlayer=req.body.canUpdatePlayer  ? req.body.canUpdatePlayer : savedSubAdmin.canUpdatePlayer;
-            savedSubAdmin.canNotifyPlayer=req.body.canNotifyPlayer  ? req.body.canNotifyPlayer : savedSubAdmin.canNotifyPlayer;
-            savedSubAdmin.canGetPlayer=req.body.canGetPlayer        ? req.body.canGetPlayer : savedSubAdmin.canGetPlayer;
-            savedSubAdmin.canDeletePlayer=req.body.canDeletePlayer  ? req.body.canDeletePlayer : savedSubAdmin.canDeletePlayer;
-            savedSubAdmin.canBlockPlayer=req.body.canBlockPlayer    ? req.body.canBlockPlayer : savedSubAdmin.canBlockPlayer;  
-            /*SubMatterEx Access*/
-            savedSubAdmin.canCreateSubMatterEx=req.body.canCreateSubMatterEx   ? req.body.canCreateSubMatterEx : savedSubAdmin.canCreateSubMatterEx;
-            savedSubAdmin.canUpdateSubMatterEx=req.body.canUpdateSubMatterEx   ? req.body.canUpdateSubMatterEx : savedSubAdmin.canUpdateSubMatterEx;
-            savedSubAdmin.canNotifySubMatterEx=req.body.canNotifySubMatterEx   ? req.body.canNotifySubMatterEx : savedSubAdmin.canNotifySubMatterEx;
-            savedSubAdmin.canGetSubMatterEx=req.body.canGetSubMatterEx         ? req.body.canGetSubMatterEx : savedSubAdmin.canGetSubMatterEx;
-            savedSubAdmin.canDeleteSubMatterEx=req.body.canDeleteSubMatterEx   ? req.body.canDeleteSubMatterEx : savedSubAdmin.canDeleteSubMatterEx;
-            savedSubAdmin.canBlockSubMatterEx=req.body.canBlockSubMatterEx     ? req.body.canBlockSubMatterEx : savedSubAdmin.canBlockSubMatterEx;
-    
-            /*AssociateMember Access*/
-            savedSubAdmin.canCreateAssociateMember =req.body.canCreateAssociateMember  ? req.body.canCreateAssociateMember : savedSubAdmin.canCreateAssociateMember; 
-            savedSubAdmin.canUpdateAssociateMember =req.body.canUpdateAssociateMember  ? req.body.canUpdateAssociateMember : savedSubAdmin.canUpdateAssociateMember;
-            savedSubAdmin.canNotifyAssociateMember =req.body.canNotifyAssociateMember  ? req.body.canNotifyAssociateMember : savedSubAdmin.canNotifyAssociateMember;  
-            savedSubAdmin.canGetAssociateMember =req.body.canGetAssociateMember        ? req.body.canGetAssociateMember : savedSubAdmin.canGetAssociateMember;
-            savedSubAdmin.canDeleteAssociateMember =req.body.canDeleteAssociateMember  ? req.body.canDeleteAssociateMember : savedSubAdmin.canDeleteAssociateMember;
-            savedSubAdmin.canBlockAssociateMember =req.body.canBlockAssociateMember    ? req.body.canBlockAssociateMember : savedSubAdmin.canBlockAssociateMember;
-            
+            savedSubAdmin.Phone = req.body.Phone != undefined
+            ? req.body.Phone
+            : savedSubAdmin.Phone
+        /*Sub Admin Access*/
+        savedSubAdmin.canCreateSubAdmin = req.body.canCreateSubAdmin != undefined
+        ? req.body.canCreateSubAdmin
+        : savedSubAdmin.canCreateSubAdmin
+
+        savedSubAdmin.canUpdateSubAdmin = req.body.canUpdateSubAdmin != undefined
+        ? req.body.canUpdateSubAdmin
+        : savedSubAdmin.canUpdateSubAdmin
+
+        savedSubAdmin.canNotifySubAdmin = req.body.canNotifySubAdmin != undefined
+        ? req.body.canNotifySubAdmin
+        : savedSubAdmin.canNotifySubAdmin
+
+        savedSubAdmin.canGetSubAdmin = req.body.canGetSubAdmin != undefined
+        ? req.body.canGetSubAdmin
+        : savedSubAdmin.canGetSubAdmin
+
+        savedSubAdmin.canDeleteSubAdmin = req.body.canDeleteSubAdmin != undefined
+        ? req.body.canDeleteSubAdmin
+        : savedSubAdmin.canDeleteSubAdmin
+
+        savedSubAdmin.canBlockSubAdmin = req.body.canBlockSubAdmin != undefined
+        ? req.body.canBlockSubAdmin
+        : savedSubAdmin.canBlockSubAdmin
+        
+        /*Team Admin Access*/
+        savedSubAdmin.canCreateTeamAdmin = req.body.canCreateTeamAdmin != undefined
+        ? req.body.canCreateTeamAdmin
+        : savedSubAdmin.canCreateTeamAdmin
+
+        savedSubAdmin.canUpdateTeamAdmin = req.body.canUpdateTeamAdmin != undefined
+        ? req.body.canUpdateTeamAdmin
+        : savedSubAdmin.canUpdateTeamAdmin
+
+        savedSubAdmin.canNotifyTeamAdmin = req.body.canNotifyTeamAdmin != undefined
+        ? req.body.canNotifyTeamAdmin
+        : savedSubAdmin.canNotifyTeamAdmin
+
+        savedSubAdmin.canGetTeamAdmin = req.body.canGetTeamAdmin != undefined
+        ? req.body.canGetTeamAdmin
+        : savedSubAdmin.canGetTeamAdmin
+
+        savedSubAdmin.canDeleteTeamAdmin = req.body.canDeleteTeamAdmin != undefined
+        ? req.body.canDeleteTeamAdmin
+        : savedSubAdmin.canDeleteTeamAdmin
+
+        savedSubAdmin.canBlockTeamAdmin = req.body.canBlockTeamAdmin != undefined
+        ? req.body.canBlockTeamAdmin
+        : savedSubAdmin.canBlockTeamAdmin
+
+        /*Team  Access*/
+        savedSubAdmin.canCreateTeam = req.body.canCreateTeam != undefined
+        ? req.body.canCreateTeam
+        : savedSubAdmin.canCreateTeam
+
+        savedSubAdmin.canUpdateTeam = req.body.canUpdateTeam != undefined
+        ? req.body.canUpdateTeam
+        : savedSubAdmin.canUpdateTeam
+
+        savedSubAdmin.canNotifyTeam = req.body.canNotifyTeam != undefined
+        ? req.body.canNotifyTeam
+        : savedSubAdmin.canNotifyTeam
+
+        savedSubAdmin.canGetTeam = req.body.canGetTeam != undefined
+        ? req.body.canGetTeam
+        : savedSubAdmin.canGetTeam
+
+        savedSubAdmin.canDeleteTeam = req.body.canDeleteTeam != undefined
+        ? req.body.canDeleteTeam
+        : savedSubAdmin.canDeleteTeam
+
+        savedSubAdmin.canBlockTeam = req.body.canBlockTeam != undefined
+        ? req.body.canBlockTeam
+        : savedSubAdmin.canBlockTeam
+        
+        /*Player Access*/
+        savedSubAdmin.canCreatePlayer = req.body.canCreatePlayer != undefined
+        ? req.body.canCreatePlayer
+        : savedSubAdmin.canCreatePlayer
+
+        savedSubAdmin.canUpdatePlayer = req.body.canUpdatePlayer != undefined
+        ? req.body.canUpdatePlayer
+        : savedSubAdmin.canUpdatePlayer
+
+        savedSubAdmin.canNotifyPlayer = req.body.canNotifyPlayer != undefined
+        ? req.body.canNotifyPlayer
+        : savedSubAdmin.canNotifyPlayer
+
+        savedSubAdmin.canGetPlayer = req.body.canGetPlayer != undefined
+        ? req.body.canGetPlayer
+        : savedSubAdmin.canGetPlayer
+
+        savedSubAdmin.canDeletePlayer = req.body.canDeletePlayer != undefined
+        ? req.body.canDeletePlayer
+        : savedSubAdmin.canDeletePlayer
+
+        savedSubAdmin.canBlockPlayer = req.body.canBlockPlayer != undefined
+        ? req.body.canBlockPlayer
+        : savedSubAdmin.canBlockPlayer
+        
+        /*SubMatterEx Access*/
+        savedSubAdmin.canCreateSubMatterEx = req.body.canCreateSubMatterEx != undefined
+        ? req.body.canCreateSubMatterEx
+        : savedSubAdmin.canCreateSubMatterEx
+
+        savedSubAdmin.canUpdateSubMatterEx = req.body.canUpdateSubMatterEx != undefined
+        ? req.body.canUpdateSubMatterEx
+        : savedSubAdmin.canUpdateSubMatterEx
+
+        savedSubAdmin.canNotifySubMatterEx = req.body.canNotifySubMatterEx != undefined
+        ? req.body.canNotifySubMatterEx
+        : savedSubAdmin.canNotifySubMatterEx
+
+        savedSubAdmin.canGetSubMatterEx = req.body.canGetSubMatterEx != undefined
+        ? req.body.canGetSubMatterEx
+        : savedSubAdmin.canGetSubMatterEx
+
+        savedSubAdmin.canDeleteSubMatterEx = req.body.canDeleteSubMatterEx != undefined
+        ? req.body.canDeleteSubMatterEx
+        : savedSubAdmin.canDeleteSubMatterEx
+
+        savedSubAdmin.canBlockSubMatterEx = req.body.canBlockSubMatterEx != undefined
+        ? req.body.canBlockSubMatterEx
+        : savedSubAdmin.canBlockSubMatterEx
+        
+        /*AssociateMember Access*/
+        
+        savedSubAdmin.canCreateAssociateMember = req.body.canCreateAssociateMember != undefined
+        ? req.body.canCreateAssociateMember
+        : savedSubAdmin.canCreateAssociateMember
+
+        savedSubAdmin.canUpdateAssociateMember = req.body.canUpdateAssociateMember != undefined
+        ? req.body.canUpdateAssociateMember
+        : savedSubAdmin.canUpdateAssociateMember
+
+        savedSubAdmin.canNotifyAssociateMember = req.body.canNotifyAssociateMember != undefined
+        ? req.body.canNotifyAssociateMember
+        : savedSubAdmin.canNotifyAssociateMember
+
+        savedSubAdmin.canGetAssociateMember = req.body.canGetAssociateMember != undefined
+        ? req.body.canGetAssociateMember
+        : savedSubAdmin.canGetAssociateMember
+
+        savedSubAdmin.canDeleteAssociateMember = req.body.canDeleteAssociateMember != undefined
+        ? req.body.canDeleteAssociateMember
+        : savedSubAdmin.canDeleteAssociateMember
+
+        savedSubAdmin.canBlockAssociateMember = req.body.canBlockAssociateMember != undefined
+        ? req.body.canBlockAssociateMember
+        : savedSubAdmin.canBlockAssociateMember
+        
             const updateSubAdmin = await savedSubAdmin.save()
     
             return res.status(200).json({ updateSubAdmin,message: "SubAdmin  Updated Successfully"})
@@ -577,6 +704,7 @@ async function deleteSubAdminNotification(req,res){
         }
     }
 module.exports = {
+    subAdminUpdateNotification,
     postSignup,
     postLogin,
     UpdateSubAdmin,

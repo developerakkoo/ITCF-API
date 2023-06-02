@@ -1,4 +1,5 @@
 const associateMember = (req,res,next) => {
+    // console.log(req.files);
     const userObj = {
         fName : req.body.fName,
         mName : req.body.mName,

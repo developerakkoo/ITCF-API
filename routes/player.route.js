@@ -9,13 +9,13 @@ routes.post('/player',Validate.validatePlayer,playerController.postPlayer);
 
 routes.get('/player/search',playerController.PlayerSearchOption);
 
-routes.put('/update/player/:Id',playerController.UpdatePlayer);
+routes.put('/update/player/:playerId',playerController.UpdatePlayer);
 
 routes.get('/getAll/player',playerController.getAllPlayer);
 
 routes.get('/getById/player/:Id',playerController.getPlayerById);
 
-routes.delete('/delete/player/:Id',playerController.DeletePlayer);
+routes.delete('/delete/player/:playerId',playerController.DeletePlayer);
 
 routes.get('/count/player',playerController.totalPlayer);
 

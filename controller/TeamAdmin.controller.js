@@ -87,6 +87,7 @@ async function UpdateTeamAdmin(req,res){
         if (!savedTeamAdmin){
             return res.status(400).json({message: "User Not found"});
         }
+        
         savedTeamAdmin.fName=req.body.fName ? req.body.fName : savedTeamAdmin.fName;
         savedTeamAdmin.lName=req.body.lName ? req.body.lName : savedTeamAdmin.lName;
         savedTeamAdmin.age=req.body.age ? req.body.age : savedTeamAdmin.age;
@@ -94,8 +95,11 @@ async function UpdateTeamAdmin(req,res){
         savedTeamAdmin.email=req.body.email ? req.body.email : savedTeamAdmin.email;  
         savedTeamAdmin.Phone=req.body.Phone ? req.body.Phone : savedTeamAdmin.Phone;
         savedTeamAdmin.Skills=req.body.Skills ? req.body.Skills : savedTeamAdmin.Skills;
-        savedTeamAdmin.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedTeamAdmin.isBlocked;
-        console.log(savedTeamAdmin.fName)
+        savedTeamAdmin.isBlocked = req.body.isBlocked != undefined
+        ? req.body.isBlocked
+        : savedTeamAdmin.isBlocked
+
+        // console.log(savedTeamAdmin.fName)
         const updateUser = await savedTeamAdmin.save()
 
         return res.status(200).json({ updateUser,message: "User  Updated Successfully"})

@@ -14,7 +14,7 @@ let msg = nodemailer.createTransport({
 
 
 async function postSubMatterEx(req,res){
-    console.log(req.body)
+    // console.log(req.body)
     const doc= req.files
     let links = [];
     // res.status(200).json({msg:"ok"})
@@ -125,7 +125,7 @@ async function DeleteSubMatterEx(req,res){
             return res.status(404).json({message: "subMatterEx Not found"});
         }
         await subMatterEx.deleteOne({_id:req.params.subMatterExId})
-        res.status(200).json({ message: `subMatterEx  Deleted Successfully with ID: ${req.params.Id}`})
+        res.status(200).json({ message: `subMatterEx  Deleted Successfully with ID: ${req.params.subMatterExId}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -238,8 +238,8 @@ async function getAllSubMatterExNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
-    
+}
+
 async function getSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
@@ -251,8 +251,8 @@ async function getSubMatterExNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
-    
+}
+
 async function deleteSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
@@ -268,7 +268,7 @@ async function deleteSubMatterExNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
+}
 
 
 module.exports={

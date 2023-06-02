@@ -14,6 +14,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 
 
 
+
 //      rotes
 
 app.use(TeamAdminRoutes);
@@ -23,6 +24,13 @@ app.use(subMatterExRoutes);
 app.use(associateMemberRoutes);
 app.use(superAdminRoutes);
 app.use(subAdminRoutes);
+
+
+app.all("*", (req, res, next) => {
+    res.status(404).json({
+        message:"Page not found"
+    });
+});
 
 mongoose.connect(process.env.DB_URL,{
     useUnifiedTopology: true,

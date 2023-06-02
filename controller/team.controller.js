@@ -40,13 +40,15 @@ async function UpdateTeam(req,res){
     try{
         const ID = req.params.teamId;
         // console.log(req.body)
-        const savedTeam = await Team.findOne({_id:teamId});
+        const savedTeam = await Team.findOne({_id:ID});
         if (!savedTeam){
             return res.status(404).json({message: "Team Not found"});
         }
         savedTeam.teamName=req.body.name ? req.body.name : savedTeam.teamName;
         savedTeam.teamCity=req.body.city ? req.body.city : savedTeam.teamCity;
-        savedTeam.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedTeam.isBlocked;
+        savedTeam.isBlocked = req.body.isBlocked != undefined
+        ? req.body.isBlocked
+        : savedTeam.isBlocked
         
         const updateTeam = await savedTeam.save()
 
@@ -80,7 +82,7 @@ async function getAllTeam(req,res){
 
 async function getTeamById(req,res){
     try{
-        const savedTeam= await Team.findOne({_id:req.params.Id})
+        const savedTeam= await Team.findOne({_id:req.params.teamId})
         if (!savedTeam){
             return res.status(404).json({message: "Team Not found"});
         }
@@ -98,7 +100,7 @@ async function DeleteTeam(req,res){
             return res.status(404).json({message: "Team Not found"});
         }
         await Team.deleteOne({_id:req.params.teamId})
-        res.status(200).json({ message: `Team  Deleted Successfully with ID: ${req.params.Id}`})
+        res.status(200).json({ message: `Team  Deleted Successfully with ID: ${req.params.teamId}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -217,7 +219,7 @@ async function getTeamNotification(req,res){
         if (!savedTeam){
             return res.status(404).json({message: "Team Not found"});
         }
-        const message = await Notification.findOne({_id:req.params.msgID})
+        const message = await Notification.find({_id:req.params.msgID})
         return res.status(404).json({count:message.length ,messages:message});
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});

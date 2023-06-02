@@ -33,6 +33,10 @@ routes.delete('/delete/subAdmin/:subAdminId',subAdminController.DeleteSubAdmin);
 
 routes.get('/getAll/subAdmin/notification/:userID',subAdminController.getAllSubAdminNotification);
 
+routes.post('/subAdmin/notifyUsers/:Id',subAdminController.sendNotificationBySubAdmin);
+
+routes.put('/subAdmin/update/notification/:Id/:notificationId',Validate.isSubAdmin,subAdminController.subAdminUpdateNotification)
+
 routes.get('/get/subAdmin/notification/:userID/:msgID',subAdminController.getSubAdminNotification);
 
 routes.delete('/delete/subAdmin/notification/:userID/:msgID',subAdminController.deleteSubAdminNotification);
@@ -53,9 +57,9 @@ routes.put('/subAdmin/update/teamAdmin/:Id/:teamAdID',[Validate.isSubAdmin,Valid
 
 routes.delete('/subAdmin/delete/teamAdmin/:Id/:teamAdID',[Validate.isSubAdmin,Validate.canDeleteSubAdmin],TeamAdminController.DeleteTeamAdmin);
 
-// routes.get('/totalTeamAdmin/:Id',[Validate.isSubAdmin,Validate.],TeamAdminController.totalTeamAdmin);
+routes.get('/subAdmin/totalTeamAdmin/:Id',[Validate.isSubAdmin],TeamAdminController.totalTeamAdmin);
 
-// routes.get('/totalTeamAdminReport/:Id',[Validate.isSubAdmin,Validate.],TeamAdminController.totalTeamAdminReport);
+routes.get('/subAdmin/totalTeamAdminReport/:Id',[Validate.isSubAdmin],TeamAdminController.totalTeamAdminReport);
 
 
 //Team  operations by sub admin
@@ -69,13 +73,13 @@ routes.put('/subAdmin/block/team/:Id/:teamId',[Validate.isSubAdmin,Validate.canB
 
 routes.get('/subAdmin/team/search/:Id',[Validate.isSubAdmin,Validate.canGetTeam],TeamAController.teamSearchOption);
 
-// routes.get('/subAdmin/getAll/team/:Id',[Validate.isSubAdmin,Validate.],TeamAController.getAllTeam);
+routes.get('/subAdmin/getAll/team/:Id',[Validate.isSubAdmin],TeamAController.getAllTeam);
 
-// routes.get('/subAdmin/getById/team/:Id',[Validate.isSubAdmin,Validate.],TeamAController.getTeamById);
+routes.get('/subAdmin/getById/team/:Id',[Validate.isSubAdmin],TeamAController.getTeamById);
 
 routes.delete('/subAdmin/delete/team/:Id/:teamId',[Validate.isSubAdmin,Validate.canDeleteTeam],TeamAController.DeleteTeam);
 
-// routes.get('/totalTeamReport/:Id',[Validate.isSubAdmin,Validate.],TeamAController.totalTeamReport);
+routes.get('/subAdmin/totalTeamReport/:Id',[Validate.isSubAdmin],TeamAController.totalTeamReport);
 
 // routes.get('/totalTeam/:Id',[Validate.isSubAdmin,Validate.],TeamAController.totalTeamCount);
 
@@ -139,7 +143,7 @@ routes.get('/subAdmin/getAll/player/:Id/',[Validate.isSubAdmin,Validate.canGetPl
 
 routes.delete('/subAdmin/delete/player/:Id/:playerId',[Validate.isSubAdmin,Validate.canDeletePlayer],playerController.DeletePlayer);
 
-// routes.get('/subAdmin/totalPlayerReport/:Id',[Validate.isSubAdmin,Validate.],playerController.totalPlayerReport)
+routes.get('/subAdmin/totalPlayerReport/:Id',[Validate.isSubAdmin],playerController.totalPlayerReport)
 
 
 //subAdmin  operations by super admin

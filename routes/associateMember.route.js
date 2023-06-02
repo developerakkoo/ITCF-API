@@ -8,11 +8,11 @@ routes.post('/post/associateMember',Upload.fields([{name:'PANCard',maxCount: 1},
 
 routes.get('/associateMember/search',associateMemberController.AssociateMemberSearchOption);
 
-routes.put('/update/associateMember/:Id',associateMemberController.UpdateAssociateMember);
+routes.put('/update/associateMember/:associateMemberId',associateMemberController.UpdateAssociateMember);
 
 routes.get('/getAll/associateMember',associateMemberController.getAllAssociateMember);
 
-routes.delete('/delete/associateMember/:Id',associateMemberController.DeleteAssociateMember);
+routes.delete('/delete/associateMember/:associateMemberId',associateMemberController.DeleteAssociateMember);
 
 routes.get('/totalAssociateMember',associateMemberController.totalAssociateMember);
 
