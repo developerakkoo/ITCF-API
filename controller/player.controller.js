@@ -4,6 +4,10 @@ const Team =  require('../models/Team.model');
 const APIFeatures = require('../utils/ApiFeature');
 const TeamAdmin = require('../models/TeamAdmin.model');
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const ejs = require('ejs');
+
+
 require('dotenv').config();
 const mongoosePaginate = require('mongoose-paginate');
 
@@ -43,11 +47,16 @@ try{
     return res.status(400).json({message: `team does not exist with this teamName`})
     }
     const playerCreated = await Player.create(playerObj)
+    const template = fs.readFileSync('tmp.ejs', 'utf-8');
+    const renderedTemplate = ejs.render(template, {
+        name: playerCreated.Name,
+        
+    });
     let mailOptions = {
         from: 'serviceacount.premieleague@gmail.com',
         to: playerCreated.email,
-        subject:'welcome ' ,
-        text:`welcome ${playerCreated.Name} account created successfully`
+        subject:' WELCOME TO THE ITCF FAMILY ' ,
+        html:renderedTemplate
     };
     msg.sendMail(mailOptions, function(error, info){
         if (error) {

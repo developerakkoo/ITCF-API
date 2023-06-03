@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const express= require('express');
 require('dotenv').config();
-const {TeamAdminRoutes,TeamRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
+const {TeamAdminRoutes,TeamRoutes,paymentRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
 const path= require('path');
 const app = express();
 app.use(express.json());
@@ -16,7 +16,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 
 
 //      rotes
-
+app.use(paymentRoutes);
 app.use(TeamAdminRoutes);
 app.use(TeamRoutes);
 app.use(playerRoutes);
