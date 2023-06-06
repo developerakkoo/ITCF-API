@@ -48,11 +48,11 @@ async function postAssociateMember(req,res){
             }
         });
 
-        res.status(201).json({message:`AssociateMember Created successfully`,AssociateMemberCreated})
+        res.status(201).json({message:`Associate Member Created Successfully`,AssociateMemberCreated})
     }catch(err){
         console.log(err)
         if(err.code == 11000){
-            return res.status(500).json({message: `AssociateMember with this information is already exist please try with another name or Mobile Number` })
+            return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
         }
         res.status(500).json({message:err.message,status:`ERROR`});
     }
@@ -65,7 +65,7 @@ async function UpdateAssociateMember(req,res){
         // console.log(req.body)
         const savedAssociateMembers = await associateMember.findOne({_id:ID});
         if (!savedAssociateMembers){
-            return res.status(404).json({message: "associateMember Not found"});
+            return res.status(404).json({message: "Associate Member Not Found"});
         }
         savedAssociateMembers.fName=req.body.fName ? req.body.fName : savedAssociateMembers.fName;
         savedAssociateMembers.mName=req.body.mName ? req.body.mName : savedAssociateMembers.mName;
@@ -79,10 +79,10 @@ async function UpdateAssociateMember(req,res){
         savedAssociateMembers.CricketingExperience=req.body.CricketingExperience ? req.body.CricketingExperience : savedAssociateMembers.CricketingExperience;
         savedAssociateMembers.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedAssociateMembers.isBlocked;
         const updatedAssociateMembers= await savedAssociateMembers.save()
-        return res.status(202).json({ updatedAssociateMembers,message: "AssociateMembers  Updated Successfully"})
+        return res.status(202).json({ updatedAssociateMembers,message: "Associate Members  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `AssociateMembers with this email or phone number is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
         }
         console.log(err)
         res.status(500).json({message: err.message,Status:`ERROR`});
@@ -112,10 +112,10 @@ async function DeleteAssociateMember(req,res){
     try{
         const savedAssociateMember= await associateMember.findOne({_id:req.params.associateMemberId})
         if (!savedAssociateMember){
-            return res.status(404).json({message: "associateMember Not found"});
+            return res.status(404).json({message: "Associate Member Not Found"});
         }
         await associateMember.deleteOne({_id:req.params.associateMemberId})
-        res.status(200).json({ message: `associateMember  Deleted Successfully with ID: ${req.params.associateMemberId}`})
+        res.status(200).json({ message: `Associate Member  Deleted Successfully With ID: ${req.params.associateMemberId}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -126,7 +126,7 @@ async function getAllAssociateMemberNotification(req,res){
 try{
     const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
     if (!savedAssociateMembers){
-        return res.status(404).json({message: "associateMember Not found"});
+        return res.status(404).json({message: "Associate Member Not Found"});
     }
     
     const message = await Notification.find({userID:req.params.userID})
@@ -140,7 +140,7 @@ async function getAssociateMemberNotification(req,res){
     try{
         const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
         if (!savedAssociateMembers){
-            return res.status(404).json({message: "associateMember Not found"});
+            return res.status(404).json({message: "Associate Member Not Found"});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
         return res.status(404).json({Notification:message});
@@ -153,14 +153,14 @@ async function deleteAssociateMemberNotification(req,res){
     try{
         const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
         if (!savedAssociateMembers){
-            return res.status(404).json({message: "User Not found"});
+            return res.status(404).json({message: "Associate Member Not Found"});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "message Not found"});
+            return res.status(404).json({message: "message Not Found"});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
@@ -201,7 +201,7 @@ async function totalAssociateMember(req,res){
     try{
         const totalAssociateMember = await associateMember.aggregate(pipeline);
         
-        res.status(200).json({totalAssociateMember})
+        res.status(200).json({message:`totalAssociateMember`,totalAssociateMember})
     }catch(err){
         res.status(500).json({message:err.message,status:`ERROR` })
     }

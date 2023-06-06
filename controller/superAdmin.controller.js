@@ -30,7 +30,7 @@ const postSignup = async (req, res, next) => {
         if(supperAdmin){
             res.status(400).json({
             status: false,
-            message: 'supperAdmin with email Already Exists'
+            message: 'Supper Admin With This Email Is Already Exists'
         })
         }
         bcrypt.hash(password, 12)
@@ -46,7 +46,7 @@ const postSignup = async (req, res, next) => {
                 from: 'serviceacount.premieleague@gmail.com',
                 to: createdAdmin.email,
                 subject:'welcome ' ,
-                text:`You'r successfully register as super Admin`
+                text:`You'r successfully register as supper Admin`
             };
             msg.sendMail(mailOptions, function(error, info){
                 if (error) {
@@ -57,12 +57,12 @@ const postSignup = async (req, res, next) => {
             });
             return createdAdmin ;
         }).then((result) => {
-            return res.status(201).json({message: 'Admin Created Successfully!', status: '201', userId: result._id});
+            return res.status(201).json({message: 'Supper Admin Created Successfully!', status: '201', userId: result._id});
         })
     
 .catch(error =>{
     if(error.code == 11000){
-        return res.status(500).json({message: `user with this information is already exist please try with another email or Mobile Number` })
+        return res.status(500).json({message: `Supper Admin With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number` })
     }
     res.status(400).json({message: error.message, status:'error'});
     })
@@ -74,7 +74,7 @@ const postLogin = async (req, res, next) => {
     let loadedUser;
     const supperAdmin = await superAdmin.findOne({ email: email})
         if(!supperAdmin){
-            const error = new Error('Admin Not Found');
+            const error = new Error('Supper Admin Not Found');
             error.status = 404;
             next(error);
         }
@@ -82,7 +82,7 @@ const postLogin = async (req, res, next) => {
         bcrypt.compare(password, supperAdmin.password)
         .then(doMatch => {
             if(!doMatch){
-                const error = new Error('Password do not match');
+                const error = new Error('Password Do Not Match');
                 error.status = 401;
                 next(error);
             }
@@ -108,17 +108,17 @@ async function UpdateSuperAdmin(req,res){
         // console.log(req.body)
         const savedSuperAdmin = await superAdmin.findOne({_id:ID});
         if (!savedSuperAdmin){
-            return res.status(400).json({message: "User Not Found"});
+            return res.status(400).json({message: "Supper Admin Not Found"});
         }
         savedSuperAdmin.email=req.body.email ? req.body.email : savedSuperAdmin.email;  
         savedSuperAdmin.Phone=req.body.Phone ? req.body.Phone : savedSuperAdmin.Phone;
 
         const updateSuperAdmin = await savedSuperAdmin.save()
 
-        return res.status(200).json({ updateSuperAdmin,message: "SuperAdmin  Updated Successfully"})
+        return res.status(200).json({ updateSuperAdmin,message: "Super Admin  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `User With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
+            return res.status(400).json({message: `Supper Admin With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
         }
         console.log(err)
         res.status(500).json({message: err.message,status:`ERROR`});
@@ -155,7 +155,7 @@ try{
             }
     const admin = await TeamAdmin.findOne({email:req.body.email});
     if(admin){
-    return res.status(400).json({message: `user already exist with email adders!${req.body.email}`})
+    return res.status(400).json({message: `team Admin Already Exist With  This Email Adders!${req.body.email}`})
     }
     const TeamAdminCreated = await TeamAdmin.create(AdminUserObj)
     const postResponse={
@@ -182,10 +182,10 @@ try{
         console.log('Email sent: ' + info.response);
         }
     });
-    res.status(201).json({message: `Team Admin created Successfully UID is send to register email!`,postResponse})
+    res.status(201).json({message: `Team Admin Created Successfully UID Is Send To Your Register Email!`,postResponse})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `User with this email or phone number  is already exist please try with different  email or phone number ` })
+        return res.status(400).json({message: `Team Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
     }
     console.log("Something went wrong while saving to DB", err);
     res.status(500).json({message:err.message,status:`ERROR`})
@@ -229,11 +229,11 @@ async function signUpAssociateMember(req,res){
             }
         });
 
-        res.status(201).json({message:`AssociateMember Created successfully`,AssociateMemberCreated})
+        res.status(201).json({message:`Associate Member Created successfully`,AssociateMemberCreated})
     }catch(err){
         console.log(err)
         if(err.code == 11000){
-            return res.status(500).json({message: `AssociateMember with this information is already exist please try with another name or Mobile Number` })
+            return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
         }
         res.status(500).json({message:err.message,status:`ERROR`});
     }
@@ -252,21 +252,21 @@ const teamObj ={
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
-    return res.status(400).json({message: `team Admin UID is not valid`})
+    return res.status(400).json({message: `Team Admin UID Is Not Valid`})
     }
     const savedAdmin = await TeamAdmin.findOne({_id:teamObj.AdminID});
     if(!savedAdmin){
-    return res.status(400).json({message: `team Admin  is not valid`})
+    return res.status(400).json({message: `Team Admin  Is Not Valid`})
     }
     const savedTeam = await Team.findOne({teamName:req.body.teamName});
-    if(savedTeam){
-    return res.status(400).json({message: `teamName already exist with please try with different teamName`})
+    if(!savedTeam){
+    return res.status(400).json({message: `Team Name Already Exist  Please Try With Different Team Name`})
     }
     const TeamACreated = await Team.create(teamObj)
-    res.status(201).json({message: `Team  created Successfully `,TeamACreated})
+    res.status(201).json({message: `Team  Created Successfully `,TeamACreated})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `Team with this Team Name is already exist please try with different  Team Name` })
+        return res.status(400).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name` })
     }
     console.log("Something went wrong while saving to DB", err);
     res.status(500).json({message:err.message,status:"ERROR"})
@@ -297,7 +297,7 @@ async function signUpMatterEx(req,res){
     try{
         const savedUser = await subMatterEx.findOne({Phone:req.body.Phone});
         if(savedUser){
-        return res.status(400).json({message: `User with this email or phone number is already exist please try with different  email or phone number `})
+        return res.status(400).json({message: `subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `})
         }
         const UserCreated = await subMatterEx.create(dataObj)
         let mailOptions = {
@@ -313,10 +313,10 @@ async function signUpMatterEx(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        return res.status(201).json({message: `User created Successfully`,UserCreated})
+        return res.status(201).json({message: `User Created Successfully`,UserCreated})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `User with this email or phone number is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number` })
         }
         console.log("Something went wrong while saving to DB", err);
         res.status(500).json({message:err.message,status:"ERROR"})
@@ -340,22 +340,22 @@ const playerObj ={
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
-    return res.status(400).json({message: `team Admin UID is not valid`})
+    return res.status(400).json({message: `Team Admin UID Is Not Valid`})
     }
     const savedAdmin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!savedAdmin){
-    return res.status(400).json({message: `team Admin  is not valid`})
+    return res.status(400).json({message: `Team Admin  Is Not Valid`})
     }
     const savedTeam = await Team.findOne({_id:req.body.teamID});
     if(!savedTeam){
-    return res.status(400).json({message: `team does not exist with this teamName`})
+    return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
     }
     const playerCreated = await Player.create(playerObj)
     let mailOptions = {
         from: 'serviceacount.premieleague@gmail.com',
         to: playerCreated.email,
         subject:'welcome ' ,
-        text:`Dear, ${playerCreated.Name} superAdmin register you as a Player`
+        text:`Dear, ${playerCreated.Name} super Admin register you as a Player`
     };
     msg.sendMail(mailOptions, function(error, info){
         if (error) {
@@ -367,7 +367,7 @@ try{
     return res.status(201).json({message: `Player created Successfully`,playerCreated})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `Player with this email or phone number is already exist please try with different  email or phone number ` })
+        return res.status(400).json({message: `Player With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
     }
     console.log("Something went wrong while saving to DB", err);
     res.status(500).json({message:err.message,status:"ERROR"})
@@ -382,7 +382,7 @@ async function sendNotification(req,res){
             message:req.body.message
         }
         const msg = await Notification.create(userObj);
-        return res.status(201).json({message: `Notification send to user successfully `,msg})
+        return res.status(201).json({message: `Notification Send To User Successfully `,msg})
     }catch(err){
         res.status(500).json({message:err.message,status:"ERROR"})
     }
@@ -418,7 +418,7 @@ async function updateNotification(req,res){
     try{
         const savedNotification = await Notification.findOne({_id:req.params.notificationId});
         if(!savedNotification){
-            return res.status(404).json({message: "Message Not found"});
+            return res.status(404).json({message: "Message Not Found"});
         }
         savedNotification.message=req.body.message ? req.body.message : savedNotification.message;
         const updateNotification= await savedNotification.save();
@@ -497,7 +497,7 @@ async function UpdateSubAdminBySuperAdmin(req,res){
         // console.log(req.body)
         const savedSubAdmin = await subAdmin.findOne({_id:ID});
         if (!savedSubAdmin){
-            return res.status(400).json({message: "User Not found"});
+            return res.status(400).json({message: "Sub Admin Not Found"});
         }
 
         savedSubAdmin.email = req.body.email != undefined
@@ -661,10 +661,10 @@ async function UpdateSubAdminBySuperAdmin(req,res){
         
         const updateSubAdmin = await savedSubAdmin.save()
 
-        return res.status(200).json({ updateSubAdmin,message: "SubAdmin  Updated Successfully"})
+        return res.status(200).json({ updateSubAdmin,message: "Sub Admin  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `User with this email or phone number  is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Sub Admin With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number` })
         }
         console.log(err)
         res.status(500).json({message: err.message,status:`ERROR`});

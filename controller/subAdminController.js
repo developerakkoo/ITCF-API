@@ -27,7 +27,7 @@ const postSignup = async (req, res, next) => {
         if(SubAdmin){
             return res.status(400).json({
             status: false,
-            message: 'SubAdmin with email Already Exists'
+            message: 'Sub Admin With This Email Already Exists'
         })
         }
         bcrypt.hash(password, 12)
@@ -43,7 +43,7 @@ const postSignup = async (req, res, next) => {
                 from: 'serviceacount.premieleague@gmail.com',
                 to: createdSubAdmin.email,
                 subject:'welcome ' ,
-                text:`You'r successfully register as sub Admin`
+                text:`You'r successfully Register As Sub Admin`
             };
             msg.sendMail(mailOptions, function(error, info){
                 if (error) {
@@ -54,12 +54,12 @@ const postSignup = async (req, res, next) => {
             });
             return createdSubAdmin ;
         }).then((result) => {
-            return res.status(201).json({message: 'Admin Created Successfully!', status: '201', userId: result._id});
+            return res.status(201).json({message: 'Sub Admin Created Successfully!', status: '201', userId: result._id});
         })
     
 .catch(error =>{
     if(error.code == 11000){
-        return res.status(500).json({message: `user with this information is already exist please try with another email or Mobile Number` })
+        return res.status(500).json({message: `Sub Admin With This Information Is Already Exist Please Try With Another Email Or Mobile Number` })
     }
     console.log(error)
     return res.status(400).json({message: error.message, status:'error'});
@@ -72,7 +72,7 @@ const postLogin = async (req, res, next) => {
     let loadedUser;
     const SubAdmin = await subAdmin.findOne({ email: email})
         if(!SubAdmin){
-            const error = new Error('Admin not found');
+            const error = new Error('Sub Admin Not Found');
             error.status = 404;
             next(error);
         }
@@ -80,7 +80,7 @@ const postLogin = async (req, res, next) => {
         bcrypt.compare(password, SubAdmin.password)
         .then(doMatch => {
             if(!doMatch){
-                const error = new Error('Password do not match');
+                const error = new Error('Password Do Not Match');
                 error.status = 401;
                 next(error);
             }
@@ -106,7 +106,7 @@ async function UpdateSubAdmin(req,res){
         // console.log(req.body)
         const savedSubAdmin = await subAdmin.findOne({_id:ID});
         if (!savedSubAdmin){
-            return res.status(400).json({message: "User Not found"});
+            return res.status(400).json({message: "Sub Admin Not Found"});
         }
         savedSubAdmin.email=req.body.email ? req.body.email : savedSubAdmin.email;  
         savedSubAdmin.Phone=req.body.Phone ? req.body.Phone : savedSubAdmin.Phone;
@@ -114,10 +114,10 @@ async function UpdateSubAdmin(req,res){
 
         const updateSubAdmin = await savedSubAdmin.save()
 
-        return res.status(200).json({ updateSubAdmin,message: "SubAdmin  Updated Successfully"})
+        return res.status(200).json({ updateSubAdmin,message: "Sub Admin  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `User with this email or phone number  is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Sub Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
         }
         console.log(err)
         res.status(500).json({message: err.message,status:`ERROR`});
@@ -152,10 +152,10 @@ async function DeleteSubAdmin(req,res){
     try{
         const savedSubAdmin= await subAdmin.findOne({_id:req.params.subAdminId})
         if (!savedSubAdmin){
-            return res.status(400).json({message: "SubAdmin Not found"});
+            return res.status(400).json({message: "Sub Admin Not Found"});
         }
         await subAdmin.deleteOne({_id:req.params.subAdminId})
-        res.status(200).json({ message: `SubAdmin  Deleted Successfully with ID: ${req.params.Id}`})
+        res.status(200).json({ message: `Sub Admin  Deleted Successfully With ID: ${req.params.subAdminId}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -165,11 +165,11 @@ async function getAllSubAdminNotification(req,res){
     try{
         const savedSubAdmin = await subAdmin.findOne({_id:req.params.userID});
         if (!savedSubAdmin){
-            return res.status(404).json({message: "subAdmin Not found"});
+            return res.status(404).json({message: "Sub Admin Not Found"});
         }
         const message = await Notification.find({userID:req.params.userID});
         if(!message){
-            return res.status(400).json({message:"message  Not found"});
+            return res.status(400).json({message:"Message  Not Found"});
         
         }
         return res.status(200).json({count:message.length ,messages:message});
@@ -182,11 +182,11 @@ async function getSubAdminNotification(req,res){
     try{
         const savedSubAdmin = await subAdmin.findOne({_id:req.params.userID});
         if (!savedSubAdmin){
-            return res.status(404).json({message: "subAdmin Not found"});
+            return res.status(404).json({message: "Sub Admin Not Found"});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
         if(!message){
-            return res.status(400).json({message:"message  Not found"});
+            return res.status(400).json({message:"Message  Not Found"});
         
         }
         return res.status(404).json({count:message.length ,messages:message});
@@ -199,14 +199,14 @@ async function deleteSubAdminNotification(req,res){
     try{
         const savedSubAdmin = await subAdmin.findOne({_id:req.params.userID});
         if (!savedSubAdmin){
-            return res.status(404).json({message: "subAdmin Not found"});
+            return res.status(404).json({message: "Sub Admin Not Found"});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
             return res.status(404).json({message: "message Not found"});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
@@ -230,7 +230,7 @@ async function deleteSubAdminNotification(req,res){
                 }
         const admin = await TeamAdmin.findOne({email:req.body.email});
         if(admin){
-        return res.status(400).json({message: `user already exist with email adders!${req.body.email}`})
+        return res.status(400).json({message: `Team Admin Already Exist With This Email Adders Please Try With Different Email Address ${req.body.email}`})
         }
         const TeamAdminCreated = await TeamAdmin.create(AdminUserObj)
         const postResponse={
@@ -248,7 +248,7 @@ async function deleteSubAdminNotification(req,res){
             from: 'serviceacount.premieleague@gmail.com',
             to: TeamAdminCreated.email,
             subject:'Your Unique User ID ' ,
-            text:`Dear ${TeamAdminCreated.fName}, subAdmin register you as a team admin, for login use this UID: ${id}`
+            text:`Dear ${TeamAdminCreated.fName}, Sub Admin Register You As A Team Admin, For Login Use This UID: ${id}`
         };
         msg.sendMail(mailOptions, function(error, info){
             if (error) {
@@ -257,10 +257,10 @@ async function deleteSubAdminNotification(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        res.status(201).json({message: `Team Admin created Successfully UID is send to register email!`,postResponse})
+        res.status(201).json({message: `Team Admin Created Successfully UID Is Send To Your Register Email Address`,postResponse})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `User with this email or phone number  is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Team Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
         }
         console.log("Something went wrong while saving to DB", err);
         res.status(500).json({message:err.message,status:`ERROR`})
@@ -294,7 +294,7 @@ async function deleteSubAdminNotification(req,res){
                 from: 'serviceacount.premieleague@gmail.com',
                 to: AssociateMemberCreated.email,
                 subject:'welcome ' ,
-                text:`Dear ${AssociateMemberCreated.fName}, subAdmin register you as a AssociateMember`
+                text:`Dear ${AssociateMemberCreated.fName}, Sub Admin Register You As A Associate Member`
             };
             msg.sendMail(mailOptions, function(error, info){
                 if (error) {
@@ -304,11 +304,11 @@ async function deleteSubAdminNotification(req,res){
                 }
             });
     
-            res.status(201).json({message:`AssociateMember Created successfully`,AssociateMemberCreated})
+            res.status(201).json({message:`Associate Member Created Successfully`,AssociateMemberCreated})
         }catch(err){
             console.log(err)
             if(err.code == 11000){
-                return res.status(500).json({message: `AssociateMember with this information is already exist please try with another name or Mobile Number` })
+                return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
             }
             res.status(500).json({message:err.message,status:`ERROR`});
         }
@@ -327,21 +327,21 @@ async function deleteSubAdminNotification(req,res){
     try{
         const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
         if(!admin){
-        return res.status(400).json({message: `team Admin UID is not valid`})
+        return res.status(400).json({message: `Team Admin UID Is Not Valid`})
         }
         const savedAdmin = await TeamAdmin.findOne({_id:teamObj.AdminID});
         if(!savedAdmin){
-        return res.status(400).json({message: `team Admin  is not valid`})
+        return res.status(400).json({message: `Team Admin  Is Not Valid`})
         }
         const savedTeam = await Team.findOne({teamName:req.body.teamName});
         if(savedTeam){
-        return res.status(400).json({message: `teamName already exist with please try with different teamName`})
+        return res.status(400).json({message: `Team Name Already Exist With Please Try With Different Team Name`})
         }
         const TeamACreated = await Team.create(teamObj)
         res.status(201).json({message: `Team  created Successfully `,TeamACreated})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Team with this Team Name is already exist please try with different  Team Name` })
+            return res.status(400).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name` })
         }
         console.log("Something went wrong while saving to DB", err);
         res.status(500).json({message:err.message,status:"ERROR"})
@@ -372,14 +372,14 @@ async function deleteSubAdminNotification(req,res){
         try{
             const savedUser = await subMatterEx.findOne({Phone:req.body.Phone});
             if(savedUser){
-            return res.status(400).json({message: `User with this email or phone number is already exist please try with different  email or phone number `})
+            return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `})
             }
             const UserCreated = await subMatterEx.create(dataObj)
             let mailOptions = {
                 from: 'serviceacount.premieleague@gmail.com',
                 to: UserCreated.email,
                 subject:'welcome ' ,
-                text:`Dear, ${UserCreated.Name} subAdmin register you as a subject Matter Expert`
+                text:`Dear, ${UserCreated.Name} sub Admin Register you as a subject Matter Expert`
             };
             msg.sendMail(mailOptions, function(error, info){
                 if (error) {
@@ -388,10 +388,10 @@ async function deleteSubAdminNotification(req,res){
                 console.log('Email sent: ' + info.response);
                 }
             });
-            return res.status(201).json({message: `User created Successfully`,UserCreated})
+            return res.status(201).json({message: `subject Matter Expert Created Successfully`,UserCreated})
         }catch(err){
             if(err.code == 11000){
-                return res.status(400).json({message: `User with this email or phone number is already exist please try with different  email or phone number ` })
+                return res.status(400).json({message: `subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
             }
             console.log("Something went wrong while saving to DB", err);
             res.status(500).json({message:err.message,status:"ERROR"})
@@ -415,22 +415,22 @@ async function deleteSubAdminNotification(req,res){
     try{
         const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
         if(!admin){
-        return res.status(400).json({message: `team Admin UID is not valid`})
+        return res.status(400).json({message: `Team Admin UID Is Not Valid`})
         }
         const savedAdmin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
         if(!savedAdmin){
-        return res.status(400).json({message: `team Admin  is not valid`})
+        return res.status(400).json({message: `Team Admin  Is Not Valid`})
         }
         const savedTeam = await Team.findOne({_id:req.body.teamID});
         if(!savedTeam){
-        return res.status(400).json({message: `team does not exist with this teamName`})
+        return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
         }
         const playerCreated = await Player.create(playerObj)
         let mailOptions = {
             from: 'serviceacount.premieleague@gmail.com',
             to: playerCreated.email,
             subject:'welcome ' ,
-            text:`Dear, ${playerCreated.Name} subAdmin register you as a Player`
+            text:`Dear, ${playerCreated.Name} Sub Admin register you as a Player`
         };
         msg.sendMail(mailOptions, function(error, info){
             if (error) {
@@ -439,10 +439,10 @@ async function deleteSubAdminNotification(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        return res.status(201).json({message: `Player created Successfully`,playerCreated})
+        return res.status(201).json({message: `Player Created Successfully`,playerCreated})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Player with this email or phone number is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Player With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
         }
         console.log("Something went wrong while saving to DB", err);
         res.status(500).json({message:err.message,status:"ERROR"})
@@ -471,7 +471,7 @@ async function deleteSubAdminNotification(req,res){
                 message:req.body.message
             }
             const msg = await Notification.create(userObj);
-            return res.status(201).json({message: `Notification send to user successfully `,msg})
+            return res.status(201).json({message: `Notification Send To User Successfully `,msg})
         }catch(err){
             res.status(500).json({message:err.message,status:"ERROR"})
         }
@@ -486,7 +486,7 @@ async function deleteSubAdminNotification(req,res){
             if(SubAdmin){
                 return res.status(400).json({
                 status: false,
-                message: 'SubAdmin with email Already Exists'
+                message: 'Sub Admin With Email Already Exists'
             })
             }
             bcrypt.hash(password, 12)
@@ -503,7 +503,7 @@ async function deleteSubAdminNotification(req,res){
                     from: 'serviceacount.premieleague@gmail.com',
                     to: createdSubAdmin.email,
                     subject:'welcome ' ,
-                    text:`You'r successfully register as sub Admin`
+                    text:`You'r Successfully Register As Sub Admin`
                 };
                 msg.sendMail(mailOptions, function(error, info){
                     if (error) {
@@ -514,15 +514,15 @@ async function deleteSubAdminNotification(req,res){
                 });
                 return createdSubAdmin ;
             }).then((result) => {
-                return res.status(201).json({message: 'Admin Created Successfully!', status: '201', userId: result._id});
+                return res.status(201).json({message: 'Sub Admin Created Successfully!', status: '201', userId: result._id});
             })
         
     .catch(error =>{
         if(error.code == 11000){
-            return res.status(500).json({message: `user with this information is already exist please try with another email or Mobile Number` })
+            return res.status(500).json({message: `Sub Admin With This Information Is Already Exist Please Try With Another Email Or Mobile Number` })
         }
         console.log(error)
-        return res.status(400).json({message: error.message, status:'error'});
+        return res.status(400).json({message: error.message, status:'ERROR'});
         })
     }
 
@@ -532,7 +532,7 @@ async function deleteSubAdminNotification(req,res){
             // console.log(req.body)
             const savedSubAdmin = await subAdmin.findOne({_id:ID});
             if (!savedSubAdmin){
-                return res.status(400).json({message: "User Not found"});
+                return res.status(400).json({message: "Sub Admin Not found"});
             }
             savedSubAdmin.email = req.body.email != undefined
             ? req.body.email
@@ -694,10 +694,10 @@ async function deleteSubAdminNotification(req,res){
         
             const updateSubAdmin = await savedSubAdmin.save()
     
-            return res.status(200).json({ updateSubAdmin,message: "SubAdmin  Updated Successfully"})
+            return res.status(200).json({ updateSubAdmin,message: "Sub Admin  Updated Successfully"})
         }catch(err){
             if(err.code == 11000){
-                return res.status(400).json({message: `User with this email or phone number  is already exist please try with different  email or phone number ` })
+                return res.status(400).json({message: `Sub Admin With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number` })
             }
             console.log(err)
             res.status(500).json({message: err.message,status:`ERROR`});

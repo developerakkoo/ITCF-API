@@ -55,13 +55,13 @@ const AdminUserObj ={
         console.log('Email sent: ' + info.response);
         }
     });
-    res.status(201).json({message: `Team Admin created Successfully UID is send to register email!`,postResponse})
+    res.status(201).json({message: `Team Admin Created Successfully UIDIs Send To Register Email!`,postResponse})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `User with this email or phone number  is already exist please try with different  email or phone number ` })
+        return res.status(400).json({message: `Team Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
     }
     console.log("Something went wrong while saving to DB", err);
-    res.status(500).json({message: "Some internal error while inserting the element"})
+    res.status(500).json({message:err.message,status:`ERROR`});
 }
 }
 
@@ -70,7 +70,7 @@ async function signIn(req, res){
     const user = await TeamAdmin.findOne({ UID: req.body.id });
     // console.log("SignIn Request for ", user);
     if (!user) {
-        return res.status(400).json({message: "Failed! UserId doesn't exist!",access: false});
+        return res.status(400).json({message: "Failed! UserId Doesn't Exist!",access: false});
     }
     res.status(200).json({Id:user.UID,access: true})
 }catch(err){
@@ -85,7 +85,7 @@ async function UpdateTeamAdmin(req,res){
         console.log(req.body)
         const savedTeamAdmin = await TeamAdmin.findOne({_id:ID});
         if (!savedTeamAdmin){
-            return res.status(400).json({message: "User Not found"});
+            return res.status(400).json({message: "Team Admin Not Found"});
         }
         
         savedTeamAdmin.fName=req.body.fName ? req.body.fName : savedTeamAdmin.fName;
@@ -102,13 +102,13 @@ async function UpdateTeamAdmin(req,res){
         // console.log(savedTeamAdmin.fName)
         const updateUser = await savedTeamAdmin.save()
 
-        return res.status(200).json({ updateUser,message: "User  Updated Successfully"})
+        return res.status(200).json({ updateUser,message: "Team Admin  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `User with this email or phone number  is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Team Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
         }
         console.log(err)
-        res.status(500).json({message: `Internal sever error while inserting the element ${err.message} `});
+        res.status(500).json({message: err.message,status:`ERROR`});
     }
 }
 
@@ -135,11 +135,11 @@ async function getTeamAdminById(req,res){
     try{
         const savedTeamAdmin= await TeamAdmin.findOne({_id:req.params.Id})
         if (!savedTeamAdmin){
-            return res.status(400).json({message: "Users Not found"});
+            return res.status(400).json({message: "Team Admin Not Found"});
         }
-        res.status(200).json({ savedTeamAdmin,message: "User  fetched Successfully"})
+        res.status(200).json({ savedTeamAdmin,message: "Team Admin  Fetched Successfully"})
     }catch(err){
-        res.status(500).json({message: `Internal sever error while inserting the element ${err.message} `});
+        res.status(500).json({message: err.message,status:`ERROR`});
     }
 }
 
@@ -147,11 +147,11 @@ async function getTeamAdminByUid(req,res){
     try{
         const savedTeamAdmin= await TeamAdmin.findOne({UID:req.params.Id})
         if (!savedTeamAdmin){
-            return res.status(400).json({message: "Users Not found"});
+            return res.status(400).json({message: "Team Admin Not Found"});
         }
-        res.status(200).json({ savedTeamAdmin,message: "User  fetched Successfully"})
+        res.status(200).json({ savedTeamAdmin,message: "Team Admin  Fetched Successfully"})
     }catch(err){
-        res.status(500).json({message: `Internal sever error while inserting the element ${err.message} `});
+        res.status(500).json({message: err.message,status:`ERROR`});
     }
 }
 
@@ -159,10 +159,10 @@ async function DeleteTeamAdmin(req,res){
     try{
         const savedTeamAdmin= await TeamAdmin.findOne({_id:req.params.teamAdID})
         if (!savedTeamAdmin){
-            return res.status(400).json({message: "Users Not found"});
+            return res.status(400).json({message: "Team Admin Not Found"});
         }
         const deletedTeamAdmin = await TeamAdmin.deleteOne({_id:req.params.teamAdID})
-        res.status(200).json({ message: `User  Deleted Successfully with ID: ${req.params.Id}`})
+        res.status(200).json({ message: `Team Admin  Deleted Successfully With ID: ${req.params.Id}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -267,7 +267,7 @@ async function getAllTeamAdminNotification(req,res){
     try{
         const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.userID});
         if (!savedTeamAdmin){
-            return res.status(404).json({message: "TeamAdmin Not found"});
+            return res.status(404).json({message: "Team Admin Not Found"});
         }
         const message = await Notification.find({userID:req.params.userID})
         return res.status(404).json({count:message.length ,messages:message});
@@ -280,7 +280,7 @@ async function getTeamAdminNotification(req,res){
     try{
         const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.userID});
         if (!savedTeamAdmin){
-            return res.status(404).json({message: "TeamAdmin Not found"});
+            return res.status(404).json({message: "Team Admin Not Found"});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
         return res.status(404).json({count:message.length ,messages:message});
@@ -293,14 +293,14 @@ async function deleteTeamAdminNotification(req,res){
     try{
         const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.userID});
         if (!savedTeamAdmin){
-            return res.status(404).json({message: "TeamAdmin Not found"});
+            return res.status(404).json({message: "Team Admin Not Found"});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "message Not found"});
+            return res.status(404).json({message: "Message Not Found"});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
@@ -314,7 +314,7 @@ async function forgotPassword(req,res){
     const {email}= req.body;
     const User = await TeamAdminModel.findOne({ email: req.body.email });
     if(!User){
-        res.send('User not registered');
+        res.send('Team Admin Not Registered');
         return;
     }
     

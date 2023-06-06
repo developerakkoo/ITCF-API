@@ -36,15 +36,15 @@ const playerObj ={
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
-    return res.status(400).json({message: `team Admin UID is not valid`})
+    return res.status(400).json({message: `Team Admin UID Is Not Valid`})
     }
     const savedAdmin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!savedAdmin){
-    return res.status(400).json({message: `team Admin  is not valid`})
+    return res.status(400).json({message: `Team Admin  Is Not Valid`})
     }
     const savedTeam = await Team.findOne({_id:req.body.teamID});
     if(!savedTeam){
-    return res.status(400).json({message: `team does not exist with this teamName`})
+    return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
     }
     const playerCreated = await Player.create(playerObj)
     const template = fs.readFileSync('tmp.ejs', 'utf-8');
@@ -65,10 +65,10 @@ try{
         console.log('Email sent: ' + info.response);
         }
     });
-    return res.status(201).json({message: `Player created Successfully`,playerCreated})
+    return res.status(201).json({message: `Player Created Successfully`,playerCreated})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `Player with this email or phone number is already exist please try with different  email or phone number ` })
+        return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
     }
     console.log("Something went wrong while saving to DB", err);
     res.status(500).json({message:err.message,status:"ERROR"})
@@ -81,7 +81,7 @@ async function UpdatePlayer(req,res){
         // console.log(req.body)
         const savedPlayer = await Player.findOne({_id:ID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not found"});
+            return res.status(404).json({message: "Player Not Found"});
         }
         savedPlayer.Name=req.body.Name ? req.body.Name : savedPlayer.Name;
         savedPlayer.age=req.body.age ? req.body.age : savedPlayer.age;
@@ -98,7 +98,7 @@ async function UpdatePlayer(req,res){
         return res.status(202).json({ updatePlayer,message: "Player  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Player with this email or phone number is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
         }
         console.log(err)
         res.status(500).json({message: err.message,Status:`ERROR`});
@@ -112,7 +112,7 @@ async function getAllPlayer(req,res){
         
         Player.paginate({}, { page: pageNumber, limit: pageSize }, (err, result) => {
         if (err) {
-            return res.status(500).json({ message: 'Error occurred while fetching Data.' });
+            return res.status(500).json({ message: 'Error Occurred While Fetching Data.' });
         }
         
         const { docs, total, limit, page, pages } = result;
@@ -127,9 +127,9 @@ async function getPlayerById(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.Id})
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not found"});
+            return res.status(404).json({message: "Player Not Found"});
         }
-        res.status(200).json({ savedPlayer,message: "Player  fetched Successfully"})
+        res.status(200).json({ savedPlayer,message: "Player  Fetched Successfully"})
     }catch(err){
         res.status(500).json({message: err.message, status:`ERROR`});
     }
@@ -140,10 +140,10 @@ async function DeletePlayer(req,res){
     try{
         const savedPlayer= await Player.findOne({_id:req.params.playerId})
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not found"});
+            return res.status(404).json({message: "Player Not Found"});
         }
-        const deletedPlayer = await Player.deleteOne({_id:req.params.playerId})
-        res.status(200).json({ message: `Player  Deleted Successfully with ID: ${req.params.playerId}`})
+        await Player.deleteOne({_id:req.params.playerId})
+        res.status(200).json({ message: `Player  Deleted Successfully With ID: ${req.params.playerId}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -249,7 +249,7 @@ async function getAllPlayersNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not found"});
+            return res.status(404).json({message: "Player Not Found"});
         }
         const message = await Notification.find({userID:req.params.userID})
         return res.status(404).json({count:message.length ,messages:message});
@@ -262,11 +262,11 @@ async function getPlayerNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not found"});
+            return res.status(404).json({message: "Player Not Found"});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
         if (!message){
-            return res.status(404).json({message: "message Not found"});
+            return res.status(404).json({message: "Message Not Found"});
         }
         return res.status(404).json({count:message.length ,messages:message});
     }catch(err){
@@ -278,14 +278,14 @@ async function deletePlayerNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not found"});
+            return res.status(404).json({message: "Player Not Found"});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "message Not found"});
+            return res.status(404).json({message: "Message Not Found"});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }

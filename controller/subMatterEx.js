@@ -36,7 +36,7 @@ async function postSubMatterEx(req,res){
     try{
         const savedUser = await subMatterEx.findOne({Phone:req.body.Phone});
         if(savedUser){
-        return res.status(400).json({message: `User with this email or phone number is already exist please try with different  email or phone number `})
+        return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `})
         }
         const UserCreated = await subMatterEx.create(dataObj)
         let mailOptions = {
@@ -52,10 +52,10 @@ async function postSubMatterEx(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        return res.status(201).json({message: `User created Successfully`,UserCreated})
+        return res.status(201).json({message: `Subject Matter Expert Created Successfully`,UserCreated})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `User with this email or phone number is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
         }
         console.log("Something went wrong while saving to DB", err);
         res.status(500).json({message:err.message,status:"ERROR"})
@@ -69,7 +69,7 @@ async function UpdateSubMatterEx(req,res){
         // console.log(req.body)
         const savedSubMatterEx = await subMatterEx.findOne({_id:ID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "subMatterEx Not found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found"});
         }
         savedSubMatterEx.Name=req.body.Name ? req.body.Name : savedSubMatterEx.Name;
         savedSubMatterEx.Specialization=req.body.Specialization ? req.body.Specialization : savedSubMatterEx.Specialization;
@@ -89,10 +89,10 @@ async function UpdateSubMatterEx(req,res){
         // }
         
         const updateSubMatterEx= await savedSubMatterEx.save()
-        return res.status(202).json({ updateSubMatterEx,message: "subMatterEx  Updated Successfully"})
+        return res.status(202).json({ updateSubMatterEx,message: "Subject Matter Expert  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `subMatterEx with this email or phone number is already exist please try with different  email or phone number ` })
+            return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number` })
         }
         console.log(err)
         res.status(500).json({message: err.message,Status:`ERROR`});
@@ -122,10 +122,10 @@ async function DeleteSubMatterEx(req,res){
     try{
         const savedSubMatterEx= await subMatterEx.findOne({_id:req.params.subMatterExId})
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "subMatterEx Not found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found"});
         }
         await subMatterEx.deleteOne({_id:req.params.subMatterExId})
-        res.status(200).json({ message: `subMatterEx  Deleted Successfully with ID: ${req.params.subMatterExId}`})
+        res.status(200).json({ message: `Subject Matter Expert  Deleted Successfully With ID: ${req.params.subMatterExId}`})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -231,7 +231,7 @@ async function getAllSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "SubMatterEx Not found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found"});
         }
         const message = await Notification.find({userID:req.params.userID})
         return res.status(404).json({count:message.length ,messages:message});
@@ -244,7 +244,7 @@ async function getSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "SubMatterEx Not found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found"});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
         return res.status(404).json({count:message.length ,messages:message});
@@ -257,14 +257,14 @@ async function deleteSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "SubMatterEx Not found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found"});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "message Not found"});
+            return res.status(404).json({message: "Message Not Found"});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }

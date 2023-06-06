@@ -15,21 +15,21 @@ const teamObj ={
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
-    return res.status(400).json({message: `team Admin UID is not valid`})
+    return res.status(400).json({message: `Team Admin UID Is Not Valid`})
     }
     const savedAdmin = await TeamAdmin.findOne({_id:teamObj.AdminID});
     if(!savedAdmin){
-    return res.status(400).json({message: `team Admin  is not valid`})
+    return res.status(400).json({message: `Team Admin  Is Not Valid`})
     }
     const savedTeam = await Team.findOne({teamName:req.body.teamName});
     if(savedTeam){
-    return res.status(400).json({message: `teamName already exist with please try with different teamName`})
+    return res.status(400).json({message: `Team Name Already Exist  Please Try With Different Team Name`})
     }
     const TeamACreated = await Team.create(teamObj)
-    res.status(201).json({message: `Team  created Successfully `,TeamACreated})
+    res.status(201).json({message: `Team  Created Successfully `,TeamACreated})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `Team with this Team Name is already exist please try with different  Team Name` })
+        return res.status(400).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name` })
     }
     console.log("Something went wrong while saving to DB", err);
     res.status(500).json({message:err.message,status:"ERROR"})
@@ -42,7 +42,7 @@ async function UpdateTeam(req,res){
         // console.log(req.body)
         const savedTeam = await Team.findOne({_id:ID});
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not found"});
+            return res.status(404).json({message: "Team Not Found"});
         }
         savedTeam.teamName=req.body.name ? req.body.name : savedTeam.teamName;
         savedTeam.teamCity=req.body.city ? req.body.city : savedTeam.teamCity;
@@ -55,7 +55,7 @@ async function UpdateTeam(req,res){
         return res.status(202).json({ updateTeam,message: "Team  Updated Successfully"})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Team with this Team Name is already exist please try with different  Team Name` })
+            return res.status(400).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name` })
         }
         console.log(err)
         res.status(500).json({message: err.message,Status:`ERROR`});
@@ -84,9 +84,9 @@ async function getTeamById(req,res){
     try{
         const savedTeam= await Team.findOne({_id:req.params.teamId})
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not found"});
+            return res.status(404).json({message: "Team Not Found"});
         }
-        res.status(200).json({ savedTeam,message: "Team  fetched Successfully"})
+        res.status(200).json({ savedTeam,message: "Team  Fetched Successfully"})
     }catch(err){
         res.status(500).json({message: err.message, status:`ERROR`});
     }
@@ -97,7 +97,7 @@ async function DeleteTeam(req,res){
     try{
         const savedTeam= await Team.findOne({_id:req.params.teamId})
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not found"});
+            return res.status(404).json({message: "Team Not Found"});
         }
         await Team.deleteOne({_id:req.params.teamId})
         res.status(200).json({ message: `Team  Deleted Successfully with ID: ${req.params.teamId}`})
@@ -204,7 +204,7 @@ async function getAllTeamNotification(req,res){
     try{
         const savedTeam = await Team.findOne({_id:req.params.userID});
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not found"});
+            return res.status(404).json({message: "Team Not Found"});
         }
         const message = await Notification.find({userID:req.params.userID})
         return res.status(404).json({count:message.length ,messages:message});
@@ -217,7 +217,7 @@ async function getTeamNotification(req,res){
     try{
         const savedTeam = await Team.findOne({_id:req.params.userID});
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not found"});
+            return res.status(404).json({message: "Team Not Found"});
         }
         const message = await Notification.find({_id:req.params.msgID})
         return res.status(404).json({count:message.length ,messages:message});
@@ -230,14 +230,14 @@ async function deleteTeamNotification(req,res){
     try{
         const savedTeam = await Team.findOne({_id:req.params.userID});
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not found"});
+            return res.status(404).json({message: "Team Not Found"});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "message Not found"});
+            return res.status(404).json({message: "Message Not Found"});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  deleted Successfully with Notification ID: ${req.params.msgID}`})
+        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
