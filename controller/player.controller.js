@@ -46,17 +46,12 @@ try{
     if(!savedTeam){
     return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
     }
-    const playerCreated = await Player.create(playerObj)
-    const template = fs.readFileSync('tmp.ejs', 'utf-8');
-    const renderedTemplate = ejs.render(template, {
-        name: playerCreated.Name,
-        
-    });
+
     let mailOptions = {
         from: 'serviceacount.premieleague@gmail.com',
         to: playerCreated.email,
         subject:' WELCOME TO THE ITCF FAMILY ' ,
-        html:renderedTemplate
+        text:"Successfully register as player "
     };
     msg.sendMail(mailOptions, function(error, info){
         if (error) {
@@ -104,6 +99,49 @@ async function UpdatePlayer(req,res){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
 }
+
+async function proPlayer(req,res){
+    try{
+        const ID = req.params.playerId;
+        // console.log(req.body)
+        const savedPlayer = await Player.findOne({_id:ID});
+        if (!savedPlayer){
+            return res.status(404).json({message: "Player Not Found"});
+        }
+        savedPlayer.isProfessionalMember = req.body.isProfessionalMember != undefined
+        ? req.body.isProfessionalMember
+        : savedPlayer.isProfessionalMember
+        
+        const updatePlayer= await savedPlayer.save();
+        if(updatePlayer.isProfessionalMember === true){
+        const template = fs.readFileSync('proMemberTemplate.ejs', 'utf-8');
+        const renderedTemplate = ejs.render(template, {name: savedPlayer.Name});
+        let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: savedPlayer.email,
+            subject:' WELCOME TO THE ITCF FAMILY ' ,
+            html:renderedTemplate
+        };
+        msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+            console.log('Email sent: ' + info.response);
+            }
+        });
+
+        return res.status(202).json({ updatePlayer,message: "Player  Updated To Pro Player Successfully"})
+    }
+    return res.status(202).json({ updatePlayer,message: "Player  Updated Successfully"})
+    }catch(err){
+        if(err.code == 11000){
+            return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+        }
+        console.log(err)
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+}
+
 
 async function getAllPlayer(req,res){
     try{
@@ -299,6 +337,7 @@ async  function get(req,res){
 module.exports={
     postPlayer,
     UpdatePlayer,
+    proPlayer,
     getAllPlayer,
     getPlayerById,
     DeletePlayer,

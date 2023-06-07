@@ -11,6 +11,8 @@ routes.get('/player/search',playerController.PlayerSearchOption);
 
 routes.put('/update/player/:playerId',playerController.UpdatePlayer);
 
+routes.put('/proMember/player/:playerId',playerController.proPlayer);
+
 routes.get('/getAll/player',playerController.getAllPlayer);
 
 routes.get('/getById/player/:Id',playerController.getPlayerById);

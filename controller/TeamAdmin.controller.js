@@ -29,7 +29,7 @@ const AdminUserObj ={
     }
     const admin = await TeamAdmin.findOne({email:req.body.email});
     if(admin){
-    return res.status(400).json({message: `user already exist with email adders!${req.body.email}`})
+    return res.status(400).json({message: `User Already Exist With This ${req.body.email} Email Adders Please Try With Different Email Address `})
     }
     const TeamAdminCreated = await TeamAdmin.create(AdminUserObj)
     const postResponse={
@@ -70,7 +70,7 @@ async function signIn(req, res){
     const user = await TeamAdmin.findOne({ UID: req.body.id });
     // console.log("SignIn Request for ", user);
     if (!user) {
-        return res.status(400).json({message: "Failed! UserId Doesn't Exist!",access: false});
+        return res.status(400).json({message: "Failed! UserId Doesn't Exist, Your UID Is Send To Your Registered Email Address  ",access: false});
     }
     res.status(200).json({Id:user.UID,access: true})
 }catch(err){
@@ -116,7 +116,7 @@ async function getAllTeamAdmin(req,res){
     try{
     const pageNumber = req.query.page || 1;// Get the current page number from the query parameters
     const skipValue = req.query.skip || 0; 
-    const pageSize = 2; // Number of items per page
+    const pageSize = 10; // Number of items per page
 
     TeamAdmin.paginate({}, { page: pageNumber, limit: pageSize ,skip:skipValue}, (err, result) => {
 if (err) {
@@ -269,9 +269,13 @@ async function getAllTeamAdminNotification(req,res){
         if (!savedTeamAdmin){
             return res.status(404).json({message: "Team Admin Not Found"});
         }
-        const message = await Notification.find({userID:req.params.userID})
+        const message = await Notification.find({userID:req.params.userID});
+        if (!message[0]){
+            return res.status(404).json({message: "Message Not Found"});
+        }
         return res.status(404).json({count:message.length ,messages:message});
     }catch(err){
+        console.log(err);
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
 }
@@ -282,7 +286,10 @@ async function getTeamAdminNotification(req,res){
         if (!savedTeamAdmin){
             return res.status(404).json({message: "Team Admin Not Found"});
         }
-        const message = await Notification.findOne({_id:req.params.msgID})
+        const message = await Notification.findOne({_id:req.params.msgID});
+        if (!message){
+            return res.status(404).json({message: "Message Not Found"});
+        }
         return res.status(404).json({count:message.length ,messages:message});
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});

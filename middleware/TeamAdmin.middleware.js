@@ -28,7 +28,7 @@ const validateTeamAdmin =(req,res,next)=>{
 
     }else if (!AdminUserObj.Skills){
         return res.status(403).send({
-            message: "Skills is require"
+            message: "Skill is require"
         })
     }
     else if (!AdminUserObj.Phone){
