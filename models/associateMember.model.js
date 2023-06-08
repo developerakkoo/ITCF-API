@@ -59,19 +59,19 @@ CricketingExperience:{
 },
 AdharCard:{
     type: String,
-    require: true,
+    default: '',
 },
 panCard:{
     type: String,
-    require: true,
+    default: '',
 },
 residentialProof:{
     type: String,
-    require: true,
+    default: '',
 },
 ITR:{
     type: String,
-    require: true,
+    default: '',
 },
 TandC:{
     type: Boolean,

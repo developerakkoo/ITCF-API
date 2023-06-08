@@ -5,7 +5,9 @@ const Upload = require('../middleware/upload');
 const Validate =require('../middleware/subMatterEx.middleware');
 
 
-routes.post('/post/subMatterEx',Upload.array('Docs',10),Validate.SubMatterEx,subMatterExController.postSubMatterEx);
+routes.post('/post/subMatterEx',Validate.SubMatterEx,subMatterExController.postSubMatterEx);
+
+routes.put('/post/subMatterEx/Docs/:id',Upload.array('Docs',10),subMatterExController.postSubMatterExDoc);
 
 routes.get('/subMatterEx/search',subMatterExController.subMatterExSearchOption);
 

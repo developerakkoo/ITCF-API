@@ -4,7 +4,9 @@ const associateMemberController = require('../controller/associateMember.control
 const Upload = require('../middleware/upload');
 const Validate = require('../middleware/associateMember.middleware')
 
-routes.post('/post/associateMember',Upload.fields([{name:'PANCard',maxCount: 1},{name:'ADHARCard',maxCount: 1},{name:'residentialProof',maxCount: 1},{name:'ITR',maxCount: 1}]),Validate.associateMember,associateMemberController.postAssociateMember);
+routes.post('/post/associateMember',Validate.associateMember,associateMemberController.postAssociateMember);
+
+routes.put('/post/associateMember/Files/:id',Upload.fields([{name:'PANCard',maxCount: 1},{name:'ADHARCard',maxCount: 1},{name:'residentialProof',maxCount: 1},{name:'ITR',maxCount: 1}]),associateMemberController.postAssociateMemberFiles);
 
 routes.get('/associateMember/search',associateMemberController.AssociateMemberSearchOption);
 
@@ -26,3 +28,4 @@ routes.get('/totalAssociateMemberReport',associateMemberController.totalAssociat
 
 
 module.exports = {associateMemberRoutes : routes}
+

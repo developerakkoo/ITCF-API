@@ -14,15 +14,7 @@ let msg = nodemailer.createTransport({
 
 
 async function postSubMatterEx(req,res){
-    // console.log(req.body)
-    const doc= req.files
-    let links = [];
-    // res.status(200).json({msg:"ok"})
-    for (let docNo=0; docNo <=doc.length-1;docNo++){
-        // console.log(req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/"),doc[docNo].path.replace(/\\/g, "/"))
-        let url = req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/")
-        links.push(url)
-    }
+
     const dataObj ={
         Name: req.body.Name,
         Specialization: req.body.Specialization,
@@ -30,7 +22,7 @@ async function postSubMatterEx(req,res){
         email: req.body.email,
         Phone: req.body.Phone,
         address: req.body.address,
-        Documents:links,  
+        
     }
     // console.log(dataObj)
     try{
@@ -61,6 +53,32 @@ async function postSubMatterEx(req,res){
         res.status(500).json({message:err.message,status:"ERROR"})
     }
 } 
+
+async function postSubMatterExDoc(req,res){
+        // console.log(req.body)
+        const doc= req.files
+        let links = [];
+        
+        for (let docNo=0; docNo <=doc.length-1;docNo++){
+            let url = req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/")
+            links.push(url)
+        }
+        const Documents =links 
+        try{
+            const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.id});
+            if(!savedSubMatterEx){
+            return res.status(400).json({message: `Subject Matter Not Found With This ID:${req.params.id} `});
+            }
+            savedSubMatterEx.Documents = Documents != undefined
+            ? Documents
+            : savedSubMatterEx.Documents
+            const updatedSubMatterEx = await savedSubMatterEx.save();
+            res.status(201).json({message:"Subject Matter Expert",updatedSubMatterEx});
+        }catch(error){
+            console.log(error);
+            res.status(500).json({message:error.message,status:`ERROR`});
+        }
+}
 
 async function UpdateSubMatterEx(req,res){
     try{
@@ -273,6 +291,7 @@ async function deleteSubMatterExNotification(req,res){
 
 module.exports={
     postSubMatterEx,
+    postSubMatterExDoc,
     UpdateSubMatterEx,
     getAllSubMatterEx,
     DeleteSubMatterEx,

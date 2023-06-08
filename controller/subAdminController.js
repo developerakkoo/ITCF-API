@@ -282,11 +282,7 @@ async function deleteSubAdminNotification(req,res){
             Phone : req.body.Phone,
             ResidentialAddress : req.body.ResidentialAddress,
             OfficeAddress : req.body.OfficeAddress,
-            CricketingExperience : req.body.CricketingExperience,
-            panCard:req.protocol +"://"+req.hostname +"/"+ req.files.PANCard[0].path.replace(/\\/g, "/"),
-            AdharCard : req.protocol +"://"+req.hostname +"/"+ req.files.ADHARCard[0].path.replace(/\\/g, "/"),
-            residentialProof:req.protocol +"://"+req.hostname +"/"+ req.files.residentialProof[0].path.replace(/\\/g, "/"),
-            ITR:req.protocol +"://"+req.hostname +"/"+ req.files.ITR[0].path.replace(/\\/g, "/"),
+            CricketingExperience : req.body.CricketingExperience
         }
         try{
             const AssociateMemberCreated = await associateMember.create(userObj)
@@ -349,15 +345,15 @@ async function deleteSubAdminNotification(req,res){
     }
     
     async function signUpMatterExBySubAdmin(req,res){
-        console.log(req.body)
-        const doc= req.files
-        let links = [];
-        // res.status(200).json({msg:"ok"})
-        for (let docNo=0; docNo <=doc.length-1;docNo++){
-            // console.log(req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/"),doc[docNo].path.replace(/\\/g, "/"))
-            let url = req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/")
-            links.push(url)
-        }
+        // console.log(req.body)
+        // const doc= req.files
+        // let links = [];
+        // // res.status(200).json({msg:"ok"})
+        // for (let docNo=0; docNo <=doc.length-1;docNo++){
+        //     // console.log(req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/"),doc[docNo].path.replace(/\\/g, "/"))
+        //     let url = req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/")
+        //     links.push(url)
+        // }
         const dataObj ={
             subAdminID:req.params.Id,
             Name: req.body.Name,
@@ -366,7 +362,6 @@ async function deleteSubAdminNotification(req,res){
             email: req.body.email,
             Phone: req.body.Phone,
             address: req.body.address,
-            Documents:links,  
         }
         // console.log(dataObj)
         try{

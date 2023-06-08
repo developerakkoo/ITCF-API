@@ -11,10 +11,6 @@ const associateMember = (req,res,next) => {
         ResidentialAddress : req.body.ResidentialAddress,
         OfficeAddress : req.body.OfficeAddress,
         CricketingExperience : req.body.CricketingExperience,
-        panCard:req.protocol +"://"+req.hostname +"/"+ req.files.PANCard[0].path.replace(/\\/g, "/"),
-        AdharCard : req.protocol +"://"+req.hostname +"/"+ req.files.ADHARCard[0].path.replace(/\\/g, "/"),
-        residentialProof:req.protocol +"://"+req.hostname +"/"+ req.files.residentialProof[0].path.replace(/\\/g, "/"),
-        ITR:req.protocol +"://"+req.hostname +"/"+ req.files.ITR[0].path.replace(/\\/g, "/"),
     }
     if (!userObj.fName ){
         return res.status(403).send({
@@ -58,31 +54,10 @@ const associateMember = (req,res,next) => {
             message: "Cricketing Experience is require"
         })
     }
-    else if (!userObj.panCard ){
-        return res.status(403).send({
-            message: "panCard  is require"
-        })
-    }else if (!userObj.AdharCard){
-        return res.status(403).send({
-            message: "AdharCard Number is require"
-        })
-    }
-    else if (!userObj.residentialProof){
-        return res.status(403).send({
-            message: "Residential Address  is require"
-        })
-    }
-    else if (!userObj.ITR){
-        return res.status(403).send({
-            message: "ITR is require"
-        })
-    }
     else{
         next();
     }
 }
-
-
 
 module.exports ={
     associateMember
