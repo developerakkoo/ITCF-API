@@ -46,7 +46,7 @@ try{
     if(!savedTeam){
     return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
     }
-
+    const playerCreated = await Player.create(playerObj); 
     let mailOptions = {
         from: 'serviceacount.premieleague@gmail.com',
         to: playerCreated.email,
@@ -120,7 +120,7 @@ async function proPlayer(req,res){
             from: 'serviceacount.premieleague@gmail.com',
             to: savedPlayer.email,
             subject:' WELCOME TO THE ITCF FAMILY ' ,
-            html:renderedTemplate
+            html: renderedTemplate
         };
         msg.sendMail(mailOptions, function(error, info){
             if (error) {

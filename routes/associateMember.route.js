@@ -6,7 +6,14 @@ const Validate = require('../middleware/associateMember.middleware')
 
 routes.post('/post/associateMember',Validate.associateMember,associateMemberController.postAssociateMember);
 
-routes.put('/post/associateMember/Files/:id',Upload.fields([{name:'PANCard',maxCount: 1},{name:'ADHARCard',maxCount: 1},{name:'residentialProof',maxCount: 1},{name:'ITR',maxCount: 1}]),associateMemberController.postAssociateMemberFiles);
+routes.put('/associateMember/upload/pan/:id',Upload.single("file"),associateMemberController.uploadPan);
+
+routes.put('/associateMember/upload/Adhar/:id',Upload.single("file"),associateMemberController.uploadAdhar);
+
+routes.put('/associateMember/upload/ITR/:id',Upload.single("file"),associateMemberController.uploadITR);
+
+routes.put('/associateMember/upload/ResidentialProof/:id',Upload.single("file"),associateMemberController.uploadResidentialProof);
+
 
 routes.get('/associateMember/search',associateMemberController.AssociateMemberSearchOption);
 

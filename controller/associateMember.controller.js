@@ -3,8 +3,8 @@ const Notification = require('../models/Notification.model');
 const APIFeatures =require('../utils/ApiFeature');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-const mongoosePaginate = require('mongoose-paginate');
-const e = require('express');
+const fs = require('fs');
+const ejs = require('ejs');
 
 let msg = nodemailer.createTransport({
     service: 'gmail',
@@ -31,12 +31,14 @@ async function postAssociateMember(req,res){
 
     }
     try{
-        const AssociateMemberCreated = await associateMember.create(userObj)
+        const AssociateMemberCreated = await associateMember.create(userObj);
+        const template = fs.readFileSync('associateMember.ejs', 'utf-8');
+        const renderedTemplate = ejs.render(template, {name: AssociateMemberCreated.fName});
         let mailOptions = {
             from: 'serviceacount.premieleague@gmail.com',
             to: AssociateMemberCreated.email,
-            subject:'welcome ' ,
-            text:`welcome ${AssociateMemberCreated.fName} account created successfully`
+            subject:'WELCOME TO THE ITCF FAMILY ' ,
+            html: renderedTemplate
         };
         msg.sendMail(mailOptions, function(error, info){
             if (error) {
@@ -57,39 +59,89 @@ async function postAssociateMember(req,res){
     
 }
 
-async function postAssociateMemberFiles(req,res){
+async function uploadPan(req,res){
     try{
-        const fileObj={
-            panCard: req.protocol +"://"+req.hostname +"/"+ req.files.PANCard[0].path.replace(/\\/g, "/"),
-            AdharCard : req.protocol +"://"+req.hostname +"/"+ req.files.ADHARCard[0].path.replace(/\\/g, "/"),
-            residentialProof : req.protocol +"://"+req.hostname +"/"+ req.files.residentialProof[0].path.replace(/\\/g, "/"),
-            ITR : req.protocol +"://"+req.hostname +"/"+ req.files.ITR[0].path.replace(/\\/g, "/")
-        }
-        
+        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
         if(!savedAssociateMember){
             return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
         }
-        savedAssociateMember.panCard = fileObj.panCard != undefined
-        ? fileObj.panCard
-        : savedSubAdmin.panCard
-        savedAssociateMember.AdharCard = fileObj.AdharCard != undefined
-        ? fileObj.AdharCard
-        : savedSubAdmin.AdharCard
-        savedAssociateMember.residentialProof = fileObj.residentialProof != undefined
-        ? fileObj.residentialProof
-        : savedSubAdmin.residentialProof
-        savedAssociateMember.ITR = fileObj.ITR != undefined
-        ? fileObj.ITR
-        : savedSubAdmin.ITR
+        savedAssociateMember.panCard = file != undefined
+        ? file
+        : savedAssociateMember.panCard
 
         const updatedUser = await savedAssociateMember.save();
-        res.status(201).json({message:"Associate Member",updatedUser});
+        res.status(201).json({message:"Associate Member Pan updated",updatedUser});
     }catch(error){
         console.log(error);
         res.status(500).json({message:error.message,status:`ERROR`});
     }
 }
+
+
+async function uploadAdhar(req,res){
+    try{
+        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+        const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
+        if(!savedAssociateMember){
+            return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
+        }
+        savedAssociateMember.AdharCard = file != undefined
+        ? file
+        : savedAssociateMember.AdharCard
+
+        const updatedUser = await savedAssociateMember.save();
+        res.status(201).json({message:"Associate Member AdharCard updated",updatedUser});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message,status:`ERROR`});
+    }
+}
+
+async function uploadResidentialProof(req,res){
+    try{
+
+        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+        
+        
+        const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
+        if(!savedAssociateMember){
+            return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
+        }
+        savedAssociateMember.residentialProof = file != undefined
+        ? file
+        : savedAssociateMember.residentialProof
+
+        const updatedUser = await savedAssociateMember.save();
+        res.status(201).json({message:"Associate Member Pan updated",updatedUser});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message,status:`ERROR`});
+    }
+}
+
+async function uploadITR(req,res){
+    try{
+        
+        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/")
+        
+        
+        const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
+        if(!savedAssociateMember){
+            return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
+        }
+        savedAssociateMember.ITR = file!= undefined
+        ? file
+        : savedAssociateMember.ITR
+
+        const updatedUser = await savedAssociateMember.save();
+        res.status(201).json({message:"Associate Member Pan updated",updatedUser});
+    }catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message,status:`ERROR`});
+    }
+}
+
 
 async function UpdateAssociateMember(req,res){
     try{
@@ -296,7 +348,10 @@ async function totalAssociateMemberReport(req,res){
 
 module.exports={
     postAssociateMember,
-    postAssociateMemberFiles,
+    uploadPan,
+    uploadAdhar,
+    uploadITR,
+    uploadResidentialProof,
     UpdateAssociateMember,
     getAllAssociateMember,
     DeleteAssociateMember,
