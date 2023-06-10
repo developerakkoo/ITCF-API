@@ -10,8 +10,11 @@ const teamObj ={
     teamAdminUID:req.body.teamAdminUID,
     AdminID: req.body.AdminID,
     teamName: req.body.teamName,
-    teamCity: req.body.teamCity
+    teamCity: req.body.teamCity,
+    address: req.body.address,
+    temp:"inviteLink"+"/"+req.body.AdminID+"/"+req.body.teamName+"/"+req.body.teamAdminUID,
 }
+    teamObj. inviteLink =req.protocol +"://"+req.hostname +"/"+teamObj.temp.replace(/\\/g, "/");
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
@@ -33,7 +36,27 @@ try{
     }
     console.log("Something went wrong while saving to DB", err);
     res.status(500).json({message:err.message,status:"ERROR"})
+    }
 }
+
+async function postTeamLogo(req,res){
+    try {
+    
+        const path = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+        const savedTeam = await Team.findOne({_id:req.params.teamId});
+        if(!savedTeam){
+        return res.status(404).json({message:`Team Not Found With This TeamId: ${req.params.teamId}`});
+        }
+        savedTeam.teamLogo = path != undefined
+        ? path
+        : savedTeam.teamLogo
+    
+        const updatedTeam = await savedTeam.save();
+        res.status(201).json({message:'teamLogo Uploaded Successfully',updatedTeam})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: error.message,status:"ERROR" });
+    }
 }
 
 async function UpdateTeam(req,res){
@@ -82,7 +105,7 @@ async function getAllTeam(req,res){
 
 async function getTeamById(req,res){
     try{
-        const savedTeam= await Team.findOne({_id:req.params.teamId})
+        const savedTeam= await Team.findOne({_id:req.params.teamId}).populate('Player')
         if (!savedTeam){
             return res.status(404).json({message: "Team Not Found"});
         }
@@ -211,7 +234,7 @@ async function getAllTeamNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
+}
     
 async function getTeamNotification(req,res){
     try{
@@ -224,7 +247,7 @@ async function getTeamNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
+}
     
 async function deleteTeamNotification(req,res){
     try{
@@ -241,10 +264,11 @@ async function deleteTeamNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
+}
 
 module.exports={
     postTeam,
+    postTeamLogo,
     UpdateTeam,
     getAllTeam,
     getTeamById,

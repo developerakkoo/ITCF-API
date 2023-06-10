@@ -5,7 +5,8 @@ const validateTeam =(req,res,next)=>{
         teamAdminUID:req.body.teamAdminUID,
         AdminID: req.body.AdminID,
         teamName: req.body.teamName,
-        teamCity: req.body.teamCity
+        teamCity: req.body.teamCity,
+        address: req.body.address
     }
     if (!teamObj.teamAdminUID ){
         return res.status(403).send({
@@ -23,6 +24,11 @@ const validateTeam =(req,res,next)=>{
     }else if (!teamObj.teamCity ){
         return res.status(403).send({
             message: "teamCity  is require"
+        })
+    }
+    else if (!teamObj.address){
+        return res.status(403).send({
+            message: "address is require"
         })
     }
     else{

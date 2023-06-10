@@ -1,8 +1,5 @@
 const validatePlayer =(req,res,next)=>{
     const playerObj ={
-        teamAdminUID:req.body.teamAdminUID,
-        AdminID: req.body.AdminID,
-        teamID: req.body.teamID,
         Name: req.body.Name,
         age: req.body.age,
         DOB: req.body.DOB,
@@ -10,20 +7,7 @@ const validatePlayer =(req,res,next)=>{
         Phone: req.body.Phone,
         Skills: req.body.Skills,
     }
-    if (!playerObj.teamAdminUID ){
-        return res.status(403).send({
-            message: "teamAdminUID is require"
-        })
-    }
-    if (!playerObj.AdminID ){
-        return res.status(403).send({
-            message: "AdminID  is require"
-        })
-    }else if (!playerObj.teamID  ){
-        return res.status(403).send({
-            message: "teamID   is require"
-        })
-    }else if (!playerObj.Name ){
+    if (!playerObj.Name ){
         return res.status(403).send({
             message: "Name  is require"
         })

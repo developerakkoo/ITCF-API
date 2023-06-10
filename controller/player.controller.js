@@ -4,12 +4,13 @@ const Team =  require('../models/Team.model');
 const APIFeatures = require('../utils/ApiFeature');
 const TeamAdmin = require('../models/TeamAdmin.model');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
 const fs = require('fs');
-const ejs = require('ejs');
-
-
 require('dotenv').config();
-const mongoosePaginate = require('mongoose-paginate');
+const ejs = require('ejs');
+const { log } = require('console');
+
+
 
 let msg = nodemailer.createTransport({
     service: 'gmail',
@@ -23,9 +24,6 @@ let msg = nodemailer.createTransport({
 async function  postPlayer(req,res){
     // console.log(">>>>>>",req.body)
 const playerObj ={
-    teamAdminUID:req.body.teamAdminUID,
-    AdminID: req.body.AdminID,
-    teamID: req.body.teamID,
     Name: req.body.Name,
     age: req.body.age,
     DOB: req.body.DOB,
@@ -34,18 +32,18 @@ const playerObj ={
     Skills: req.body.Skills,
 }
 try{
-    const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
-    if(!admin){
-    return res.status(400).json({message: `Team Admin UID Is Not Valid`})
-    }
-    const savedAdmin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
-    if(!savedAdmin){
-    return res.status(400).json({message: `Team Admin  Is Not Valid`})
-    }
-    const savedTeam = await Team.findOne({_id:req.body.teamID});
-    if(!savedTeam){
-    return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
-    }
+    // const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
+    // if(!admin){
+    // return res.status(400).json({message: `Team Admin UID Is Not Valid`})
+    // }
+    // const savedAdmin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
+    // if(!savedAdmin){
+    // return res.status(400).json({message: `Team Admin  Is Not Valid`})
+    // }
+    // const savedTeam = await Team.findOne({_id:req.body.teamID});
+    // if(!savedTeam){
+    // return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
+    // }
     const playerCreated = await Player.create(playerObj); 
     let mailOptions = {
         from: 'serviceacount.premieleague@gmail.com',
@@ -67,6 +65,26 @@ try{
     }
     console.log("Something went wrong while saving to DB", err);
     res.status(500).json({message:err.message,status:"ERROR"})
+}
+}
+
+async function postPlayerImage(req,res){
+try {
+
+    const path = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+    const savedPlayer = await Player.findOne({_id:req.params.playerId});
+    if(!savedPlayer){
+    return res.status(404).json({message:`Player Not Found With This Player Id: ${req.params.playerId}`});
+    }
+    savedPlayer.image = path != undefined
+    ? path
+    : savedPlayer.image
+
+    const updatedPlayer = await savedPlayer.save();
+    res.status(201).json({message:'Image Uploaded Successfully',updatedPlayer})
+} catch (error) {
+    console.log(error);
+    res.status(500).json({message: error.message,status:"ERROR" });
 }
 }
 
@@ -294,8 +312,8 @@ async function getAllPlayersNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
-    
+}
+
 async function getPlayerNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
@@ -310,8 +328,8 @@ async function getPlayerNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
-    
+}
+
 async function deletePlayerNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
@@ -327,15 +345,100 @@ async function deletePlayerNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
+}
 
 async  function get(req,res){
     const sub =  await Team.updateMany({canUpdateSubAdmin:true})
     res.status(200).json("ok")
 }
 
+async function handelGet (req,res){
+    res.render('invitationForm');
+}
+async function handelPost (req,res){
+    try {
+        console.log(req.body);
+        console.log('post');
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.AdminID});
+        if (!savedTeamAdmin) {
+            return res.status(400).json({message:`Team Admin Not Found`});
+        }
+        const savedTeam = await Team.findOne({teamName:req.params.teamName});
+        if (!savedTeam) {
+            return res.status(400).json({message:`Team Not Found`});
+        }
+        const userObj={
+            AdminID: req.params.AdminID ,
+            Name: req.body.Name,
+            Phone: req.body.Phone,
+            email: req.body.Email,
+            Password:await bcrypt.hash(req.body.Password,10)
+        }
+        const createdPlayer = await Player.create(userObj);
+        savedTeam.teamMembers.push(createdPlayer._id);
+        const updatedTeam = await savedTeam.save();
+        let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: createdPlayer.email,
+            subject:' WELCOME TO THE ITCF FAMILY ' ,
+            text:`Successfully register as player  and Added in to The Team ${req.params.teamName} `
+        };
+        msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+            console.log('Email sent: ' + info.response);
+            }
+        });
+        res.status(201).json({message:'Player Created and Added to team SuccessFully',Player:createdPlayer,Team:updatedTeam});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: error.message,Status:`ERROR`});
+    }
+
+}
+
+async function verifyNumber(req,res){
+    try {
+        const savedPlayer = await Player.findOne({Phone:req.query.phoneNumber});
+        if (!savedPlayer) {
+            return res.status(404).json({message:`Player Not Found With This Phone Number:${req.query.phoneNumber}`});
+        }
+        res.status(200).json({Status:true,access:true, message:"Player Found",savedPlayer});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+}
+
+async function setPassword(req,res){
+    try {
+        
+        const savedPlayer = await Player.findOne({_id:req.body.Id});
+        const password = await bcrypt.hash(req.body.Password,10);
+        savedPlayer.email =req.body.email != undefined
+        ? req.body.email
+        : savedPlayer.email
+
+        savedPlayer.Password =password != undefined
+        ? password
+        : savedPlayer.Password
+        
+        const updatedPlayer =  await savedPlayer.save();
+        res.status(201).json({message:'Password And Email updated Successfully',updatedPlayer});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+}
+
 module.exports={
     postPlayer,
+    postPlayerImage,
+    verifyNumber,
+    setPassword,
+    handelGet,
+    handelPost,
     UpdatePlayer,
     proPlayer,
     getAllPlayer,

@@ -1,10 +1,12 @@
 const TeamAdmin = require('../models/TeamAdmin.model');
+const Player =  require('../models/player.mode');
+const Team = require('../models/Team.model');
 const Notification = require('../models/Notification.model');
 const APIFeatures = require('../utils/ApiFeature')
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const mongoosePaginate = require('mongoose-paginate');
+
 require('dotenv').config();
 
 let msg = nodemailer.createTransport({
@@ -279,7 +281,7 @@ async function getAllTeamAdminNotification(req,res){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
 }
-    
+
 async function getTeamAdminNotification(req,res){
     try{
         const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.userID});
@@ -294,7 +296,7 @@ async function getTeamAdminNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
+}
 
 async function deleteTeamAdminNotification(req,res){
     try{
@@ -313,6 +315,58 @@ async function deleteTeamAdminNotification(req,res){
     }
 }
 
+async function PlayerBulkCreate(req,res){
+    try {
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.Id});
+        if (!savedTeamAdmin) {
+            return res.status(404).json({message:`Team Admin Not Found With Id:${req.params.Id}`});
+        }
+        const createPlayers = [];
+        const players =  req.body.Players;
+        players.forEach(player => {
+            createPlayers.push(player)
+            
+            });
+            console.log('createPlayers');
+            const playerCreated =  await Player.insertMany(createPlayers)
+            res.status(201).json({message:'Players Inserted',Count:playerCreated.length,playerCreated});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: error.message,Status:`ERROR`});
+    }
+}
+
+async function addPlayerToTeam(req,res){
+    try {
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.TeamAdminId});
+        if (!savedTeamAdmin) {
+            console.log('pass TA');
+            return res.status(400).json({message:`Team Admin Not Found With This ID:${req.params.TeamAdminId}`});
+        }
+        const savedTeam = await Team.findOne({_id:req.params.TeamId});
+        if (!savedTeam) {
+            console.log('pass T');
+            return res.status(400).json({message:`Team Not Found With This ID:${req.params.TeamId}`});
+        }
+
+        const PlayerIds = req.body.Players
+        if (req.body.insert ){
+            PlayerIds.forEach(playerId => {
+            savedTeam.teamMembers.push(playerId)
+            
+        })}
+        else if (req.body.Delete){
+            savedPlayerIds = savedTeam.teamMembers.filter((playerId)=>{
+                return !PlayerIds.includes(playerId.toString());
+            })
+            savedTeam.teamMembers = savedPlayerIds;
+        }
+        const updateTeam= await savedTeam.save();
+        return res.status(200).send(updateTeam);
+    } catch (error) {
+        res.status(500).json({message: error.message,Status:`ERROR`});
+    }
+}
 
 //transporter contain our mail sender and password
 
@@ -396,6 +450,8 @@ async function ResetPassword(req,res){
 module.exports={
     signUp,
     signIn,
+    PlayerBulkCreate,
+    addPlayerToTeam,
     UpdateTeamAdmin,
     getAllTeamAdmin,
     getTeamAdminById,

@@ -2,10 +2,17 @@ const express = require('express');
 const routes = express.Router();
 const playerController = require('../controller/player.controller');
 const Validate = require('../middleware/player.middleware');
+const Upload = require('../middleware/upload');
 
 
 
 routes.post('/player',Validate.validatePlayer,playerController.postPlayer);
+
+routes.get('/plyer/phoneNo/verify/',playerController.verifyNumber);
+
+routes.put('/set/password',playerController.setPassword);
+
+routes.put('/upload/image/player/:playerId',Upload.single("file"),playerController.postPlayerImage);
 
 routes.get('/player/search',playerController.PlayerSearchOption);
 

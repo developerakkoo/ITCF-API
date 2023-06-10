@@ -7,6 +7,10 @@ const Validate = require('../middleware/TeamAdmin.middleware')
 
 routes.post('/App/api/v1/signUp',[Validate.validateTeamAdmin],TeamAdminController.signUp);
 
+routes.put('/teamAdmin/addPlayer/team/:TeamAdminId/:TeamId',TeamAdminController.addPlayerToTeam);
+
+routes.post('/TeamAdmin/bulkCreate/:Id',TeamAdminController.PlayerBulkCreate);
+
 routes.post('/App/api/v1/auth/signIn',[Validate.validateTeamAdminSignIn],TeamAdminController.signIn);
 
 routes.put('/update/teamAdmin/:teamAdID',TeamAdminController.UpdateTeamAdmin);

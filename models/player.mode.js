@@ -16,7 +16,6 @@ subAdminID:{
 },
 teamAdminUID:{
     type:String,
-    required: true
 },
 AdminID:{
     type: Schema.Types.ObjectId,
@@ -30,26 +29,33 @@ Name:{
     type:String,
     required: true
 },
+image:{
+    type:String,
+    default:""
+},
 age:{
     type:String,
-    required: true
+    // required: true
 },
 DOB:{
     type:String,
-    required: true
+    // required: true
 },
 email: {
     type: String,
-    required: [true, 'Email is required'],
+    // required: [true, 'Email is required'],
     lowercase: true,
-    unique: true,
+    // unique: true,
     isEmail: true,
+},
+Password:{
+    type:String,
+
 },
 Phone:{
     type:Number,
     required: [true, 'Phone number is required'],
     unique: true,
-    minLength:10
 },
 Skills: {
     type : String,

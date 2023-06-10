@@ -7,6 +7,7 @@ const validateTeamAdmin =(req,res,next)=>{
         Skills: req.body.Skills,
         Phone: req.body.Phone,
         email: req.body.email,
+        
     }
     if (!AdminUserObj.fName ){
         return res.status(403).send({

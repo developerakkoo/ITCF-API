@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const express= require('express');
 require('dotenv').config();
-const {TeamAdminRoutes,TeamRoutes,paymentRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
+const inviteLink = require('./controller/player.controller');
+const {TeamAdminRoutes,TeamRoutes,paymentRoutes,OTPRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
 const path= require('path');
 const app = express();
 app.use(express.json());
@@ -24,6 +25,12 @@ app.use(subMatterExRoutes);
 app.use(associateMemberRoutes);
 app.use(superAdminRoutes);
 app.use(subAdminRoutes);
+app.use(OTPRoutes);
+
+
+
+app.route('/inviteLink/:AdminID/:teamName/:teamAdminUID').get(inviteLink.handelGet).post(inviteLink.handelPost)
+
 
 
 app.all("*", (req, res, next) => {
@@ -31,7 +38,6 @@ app.all("*", (req, res, next) => {
         message:"Page not found"
     });
 });
-
 mongoose.connect(process.env.DB_URL,{
     useUnifiedTopology: true,
     useNewUrlParser: true,
@@ -48,5 +54,5 @@ console.log('Running at localhost:8000 🚀'));
 
 
 
-
+// player log in akk route take a number true   put  email and password login 
 

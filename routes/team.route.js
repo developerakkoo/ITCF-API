@@ -1,11 +1,13 @@
 const express = require('express');
 const routes = express.Router();
-const TeamController = require('../controller/team.controller')
-const Validate = require('../middleware/team.middleware') 
-
+const TeamController = require('../controller/team.controller');
+const Validate = require('../middleware/team.middleware');
+const Upload = require('../middleware/upload');
 
 
 routes.post('/team',Validate.validateTeam,TeamController.postTeam)
+
+routes.put('/upload/teamLogo/Team/:teamId',Upload.single("file"),TeamController.postTeamLogo);
 
 routes.put('/update/team/:teamId',TeamController.UpdateTeam);
 

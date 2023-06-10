@@ -6,7 +6,7 @@ const {associateMemberRoutes}= require('./associateMember.route');
 const {superAdminRoutes} =  require('./superAdmin.route');
 const{subAdminRoutes} = require('./subAdmin.route');
 const {paymentRoutes} = require('./payment.route');
-
+const {OTPRoutes} = require('./otpVerify.route');
 module.exports={
     TeamAdminRoutes,
     TeamRoutes,
@@ -15,5 +15,6 @@ module.exports={
     associateMemberRoutes,
     superAdminRoutes,
     subAdminRoutes,
-    paymentRoutes
+    paymentRoutes,
+    OTPRoutes
 }
