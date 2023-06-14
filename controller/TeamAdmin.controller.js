@@ -373,7 +373,7 @@ async function addPlayerToTeam(req,res){
 //sending mail about rest password with rest password page link
 async function forgotPassword(req,res){
     const {email}= req.body;
-    const User = await TeamAdminModel.findOne({ email: req.body.email });
+    const User = await TeamAdmin.findOne({ email: req.body.email });
     if(!User){
         res.send('Team Admin Not Registered');
         return;
@@ -409,7 +409,7 @@ async function forgotPassword(req,res){
 
 async function getResetPassword(req,res){
     const{id,token} =  req.params;
-    const user = await TeamAdminModel.findOne({ _id: req.params.id })
+    const user = await TeamAdmin.findOne({ _id: req.params.id })
     if(!user){
         res.send('Invalid Id...!');
     }
@@ -427,7 +427,7 @@ async function getResetPassword(req,res){
 
 async function ResetPassword(req,res){
     const{id,token} =  req.params;
-    const user = await TeamAdminModel.findOne({ _id: req.params.id });
+    const user = await TeamAdmin.findOne({ _id: req.params.id });
     if(!user){
         res.send('Invalid Id...!');
     }

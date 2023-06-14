@@ -2,6 +2,8 @@ const associateMember =require('../models/associateMember.model');
 const Notification = require('../models/Notification.model');
 const APIFeatures =require('../utils/ApiFeature');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const fs = require('fs');
 const ejs = require('ejs');
@@ -345,9 +347,155 @@ async function totalAssociateMemberReport(req,res){
     }
 }
 
+async function updatePasswordToAssociateMember(req,res){
+        try{
+            const ID = req.body.userId;
+            // console.log(req.body)
+            const savedAssociateMembers = await associateMember.findOne({_id:ID});
+            if (!savedAssociateMembers){
+                return res.status(404).json({message: "Associate Member Not Found"});
+            }
+            savedAssociateMembers.password = await bcrypt.hash(req.body.password,10)
+            ? await bcrypt.hash(req.body.password,10)
+            : savedAssociateMembers.password;
+            
+            const updatedAssociateMembers= await savedAssociateMembers.save();
+            let mailOptions = {
+                from: 'serviceacount.premieleague@gmail.com',
+                to: savedAssociateMembers.email,
+                subject:'Your Login Credential' ,
+                text: `Dear ${savedAssociateMembers.fName}, Use this password for login in to your ITFC account ${req.body.password}`
+            };
+            msg.sendMail(mailOptions, function(error, info){
+                if (error) {
+                console.log(error);
+                } else {
+                console.log('Email sent: ' + info.response);
+                }
+            });
+            return res.status(202).json({ updatedAssociateMembers,message: "Associate Members  Updated Successfully"})
+        }catch(err){
+            if(err.code == 11000){
+                return res.status(400).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+            }
+            console.log(err)
+            res.status(500).json({message: err.message,Status:`ERROR`});
+        }
+    }
+
+
+async function postLogin(req, res, next){
+        const email = req.body.email;
+        const password = req.body.password;
+        let loadedUser;
+        const savedAssociateMember= await associateMember.findOne({ email: email})
+            if(!savedAssociateMember){
+                const error = new Error('Supper Admin Not Found');
+                error.status = 404;
+                next(error);
+            }
+            loadedUser = savedAssociateMember;
+            bcrypt.compare(password, savedAssociateMember.password)
+            .then(doMatch => {
+                if(!doMatch){
+                    return res.status(401).json({message:'Password Do Not Match'});
+                }
+                const token = jwt.sign({
+                    email: loadedUser.email,
+                    userId: loadedUser._id,
+                },process.env.SECRET_KEY, {expiresIn: '3h'});
+                const  postResponse={   
+                    token: token,
+                    userId: loadedUser._id.toString()
+                }
+                res.status(200).json({message: 'Sign In Successful',postResponse})
+            })
+            .catch(error =>{
+            console.log(error)
+            res.status(400).json({message: error.message, status:'error'});
+        })
+    }
+
+//sending mail about rest password with rest password page link
+async function forgotPassword(req,res){
+    const {email}= req.body;
+    const User = await associateMember.findOne({ email: req.body.email });
+    if(!User){
+        res.send('Associate Member Not Registered');
+        return;
+    }
+    
+    const payload = {
+        userId: User._id,
+        email:User.email 
+    }
+    let token = jwt.sign(payload, process.env.SECRET_KEY + User.password, { expiresIn: 86400 });// 24 hours
+    const Link = `http://localhost:8000/associateMember/rest-password/${User._id}/${token}`
+    console.log(Link)
+
+
+    let mailOptions = {
+        from: 'serviceacount.premieleague@gmail.com',
+        to: User.email,
+        subject:'Rest password' ,
+        text:`Click on link to reset your password    ${Link}`
+    };
+    msg.sendMail(mailOptions, function(error, info){
+        if (error) {
+        console.log(error);
+        } else {
+        console.log('Email sent: ' + info.response);
+        }
+    });
+    res.send('Password reset link has been sent to your email..!')
+    
+}
+
+//user rest password page for getting the new password from user
+
+async function getResetPassword(req,res){
+    const{id,token} =  req.params;
+    const user = await associateMember.findOne({ _id: req.params.id })
+    if(!user){
+        res.send('Invalid Id...!');
+    }
+    try{
+        const payload =jwt.verify(token,process.env.SECRET_KEY + user.password);
+        res.render('reset-password',{email:user.email});
+
+    }catch(error){
+        console.log(error.message);
+        res.send(error.message);
+    }
+}
+
+//updating user password
+
+async function ResetPassword(req,res){
+    const{id,token} =  req.params;
+    const user = await associateMember.findOne({ _id: req.params.id });
+    if(!user){
+        res.send('Invalid Id...!');
+    }
+    try{
+        const payload = jwt.verify(token,process.env.SECRET_KEY + user.password);
+        
+            user.password= bcrypt.hashSync(req.body.password, 16) ? bcrypt.hashSync(req.body.password, 16) : user.password
+        const updatedUser= await user.save(user);
+        res.status(200).send(updatedUser);
+    }catch(error){
+        console.log(error.message);
+        res.send(error.message);
+    }
+}
+
 
 module.exports={
     postAssociateMember,
+    postLogin,
+    forgotPassword,
+    getResetPassword,
+    ResetPassword,
     uploadPan,
     uploadAdhar,
     uploadITR,
@@ -360,5 +508,6 @@ module.exports={
     totalAssociateMemberReport,
     deleteAssociateMemberNotification,
     getAssociateMemberNotification,
-    getAllAssociateMemberNotification
+    getAllAssociateMemberNotification,
+    updatePasswordToAssociateMember
 }

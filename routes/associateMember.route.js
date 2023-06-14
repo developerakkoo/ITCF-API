@@ -6,6 +6,8 @@ const Validate = require('../middleware/associateMember.middleware')
 
 routes.post('/post/associateMember',Validate.associateMember,associateMemberController.postAssociateMember);
 
+routes.post('/associateMember/login',associateMemberController.postLogin);
+
 routes.put('/associateMember/upload/pan/:id',Upload.single("file"),associateMemberController.uploadPan);
 
 routes.put('/associateMember/upload/Adhar/:id',Upload.single("file"),associateMemberController.uploadAdhar);
@@ -13,7 +15,6 @@ routes.put('/associateMember/upload/Adhar/:id',Upload.single("file"),associateMe
 routes.put('/associateMember/upload/ITR/:id',Upload.single("file"),associateMemberController.uploadITR);
 
 routes.put('/associateMember/upload/ResidentialProof/:id',Upload.single("file"),associateMemberController.uploadResidentialProof);
-
 
 routes.get('/associateMember/search',associateMemberController.AssociateMemberSearchOption);
 
@@ -32,6 +33,17 @@ routes.get('/get/AssociateMember/notification/:userID/:msgID',associateMemberCon
 routes.delete('/delete/AssociateMember/notification/:userID/:msgID',associateMemberController.deleteAssociateMemberNotification);
 
 routes.get('/totalAssociateMemberReport',associateMemberController.totalAssociateMemberReport);
+
+
+routes.get('/App/api/v1/associateMember-forgot-password',(req,res,next)=>{
+    res.render('forgot-password');
+});
+
+routes.post('/App/api/v1/associateMember-forgot-password',associateMemberController.forgotPassword);
+
+routes.get('/associateMember/rest-password/:id/:token',associateMemberController.getResetPassword);
+
+routes.post('/associateMember/rest-password/:id/:token',associateMemberController.ResetPassword);
 
 
 module.exports = {associateMemberRoutes : routes}

@@ -32,6 +32,9 @@ email: {
     unique: true,
     isEmail: true,
 },
+password: {
+    type: String
+},
 Phone:{
     type:Number,
     required: [true, 'Phone number is required'],

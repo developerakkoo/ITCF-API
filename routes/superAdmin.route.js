@@ -81,6 +81,8 @@ routes.post('/superAdmin/post/associateMember/:Id',Validate.isSuperAdmin,Upload.
 
 routes.get('/superAdmin/associateMember/search/:Id',Validate.isSuperAdmin,associateMemberController.AssociateMemberSearchOption);
 
+routes.put('/add/credential/:Id',Validate.isSuperAdmin,associateMemberController.updatePasswordToAssociateMember)
+
 routes.put('/superAdmin/update/associateMember/:Id/:associateMemberId',Validate.isSuperAdmin,associateMemberController.UpdateAssociateMember);
 
 routes.put('/superAdmin/block/associateMember/:Id/:associateMemberId',Validate.isSuperAdmin,associateMemberController.UpdateAssociateMember);

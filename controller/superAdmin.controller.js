@@ -274,15 +274,6 @@ try{
 }
 
 async function signUpMatterEx(req,res){
-    // console.log(req.body)
-    // const doc= req.files
-    // let links = [];
-    // // res.status(200).json({msg:"ok"})
-    // for (let docNo=0; docNo <=doc.length-1;docNo++){
-    //     // console.log(req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/"),doc[docNo].path.replace(/\\/g, "/"))
-    //     let url = req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/")
-    //     links.push(url)
-    // }
     const dataObj ={
         superAdminID:req.params.Id,
         Name: req.body.Name,
@@ -671,6 +662,8 @@ async function UpdateSubAdminBySuperAdmin(req,res){
     }
 }
 
+
+
 module.exports= {
     postSignup,
     postLogin,
@@ -686,5 +679,5 @@ module.exports= {
     updateNotification,
     deleteNotification,
     singUpSubAdmin,
-    UpdateSubAdminBySuperAdmin
+    UpdateSubAdminBySuperAdmin,
 }

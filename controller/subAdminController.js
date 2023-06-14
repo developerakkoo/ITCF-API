@@ -267,38 +267,38 @@ async function deleteSubAdminNotification(req,res){
     }
     }
     
-    async function signUpAssociateMemberBySubAdmin(req,res){
-        // console.log("AddDetails")
-        // console.log("data>>",req.files.PANCard[0].path)
-        const ID =req.params.Id;
-        const userObj = {
-            subAdminID:ID,
-            fName : req.body.fName,
-            mName : req.body.mName,
-            lName : req.body.lName,
-            age : req.body.age,
-            DOB : req.body.DOB,
-            email : req.body.email,
-            Phone : req.body.Phone,
-            ResidentialAddress : req.body.ResidentialAddress,
-            OfficeAddress : req.body.OfficeAddress,
-            CricketingExperience : req.body.CricketingExperience
-        }
-        try{
-            const AssociateMemberCreated = await associateMember.create(userObj)
-            let mailOptions = {
-                from: 'serviceacount.premieleague@gmail.com',
-                to: AssociateMemberCreated.email,
-                subject:'welcome ' ,
-                text:`Dear ${AssociateMemberCreated.fName}, Sub Admin Register You As A Associate Member`
-            };
-            msg.sendMail(mailOptions, function(error, info){
-                if (error) {
-                console.log(error);
-                } else {
-                console.log('Email sent: ' + info.response);
-                }
-            });
+async function signUpAssociateMemberBySubAdmin(req,res){
+    // console.log("AddDetails")
+    // console.log("data>>",req.files.PANCard[0].path)
+    const ID =req.params.Id;
+    const userObj = {
+        subAdminID:ID,
+        fName : req.body.fName,
+        mName : req.body.mName,
+        lName : req.body.lName,
+        age : req.body.age,
+        DOB : req.body.DOB,
+        email : req.body.email,
+        Phone : req.body.Phone,
+        ResidentialAddress : req.body.ResidentialAddress,
+        OfficeAddress : req.body.OfficeAddress,
+        CricketingExperience : req.body.CricketingExperience
+    }
+    try{
+        const AssociateMemberCreated = await associateMember.create(userObj)
+        let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: AssociateMemberCreated.email,
+            subject:'welcome ' ,
+            text:`Dear ${AssociateMemberCreated.fName}, Sub Admin Register You As A Associate Member`
+        };
+        msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+            console.log('Email sent: ' + info.response);
+            }
+        });
     
             res.status(201).json({message:`Associate Member Created Successfully`,AssociateMemberCreated})
         }catch(err){
@@ -478,40 +478,40 @@ async function deleteSubAdminNotification(req,res){
         const Phone = req.body.Phone;
         const password = req.body.password;
         const SubAdmin = await subAdmin.findOne({ email: email})
-            if(SubAdmin){
-                return res.status(400).json({
-                status: false,
-                message: 'Sub Admin With Email Already Exists'
+        if(SubAdmin){
+            return res.status(400).json({
+            status: false,
+            message: 'Sub Admin With Email Already Exists'
             })
             }
-            bcrypt.hash(password, 12)
-            .then(async (hashedPasswords) => {
-                const admin = new subAdmin({
-                    subAdminID:subAdminID,
-                    email: email,
-                    password: hashedPasswords,
-                    Phone:Phone
-                });
+        bcrypt.hash(password, 12)
+        .then(async (hashedPasswords) => {
+        const admin = new subAdmin({
+            subAdminID:subAdminID,
+            email: email,
+            password: hashedPasswords,
+                Phone:Phone
+            });
     
-                const createdSubAdmin = await admin.save();
-                let mailOptions = {
-                    from: 'serviceacount.premieleague@gmail.com',
-                    to: createdSubAdmin.email,
-                    subject:'welcome ' ,
-                    text:`You'r Successfully Register As Sub Admin`
-                };
-                msg.sendMail(mailOptions, function(error, info){
-                    if (error) {
-                    console.log(error);
-                    } else {
-                    console.log('Email sent: ' + info.response);
-                    }
-                });
-                return createdSubAdmin ;
-            }).then((result) => {
-                return res.status(201).json({message: 'Sub Admin Created Successfully!', status: '201', userId: result._id});
-            })
-        
+            const createdSubAdmin = await admin.save();
+            let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: createdSubAdmin.email,
+            subject:'welcome ' ,
+            text:`You'r Successfully Register As Sub Admin`
+            };
+            msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+        return createdSubAdmin ;
+        }).then((result) => {
+        return res.status(201).json({message: 'Sub Admin Created Successfully!', status: '201', userId: result._id});
+        })
+    
     .catch(error =>{
         if(error.code == 11000){
             return res.status(500).json({message: `Sub Admin With This Information Is Already Exist Please Try With Another Email Or Mobile Number` })
