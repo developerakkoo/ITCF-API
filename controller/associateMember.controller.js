@@ -390,9 +390,7 @@ async function postLogin(req, res, next){
         let loadedUser;
         const savedAssociateMember= await associateMember.findOne({ email: email})
             if(!savedAssociateMember){
-                const error = new Error('Supper Admin Not Found');
-                error.status = 404;
-                next(error);
+            return res.status(404).json({message:"Associate Member Not Found"})
             }
             loadedUser = savedAssociateMember;
             bcrypt.compare(password, savedAssociateMember.password)

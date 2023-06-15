@@ -88,6 +88,8 @@ routes.get('/subAdmin/totalTeamReport/:Id',[Validate.isSubAdmin],TeamAController
 
 routes.post('/subAdmin/post/associateMember/:Id',Validate.isSubAdmin,Validate.canCreateAssociateMember,Upload.fields([{name:'PANCard',maxCount: 1},{name:'ADHARCard',maxCount: 1},{name:'residentialProof',maxCount: 1},{name:'ITR',maxCount: 1}]),ValidateAssociateMember.associateMember,subAdminController.signUpAssociateMemberBySubAdmin);
 
+routes.put('/subAdmin/addCredential/associateMember/:Id',Validate.isSubAdmin,associateMemberController.updatePasswordToAssociateMember);
+
 routes.get('/subAdmin/associateMember/search/:Id',[Validate.isSubAdmin,Validate.canGetAssociateMember],associateMemberController.AssociateMemberSearchOption);
 
 routes.put('/subAdmin/update/associateMember/:Id/:associateMemberId',[Validate.isSubAdmin,Validate.canUpdateAssociateMember],associateMemberController.UpdateAssociateMember);
@@ -111,6 +113,8 @@ routes.delete('/subAdmin/delete/AssociateMember/notification/:Id/:userID/:msgID'
 //subMatterEx  operations by super admin
 
 routes.post('/subAdmin/post/subMatterEx/:Id',Validate.isSubAdmin,Validate.canCreateSubMatterEx,Upload.array('Docs',10),validateSubMatterEx.SubMatterEx,subAdminController.signUpMatterExBySubAdmin);
+
+routes.put('/subAdmin/addCredential/subMatterEx/:Id',Validate.isSubAdmin,subMatterExController.updatePasswordToSubMatterEx);
 
 routes.get('/subAdmin/subMatterEx/search/:Id',[Validate.isSubAdmin,Validate.canGetSubMatterEx],subMatterExController.subMatterExSearchOption);
 

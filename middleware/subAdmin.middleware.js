@@ -444,11 +444,28 @@ const canBlockAssociateMember = async (req,res,next) => {
     }
 }
 
+
+//    Password Access
+
+const canAssignPassword = async (req,res,next) => {
+    const savedAdmin = await subAdmin.findOne({ _id: req.params.Id})
+        if(!savedAdmin.canAssignPassword === true){
+            res.status(400).json({
+            status: false,
+            message: `Sorry, You doe's not have a subAdmin rights!`
+        });
+    } else{
+        next();
+    }
+}
+
 module.exports ={
     validateSubAdmin,
     isSubAdmin,
     canCreateSubAdmin,
     canUpdateSubAdmin,
+
+    canAssignPassword,
 
     /*sub Admin Access*/
     canCreateSubAdmin,

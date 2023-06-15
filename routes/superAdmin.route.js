@@ -101,6 +101,8 @@ routes.get('/superAdmin/totalAssociateMemberReport/:Id',Validate.isSuperAdmin,as
 
 routes.post('/superAdmin/post/subMatterEx/:Id',Validate.isSuperAdmin,Upload.array('Docs',10),validateSubMatterEx.SubMatterEx,superAdminController.signUpMatterEx);
 
+routes.put('/subMatterEx/add/credential/:Id',Validate.isSuperAdmin,subMatterExController.updatePasswordToSubMatterEx)
+
 routes.get('/superAdmin/subMatterEx/search/:Id',Validate.isSuperAdmin,subMatterExController.subMatterExSearchOption);
 
 routes.put('/superAdmin/update/subMatterEx/:Id/:subMatterExId',Validate.isSuperAdmin,subMatterExController.UpdateSubMatterEx);

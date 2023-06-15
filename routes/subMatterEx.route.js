@@ -23,6 +23,20 @@ routes.get('/get/subMatterEx/notification/:userID/:msgID',subMatterExController.
 
 routes.delete('/delete/subMatterEx/notification/:userID/:msgID',subMatterExController.deleteSubMatterExNotification);
 
+
+routes.post('/subMatterEx/login',subMatterExController.postLogin);
+
+
+routes.get('/App/api/v1/subjectMatterExpert-forgot-password',(req,res,next)=>{
+    res.render('forgot-password');
+});
+
+routes.post('/App/api/v1/subjectMatterExpert-forgot-password',subMatterExController.forgotPassword);
+
+routes.get('/subjectMatterExpert/rest-password/:id/:token',subMatterExController.getResetPassword);
+
+routes.post('/subjectMatterExpert/rest-password/:id/:token',subMatterExController.ResetPassword);
+
 module.exports = {subMatterExRoutes : routes}
 
 

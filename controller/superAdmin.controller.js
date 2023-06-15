@@ -650,6 +650,11 @@ async function UpdateSubAdminBySuperAdmin(req,res){
         ? req.body.canBlockAssociateMember
         : savedSubAdmin.canBlockAssociateMember
         
+        /*Password Access*/
+        savedSubAdmin.canAssignPassword = req.body.canAssignPassword != undefined
+        ? req.body.canAssignPassword
+        : savedSubAdmin.canAssignPassword
+        
         const updateSubAdmin = await savedSubAdmin.save()
 
         return res.status(200).json({ updateSubAdmin,message: "Sub Admin  Updated Successfully"})

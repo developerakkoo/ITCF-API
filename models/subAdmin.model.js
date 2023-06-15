@@ -26,7 +26,7 @@ const subAdminSchema = new Schema({
         required: [true, 'Password is required']
     },
     isActive:{
-        type: Boolean,
+        type: Boolean, 
         default: false
     },
     isBlocked:{
@@ -184,7 +184,11 @@ const subAdminSchema = new Schema({
         type: Boolean,
         default: false
     },
-
+/*Password  Access*/
+canAssignPassword:{
+    type: Boolean,
+    default: false
+},
     createdAt: {
         type: Date,
         default: () => Date.now()

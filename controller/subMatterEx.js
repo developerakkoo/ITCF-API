@@ -4,6 +4,8 @@ const APIFeatures =require('../utils/ApiFeature');
 require('dotenv').config();
 const mongoosePaginate = require('mongoose-paginate');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 let msg = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -289,6 +291,145 @@ async function deleteSubMatterExNotification(req,res){
 }
 
 
+async function updatePasswordToSubMatterEx(req,res){
+    try{
+        const ID = req.body.userId;
+        // console.log(req.body)
+        const savedSubMatterEx = await subMatterEx.findOne({_id:ID});
+        if (!savedSubMatterEx){
+            return res.status(404).json({message: "Subject Matter Expert Not Found"});
+        }
+        savedSubMatterEx.password = await bcrypt.hash(req.body.password,10)
+        ? await bcrypt.hash(req.body.password,10)
+        : savedSubMatterEx.password;
+        
+        const updatedSubMatterEx = await savedSubMatterEx.save();
+        let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: savedSubMatterEx.email,
+            subject:'Your Login Credential' ,
+            text: `Dear ${updatedSubMatterEx.Name}, Use this password for login in to your ITFC account ${req.body.password}`
+        };
+        msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+            console.log('Email sent: ' + info.response);
+            }
+        });
+        return res.status(202).json({ updatedSubMatterEx,message: "Subject Matter Expert Updated Successfully"})
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message,Status:`ERROR`});
+    }
+}
+
+
+async function postLogin(req, res, next){
+    const email = req.body.email;
+    const password = req.body.password;
+    let loadedUser;
+    const savedSubMatterEx= await subMatterEx.findOne({ email: email})
+        if(!savedSubMatterEx){
+            return res.status(404).json({message:`Subject Matter Expert Not Found With This Email ${req.body.email}`});
+        }
+        loadedUser = savedSubMatterEx;
+        bcrypt.compare(password, savedSubMatterEx.password)
+        .then(doMatch => {
+            if(!doMatch){
+                return res.status(401).json({message:'Password Do Not Match'});
+            }
+            const token = jwt.sign({
+                email: loadedUser.email,
+                userId: loadedUser._id,
+            },process.env.SECRET_KEY, {expiresIn: '3h'});
+            const  postResponse={   
+                token: token,
+                userId: loadedUser._id.toString()
+            }
+            res.status(200).json({message: 'Sign In Successful',postResponse})
+        })
+        .catch(error =>{
+        console.log(error)
+        res.status(400).json({message: error.message, status:'error'});
+    })
+}
+
+//sending mail about rest password with rest password page link
+async function forgotPassword(req,res){
+const {email}= req.body;
+const User = await subMatterEx.findOne({ email: req.body.email });
+if(!User){
+    res.send('Associate Member Not Registered');
+    return;
+}
+
+const payload = {
+    userId: User._id,
+    email:User.email 
+}
+let token = jwt.sign(payload, process.env.SECRET_KEY + User.password, { expiresIn: 86400 });// 24 hours
+const Link = `http://localhost:8000/subjectMatterExpert/rest-password/${User._id}/${token}`
+console.log(Link)
+
+
+let mailOptions = {
+    from: 'serviceacount.premieleague@gmail.com',
+    to: User.email,
+    subject:'Rest password' ,
+    text:`Click on link to reset your password    ${Link}`
+};
+msg.sendMail(mailOptions, function(error, info){
+    if (error) {
+    console.log(error);
+    } else {
+    console.log('Email sent: ' + info.response);
+    }
+});
+res.send('Password reset link has been sent to your email..!')
+
+}
+
+//user rest password page for getting the new password from user
+
+async function getResetPassword(req,res){
+const{id,token} =  req.params;
+const user = await subMatterEx.findOne({ _id: req.params.id })
+if(!user){
+    res.send('Invalid Id...!');
+}
+try{
+    const payload =jwt.verify(token,process.env.SECRET_KEY + user.password);
+    res.render('reset-password',{email:user.email});
+
+}catch(error){
+    console.log(error.message);
+    res.send(error.message);
+}
+}
+
+//updating user password
+
+async function ResetPassword(req,res){
+const{id,token} =  req.params;
+const user = await subMatterEx.findOne({ _id: req.params.id });
+if(!user){
+    res.send('Invalid Id...!');
+}
+try{
+    const payload = jwt.verify(token,process.env.SECRET_KEY + user.password);
+    
+        user.password= bcrypt.hashSync(req.body.password, 16) ? bcrypt.hashSync(req.body.password, 16) : user.password
+    const updatedUser= await user.save(user);
+    res.status(200).send(updatedUser);
+}catch(error){
+    console.log(error.message);
+    res.send(error.message);
+}
+}
+
+
+
 module.exports={
     postSubMatterEx,
     postSubMatterExDoc,
@@ -300,5 +441,10 @@ module.exports={
     totalSubMatterExReport,
     getAllSubMatterExNotification,
     getSubMatterExNotification,
-    deleteSubMatterExNotification
+    deleteSubMatterExNotification,
+    updatePasswordToSubMatterEx,
+    postLogin,
+    forgotPassword,
+    getResetPassword,
+    ResetPassword
 }

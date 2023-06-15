@@ -35,15 +35,15 @@ routes.delete('/delete/AssociateMember/notification/:userID/:msgID',associateMem
 routes.get('/totalAssociateMemberReport',associateMemberController.totalAssociateMemberReport);
 
 
-routes.get('/App/api/v1/associateMember-forgot-password',(req,res,next)=>{
+routes.get('/App/api/v1/subjectMatterExpert-forgot-password',(req,res,next)=>{
     res.render('forgot-password');
 });
 
-routes.post('/App/api/v1/associateMember-forgot-password',associateMemberController.forgotPassword);
+routes.post('/App/api/v1/subjectMatterExpert-forgot-password',associateMemberController.forgotPassword);
 
-routes.get('/associateMember/rest-password/:id/:token',associateMemberController.getResetPassword);
+routes.get('/subjectMatterExpert/rest-password/:id/:token',associateMemberController.getResetPassword);
 
-routes.post('/associateMember/rest-password/:id/:token',associateMemberController.ResetPassword);
+routes.post('/subjectMatterExpert/rest-password/:id/:token',associateMemberController.ResetPassword);
 
 
 module.exports = {associateMemberRoutes : routes}
