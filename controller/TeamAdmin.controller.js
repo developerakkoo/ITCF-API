@@ -75,7 +75,7 @@ async function signIn(req, res){
     if (!user) {
         return res.status(400).json({message: "Failed! UserId Doesn't Exist, Your UID Is Send To Your Registered Email Address  ",access: false});
     }
-    res.status(200).json({ID:user._id,UID:user.UID,access: true})
+    res.status(200).json({ID:user._id,UID:user.UID,PhoneNo:user.Phone})
 }catch(err){
     // console.log(err);
     res.status(500).json({message: err.message,status:"ERROR"})
