@@ -49,7 +49,15 @@ routes.post('/rest-password/:id/:token',TeamAdminController.ResetPassword);
 
 
 
+routes.get('/App/api/v1/TeamAdmin-forgot-UID',(req,res,next)=>{
+    res.render('forgot-UID.ejs');
+});
 
+routes.post('/App/api/v1/TeamAdmin-forgot-UID',TeamAdminController.forgotUID);
+
+routes.get('/TeamAdmin-rest-UID/:id/:token',TeamAdminController.getResetUID);
+
+routes.post('/TeamAdmin-rest-UID/:id/:token',TeamAdminController.ResetUID);
 
 
 module.exports = {TeamAdminRoutes : routes}

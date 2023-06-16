@@ -385,7 +385,7 @@ async function forgotPassword(req,res){
         email:User.email 
     }
     let token = jwt.sign(payload, process.env.SECRET_KEY + User.password, { expiresIn: 86400 });// 24 hours
-    const Link = `http://localhost:8000/rest-password/${User._id}/${token}`
+    const Link = `http://localhost:8000/TeamAdmin-rest-password/${User._id}/${token}`
     console.log(Link)
 
 
@@ -445,10 +445,104 @@ async function ResetPassword(req,res){
     }
 }
 
+//transporter contain our mail sender and password
+
+//sending mail about rest UID with rest password page link
+async function forgotUID(req,res){
+    const {email}= req.body;
+    const User = await TeamAdmin.findOne({ Phone: req.body.phone });
+    if(!User){
+        res.send('Team Admin Not Registered');
+        return;
+    }
+    
+    const payload = {
+        userId: User._id,
+        email:User.email 
+    }
+    let token = jwt.sign(payload, process.env.SECRET_KEY + User.password, { expiresIn: 86400 });// 24 hours
+    const Link = `http://localhost:8000/TeamAdmin-rest-UID/${User._id}/${token}`
+    console.log(Link)
+
+
+    let mailOptions = {
+        from: 'serviceacount.premieleague@gmail.com',
+        to: User.email,
+        subject:'Rest password' ,
+        text:`Click on link to reset your password    ${Link}`
+    };
+    msg.sendMail(mailOptions, function(error, info){
+        if (error) {
+        console.log(error);
+        } else {
+        console.log('Email sent: ' + info.response);
+        }
+    });
+    res.send('Password reset link has been sent to your email..!')
+    
+}
+
+//user rest UID page for getting the new password from user
+
+async function getResetUID(req,res){
+    const{id,token} =  req.params;
+    const user = await TeamAdmin.findOne({ _id: req.params.id })
+    if(!user){
+        res.send('Invalid Id...!');
+    }
+    try{
+        const payload =jwt.verify(token,process.env.SECRET_KEY + user.password);
+        res.render('reset-UID', {email:user.email});
+
+    }catch(error){
+        console.log(error.message);
+        res.send(error.message);
+    }
+}
+
+//updating user UID
+
+async function ResetUID(req,res){
+    const{id,token} =  req.params;
+    
+    const user = await TeamAdmin.findOne({ _id: req.params.id });
+    if(!user){
+        res.send('Invalid Id...!');
+    }
+    try{
+        const payload = jwt.verify(token,process.env.SECRET_KEY + user.password);
+        
+            user.UID= user.fName.split('')[0]+user.lName.split('')[0]+Math.ceil(Math.random() * 100000+1984567);
+
+        const updatedUser= await user.save(user);
+        
+        let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: updatedUser.email,
+            subject:'Your UID ' ,
+            text:`Dear, ${updatedUser.fName} UID reset successfully your new UID is ${updatedUser.UID}`
+        };
+        msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+            console.log('Email sent: ' + info.response);
+            }
+        });
+        res.send('Your UID  has been sent to your email..!')
+
+    }catch(error){
+        console.log(error.message);
+        res.send(error.message);
+    }
+}
 
 
 
 module.exports={
+    getResetUID,
+    ResetUID,
+    forgotUID,
     signUp,
     signIn,
     PlayerBulkCreate,
