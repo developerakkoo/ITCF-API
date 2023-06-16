@@ -16,6 +16,8 @@ routes.put('/associateMember/upload/ITR/:id',Upload.single("file"),associateMemb
 
 routes.put('/associateMember/upload/ResidentialProof/:id',Upload.single("file"),associateMemberController.uploadResidentialProof);
 
+routes.get('/getById/associateMember/:associateMemberId',associateMemberController.getAssociateMemberById)
+
 routes.get('/associateMember/search',associateMemberController.AssociateMemberSearchOption);
 
 routes.put('/update/associateMember/:associateMemberId',associateMemberController.UpdateAssociateMember);

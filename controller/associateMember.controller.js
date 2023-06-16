@@ -193,6 +193,17 @@ async function getAllAssociateMember(req,res){
     }
 }
 
+async function getAssociateMemberById(req,res){
+    try{
+        const savedAssociateMember= await associateMember.findOne({_id:req.params.associateMemberId}) .select("-password")
+        if (!savedAssociateMember){
+            return res.status(404).json({message: "Associate Member Not Found"});
+        }
+        res.status(200).json({ message: 'Associate Member  Fetched Successfully With',savedAssociateMember})
+    }catch(err){
+        res.status(500).json({message: err.message,status:"ERROR" });
+    }
+}
 
 async function DeleteAssociateMember(req,res){
     try{
@@ -233,7 +244,7 @@ async function getAssociateMemberNotification(req,res){
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
-    }
+}
 
 async function deleteAssociateMemberNotification(req,res){
     try{
@@ -253,7 +264,6 @@ async function deleteAssociateMemberNotification(req,res){
 }
 
 async function AssociateMemberSearchOption (req, res, next) {
-
     try {
         const query = req.query.query;
         const term = req.query.term;
@@ -381,7 +391,7 @@ async function updatePasswordToAssociateMember(req,res){
             console.log(err)
             res.status(500).json({message: err.message,Status:`ERROR`});
         }
-    }
+}
 
 
 async function postLogin(req, res, next){
@@ -412,7 +422,7 @@ async function postLogin(req, res, next){
             console.log(error)
             res.status(400).json({message: error.message, status:'error'});
         })
-    }
+}
 
 //sending mail about rest password with rest password page link
 async function forgotPassword(req,res){
@@ -501,6 +511,7 @@ module.exports={
     UpdateAssociateMember,
     getAllAssociateMember,
     DeleteAssociateMember,
+    getAssociateMemberById,
     AssociateMemberSearchOption,
     totalAssociateMember,
     totalAssociateMemberReport,
