@@ -328,12 +328,16 @@ async function PlayerBulkCreate(req,res){
         }
         //player creation
         const createPlayers = [];
-        const players =  req.body.Players;
+        const players =  JSON.parse(req.body.Players);
+        console.log(players);
+        console.log(typeof(players));
         if ( players.length == 0) {
             return res.status(400).json({message:"Please Provide Player Data"})
         }
         let playerIds = []
         for (const player of players) {
+            console.log(player.Name + "---");
+            console.log(player.Phone + "---");
             const playerCreated=await Player.create({
             AdminID: player.AdminID,
             Name: player.Name,

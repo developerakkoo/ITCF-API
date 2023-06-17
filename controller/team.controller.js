@@ -105,11 +105,11 @@ async function getAllTeam(req,res){
 
 async function getTeamById(req,res){
     try{
-        const savedTeam= await Team.findOne({_id:req.params.teamId}).populate('Player')
+        const savedTeam= await Team.findOne({_id:req.params.teamId})
         if (!savedTeam){
             return res.status(404).json({message: "Team Not Found"});
         }
-        res.status(200).json({ savedTeam,message: "Team  Fetched Successfully"})
+        res.status(200).json({ savedTeam,message: "Team Fetched Successfully"})
     }catch(err){
         res.status(500).json({message: err.message, status:`ERROR`});
     }
