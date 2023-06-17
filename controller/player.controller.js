@@ -96,18 +96,37 @@ async function UpdatePlayer(req,res){
         if (!savedPlayer){
             return res.status(404).json({message: "Player Not Found"});
         }
-        savedPlayer.Name=req.body.Name ? req.body.Name : savedPlayer.Name;
-        savedPlayer.age=req.body.age ? req.body.age : savedPlayer.age;
-        savedPlayer.DOB=req.body.DOB ? req.body.DOB : savedPlayer.DOB;
-        savedPlayer.email=req.body.email ? req.body.email : savedPlayer.email;  
-        savedPlayer.Phone=req.body.Phone ? req.body.Phone : savedPlayer.Phone;
-        savedPlayer.Skills=req.body.Skills 
+        savedPlayer.Name = req.body.Name = undefined
+        ? req.body.Name 
+        : savedPlayer.Name;
+        
+        savedPlayer.age = req.body.age = undefined
+        ? req.body.age 
+        : savedPlayer.age;
+        
+        savedPlayer.DOB = req.body.DOB = undefined
+        ? req.body.DOB 
+        : savedPlayer.DOB;
+        
+        savedPlayer.email = req.body.email = undefined
+        ? req.body.email 
+        : savedPlayer.email;  
+        
+        savedPlayer.Phone = req.body.Phone = undefined
+        ? req.body.Phone 
+        : savedPlayer.Phone;
+
+        savedPlayer.Skills = req.body.Skills = undefined
         ? req.body.Skills 
         : savedPlayer.Skills;
-        
+
         savedPlayer.isBlocked = req.body.isBlocked != undefined
         ? req.body.isBlocked
         : savedPlayer.isBlocked
+
+        savedPlayer.isFeePaid = req.body.isFeePaid != undefined
+        ? req.body.isFeePaid
+        : savedPlayer.isFeePaid
         
         const updatePlayer= await savedPlayer.save();
 
