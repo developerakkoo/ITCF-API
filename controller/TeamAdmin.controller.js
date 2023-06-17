@@ -330,7 +330,7 @@ async function PlayerBulkCreate(req,res){
         const createPlayers = [];
         const players =  req.body.Players;
         // console.log(players);
-        if ( !players[0]) {
+        if ( !players.length > 0) {
             return res.status(400).json({message:"Please Provide Player Data"})
         }
         players.forEach(player => {
