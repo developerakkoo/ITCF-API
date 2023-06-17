@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const express= require('express');
+const cors = require('cors');
 require('dotenv').config();
 const inviteLink = require('./controller/player.controller');
 const {TeamAdminRoutes,TeamRoutes,paymentRoutes,OTPRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
 const path= require('path');
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.set("view engine", "ejs");
