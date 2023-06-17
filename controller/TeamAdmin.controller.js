@@ -318,26 +318,47 @@ async function deleteTeamAdminNotification(req,res){
 
 async function PlayerBulkCreate(req,res){
     try {
-        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.Id});
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.TeamAdminId});
         if (!savedTeamAdmin) {
             return res.status(404).json({message:`Team Admin Not Found With Id:${req.params.Id}`});
         }
+        const savedTeam = await Team.findOne({_id:req.params.TeamId});
+        if (!savedTeam) {
+            return res.status(400).json({message:`Team Not Found With This ID:${req.params.TeamId}`});
+        }
+        //player creation
         const createPlayers = [];
         const players =  req.body.Players;
         players.forEach(player => {
             createPlayers.push(player)
             
             });
-            console.log('createPlayers');
-            const playerCreated =  await Player.insertMany(createPlayers)
-            res.status(201).json({message:'Players Inserted',Count:playerCreated.length,playerCreated});
+            const playerCreated =  await Player.insertMany(createPlayers);
+/**********************************************************************/
+
+/******************************addPlayerToTeam****************************************/
+            let playerIds = []
+            playerCreated.forEach(player => {
+                playerIds.push(player._id)
+                });
+                // console.log(playerIds);
+                const PlayerIds = playerIds
+
+                PlayerIds.forEach(Id => {
+                savedTeam.teamMembers.push(Id)
+                })
+                const updateTeam= await savedTeam.save();
+/**********************************************************************/
+            res.status(201).json({message:'Players Crated And Added To The Team',TeamId:updateTeam._id,TeamMembers:updateTeam.teamMembers,Count:playerCreated.length,playerCreated});
     } catch (error) {
-        console.log(error);
+        if(error.code == 11000){
+            return res.status(400).json({message: `Players With This  Name Is Already Exist Please Try With Different  Player Name Or Phone Number` })
+        }
         res.status(500).json({message: error.message,Status:`ERROR`});
     }
 }
 
-async function addPlayerToTeam(req,res){
+async function deletePlayerFromTeam(req,res){
     try {
         const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.TeamAdminId});
         if (!savedTeamAdmin) {
@@ -349,19 +370,12 @@ async function addPlayerToTeam(req,res){
             console.log('pass T');
             return res.status(400).json({message:`Team Not Found With This ID:${req.params.TeamId}`});
         }
-
         const PlayerIds = req.body.Players
-        if (req.body.insert ){
-            PlayerIds.forEach(playerId => {
-            savedTeam.teamMembers.push(playerId)
-            
-        })}
-        else if (req.body.Delete){
             savedPlayerIds = savedTeam.teamMembers.filter((playerId)=>{
                 return !PlayerIds.includes(playerId.toString());
             })
             savedTeam.teamMembers = savedPlayerIds;
-        }
+        
         const updateTeam= await savedTeam.save();
         return res.status(200).send(updateTeam);
     } catch (error) {
@@ -546,7 +560,7 @@ module.exports={
     signUp,
     signIn,
     PlayerBulkCreate,
-    addPlayerToTeam,
+    deletePlayerFromTeam,
     UpdateTeamAdmin,
     getAllTeamAdmin,
     getTeamAdminById,

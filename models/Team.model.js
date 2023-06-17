@@ -34,16 +34,14 @@ teamCity:{
     required:true
 },
 address:{
-    type:String,
-    required:true
+    type:String
 },
 teamMembers:{
     type:[mongoose.Types.ObjectId],
     ref:'Player'
 },
 inviteLink:{
-    type:String,
-    required:true
+    type:String
 },
 isActive: {
     type: Boolean,
