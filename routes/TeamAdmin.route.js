@@ -31,7 +31,7 @@ routes.get('/get/teamAdmin/notification/:userID/:msgID',TeamAdminController.getT
 
 routes.delete('/delete/teamAdmin/notification/:userID/:msgID',TeamAdminController.deleteTeamAdminNotification);
 
-
+routes.post('/add/player/:TeamAdminId/:TeamId',TeamAdminController.PlayerCreate);
 
 
 

@@ -329,38 +329,67 @@ async function PlayerBulkCreate(req,res){
         //player creation
         const createPlayers = [];
         const players =  req.body.Players;
-        // console.log(players);
-        if ( !players.length > 0) {
+        if ( players.length == 0) {
             return res.status(400).json({message:"Please Provide Player Data"})
         }
-        players.forEach(player => {
-            createPlayers.push(player)
-            
+        let playerIds = []
+        for (const player of players) {
+            const playerCreated=await Player.create({
+            AdminID: player.AdminID,
+            Name: player.Name,
+            Phone: player.Phone
             });
-            const playerCreated =  await Player.insertMany(createPlayers);
+            
+            playerIds.push( playerCreated._id)
+        }
+
 /**********************************************************************/
 
 /******************************addPlayerToTeam****************************************/
-            let playerIds = []
-            playerCreated.forEach(player => {
-                playerIds.push(player._id)
-                });
-                // console.log(playerIds);
-                const PlayerIds = playerIds
+        for(player of playerIds){
+            savedTeam.teamMembers.push(player._id)
+        }
 
-                PlayerIds.forEach(Id => {
-                savedTeam.teamMembers.push(Id)
-                })
-                const updateTeam= await savedTeam.save();
+        const updateTeam= await savedTeam.save();
+        res.status(201).json({message:'Players Crated And Added To The Team',Team:updateTeam.teamMembers});
 /**********************************************************************/
-            res.status(201).json({message:'Players Crated And Added To The Team',TeamId:updateTeam._id,TeamMembers:updateTeam.teamMembers,Count:playerCreated.length,playerCreated});
+
     } catch (error) {
         if(error.code == 11000){
             return res.status(400).json({message: `Players With This  Name Is Already Exist Please Try With Different  Player Name Or Phone Number` })
         }
+        console.log(error);
         res.status(500).json({message: error.message,Status:`ERROR`});
     }
 }
+
+
+async function PlayerCreate(req,res){
+try {
+    const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.TeamAdminId});
+    if (!savedTeamAdmin) {
+        return res.status(404).json({message:`Team Admin Not Found With Id:${req.params.Id}`});
+    }
+    const savedTeam = await Team.findOne({_id:req.params.TeamId});
+    if (!savedTeam) {
+        return res.status(400).json({message:`Team Not Found With This ID:${req.params.TeamId}`});
+    }
+    const playerObj ={
+        Name:req.body.Name,
+        Phone:req.body.Phone,
+        AdminID:req.body.AdminID
+    }
+    const createdPlayer = await Player.create(playerObj); 
+
+    savedTeam.teamMembers.push(createdPlayer._id);
+    const UpdatedTeam =  await savedTeam.save();
+    res.status(201).json({message:'Player created And Added In To Team Successfully',TeamMember:UpdatedTeam.teamMembers});
+} catch (error) {
+    res.status(500).json({message:error.message,status:'ERROR'})
+}
+}
+
+
 
 async function deletePlayerFromTeam(req,res){
     try {
@@ -578,6 +607,7 @@ module.exports={
     totalTeamAdminReport,
     getAllTeamAdminNotification,
     getTeamAdminNotification,
-    deleteTeamAdminNotification
+    deleteTeamAdminNotification,
+    PlayerCreate
     
 }
