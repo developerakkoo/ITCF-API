@@ -58,9 +58,12 @@ const teamAdmin = require('../models/TeamAdmin.model');
                 status:success.status,
                 Valid:success.valid
             }
-                res.status(200).json({postObj})
+            if (success.valid === true && success.status === "approved" ) {
+            return res.status(200).json({postObj});   
+            }
+            res.status(400).json({message:`Please Enter Valid Otp Or Mobile Number`})
             
         }).catch((error) => {
-            res.status(401).json({status:'error' ,error, message: 'Something went wrong!'})
+            res.status(500).json({status:'error' , message: error.message})
         })
     }
