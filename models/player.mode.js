@@ -65,6 +65,10 @@ isProfessionalMember:{
     type: Boolean,
     default : false
 },
+isFeePaid:{
+    type: Boolean,
+    default : false
+},
 isActive: {
     type: Boolean,
     default : false

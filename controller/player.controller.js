@@ -101,7 +101,10 @@ async function UpdatePlayer(req,res){
         savedPlayer.DOB=req.body.DOB ? req.body.DOB : savedPlayer.DOB;
         savedPlayer.email=req.body.email ? req.body.email : savedPlayer.email;  
         savedPlayer.Phone=req.body.Phone ? req.body.Phone : savedPlayer.Phone;
-        savedPlayer.Skills=req.body.Skills ? req.body.Skills : savedPlayer.Skills;
+        savedPlayer.Skills=req.body.Skills 
+        ? req.body.Skills 
+        : savedPlayer.Skills;
+        
         savedPlayer.isBlocked = req.body.isBlocked != undefined
         ? req.body.isBlocked
         : savedPlayer.isBlocked
