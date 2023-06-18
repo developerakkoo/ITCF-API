@@ -10,6 +10,7 @@ routes.post('/post/subMatterEx',Validate.SubMatterEx,subMatterExController.postS
 routes.put('/post/subMatterEx/Docs/:id',Upload.array('Docs',10),subMatterExController.postSubMatterExDoc);
 
 routes.get('/subMatterEx/search',subMatterExController.subMatterExSearchOption);
+routes.get('/subMatterEx/:id',subMatterExController.getSubMatterById);
 
 routes.put('/update/subMatterEx/:subMatterExId',subMatterExController.UpdateSubMatterEx);
 

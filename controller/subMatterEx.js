@@ -56,6 +56,31 @@ async function postSubMatterEx(req,res){
     }
 } 
 
+async function getSubMatterById(req, res){
+    try{
+        let id = req.params.id;
+
+        let user = await subMatterEx.findById(id);
+
+        if(user){
+            res.status(200).json({
+                user,
+                message: "User Fetched successfully"
+            })
+        }
+        else{
+            res.status(404).json({
+                message:"User Not Found",
+
+            })
+        }
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({message:error.message,status:`ERROR`});
+    }
+}
+
 async function postSubMatterExDoc(req,res){
         // console.log(req.body)
         const doc= req.files
@@ -435,6 +460,7 @@ module.exports={
     postSubMatterExDoc,
     UpdateSubMatterEx,
     getAllSubMatterEx,
+    getSubMatterById,
     DeleteSubMatterEx,
     subMatterExSearchOption,
     totalSubMatterEx,
