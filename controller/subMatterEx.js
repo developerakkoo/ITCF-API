@@ -327,6 +327,8 @@ async function updatePasswordToSubMatterEx(req,res){
         savedSubMatterEx.password = await bcrypt.hash(req.body.password,10)
         ? await bcrypt.hash(req.body.password,10)
         : savedSubMatterEx.password;
+
+        savedSubMatterEx.isActive = true;
         
         const updatedSubMatterEx = await savedSubMatterEx.save();
         let mailOptions = {

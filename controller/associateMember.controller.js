@@ -369,6 +369,8 @@ async function updatePasswordToAssociateMember(req,res){
             ? await bcrypt.hash(req.body.password,10)
             : savedAssociateMembers.password;
             
+            savedAssociateMembers.isActive = true
+
             const updatedAssociateMembers= await savedAssociateMembers.save();
             let mailOptions = {
                 from: 'serviceacount.premieleague@gmail.com',

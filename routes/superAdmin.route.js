@@ -81,7 +81,7 @@ routes.post('/superAdmin/post/associateMember/:Id',Validate.isSuperAdmin,Upload.
 
 routes.get('/superAdmin/associateMember/search/:Id',Validate.isSuperAdmin,associateMemberController.AssociateMemberSearchOption);
 
-routes.put('/add/credential/:Id',Validate.isSuperAdmin,associateMemberController.updatePasswordToAssociateMember)
+routes.put('/superAdmin/add/credential/associateMember/:Id',Validate.isSuperAdmin,associateMemberController.updatePasswordToAssociateMember)
 
 routes.put('/superAdmin/update/associateMember/:Id/:associateMemberId',Validate.isSuperAdmin,associateMemberController.UpdateAssociateMember);
 
@@ -101,7 +101,7 @@ routes.get('/superAdmin/totalAssociateMemberReport/:Id',Validate.isSuperAdmin,as
 
 routes.post('/superAdmin/post/subMatterEx/:Id',Validate.isSuperAdmin,Upload.array('Docs',10),validateSubMatterEx.SubMatterEx,superAdminController.signUpMatterEx);
 
-routes.put('/subMatterEx/add/credential/:Id',Validate.isSuperAdmin,subMatterExController.updatePasswordToSubMatterEx)
+routes.put('/superAdmin/add/subMatterEx/credential/:Id',Validate.isSuperAdmin,subMatterExController.updatePasswordToSubMatterEx)
 
 routes.get('/superAdmin/subMatterEx/search/:Id',Validate.isSuperAdmin,subMatterExController.subMatterExSearchOption);
 
