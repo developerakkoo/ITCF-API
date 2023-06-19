@@ -44,10 +44,10 @@ try{
     // if(!savedTeam){
     // return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
     // }
-    const playerCreated = await Player.create(playerObj); 
+    const data = await Player.create(playerObj); 
     let mailOptions = {
         from: 'serviceacount.premieleague@gmail.com',
-        to: playerCreated.email,
+        to: data.email,
         subject:' WELCOME TO THE ITCF FAMILY ' ,
         text:"Successfully register as player "
     };
@@ -58,13 +58,13 @@ try{
         console.log('Email sent: ' + info.response);
         }
     });
-    return res.status(201).json({message: `Player Created Successfully`,playerCreated})
+    return res.status(200).json({message: `Player Created Successfully`,statusCode:'200',data})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+        return res.status(500).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'500'})
     }
     console.log("Something went wrong while saving to DB", err);
-    res.status(500).json({message:err.message,status:"ERROR"})
+    res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
 }
 }
 
@@ -74,17 +74,17 @@ try {
     const path = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
     const savedPlayer = await Player.findOne({_id:req.params.playerId});
     if(!savedPlayer){
-    return res.status(404).json({message:`Player Not Found With This Player Id: ${req.params.playerId}`});
+    return res.status(404).json({message:`Player Not Found With This Player Id: ${req.params.playerId}`,statusCode:'404'});
     }
     savedPlayer.image = path != undefined
     ? path
     : savedPlayer.image
 
-    const updatedPlayer = await savedPlayer.save();
-    res.status(201).json({message:'Image Uploaded Successfully',updatedPlayer})
+    const data = await savedPlayer.save();
+    res.status(201).json({message:'Image Uploaded Successfully',data,statusCode:'201'})
 } catch (error) {
     console.log(error);
-    res.status(500).json({message: error.message,status:"ERROR" });
+    res.status(500).json({message: error.message,statusCode:'500',status:"ERROR" });
 }
 }
 
@@ -94,7 +94,7 @@ async function UpdatePlayer(req,res){
         // console.log(req.body)
         const savedPlayer = await Player.findOne({_id:ID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not Found"});
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
         savedPlayer.Name = req.body.Name = undefined
         ? req.body.Name 
@@ -128,15 +128,15 @@ async function UpdatePlayer(req,res){
         ? req.body.isFeePaid
         : savedPlayer.isFeePaid
         
-        const updatePlayer= await savedPlayer.save();
+        const data= await savedPlayer.save();
 
-        return res.status(202).json({ updatePlayer,message: "Player  Updated Successfully"})
+        return res.status(201).json({ message: "Player  Updated Successfully",statusCode:'201',data})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+            return res.status(500).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'500'})
         }
         console.log(err)
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -146,7 +146,7 @@ async function proPlayer(req,res){
         // console.log(req.body)
         const savedPlayer = await Player.findOne({_id:ID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not Found"});
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
         savedPlayer.isProfessionalMember = req.body.isProfessionalMember != undefined
         ? req.body.isProfessionalMember
@@ -170,15 +170,15 @@ async function proPlayer(req,res){
             }
         });
 
-        return res.status(202).json({ updatePlayer,message: "Player  Updated To Pro Player Successfully"})
+        return res.status(200).json({ message: "Player  Updated To Pro Player Successfully",statusCode:'200',data:updatePlayer})
     }
-    return res.status(202).json({ updatePlayer,message: "Player  Updated Successfully"})
+    return res.status(200).json({ message: "Player  Updated To Pro Player Successfully",statusCode:'200',data:updatePlayer})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+            return res.status(500).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number`,statusCode:'500'})
         }
         console.log(err)
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -190,14 +190,14 @@ async function getAllPlayer(req,res){
         
         Player.paginate({}, { page: pageNumber, limit: pageSize }, (err, result) => {
         if (err) {
-            return res.status(500).json({ message: 'Error Occurred While Fetching Data.' });
+            return res.status(500).json({ message: 'Error Occurred While Fetching Data.',statusCode:'500' });
         }
         
         const { docs, total, limit, page, pages } = result;
-        res.json({ players: docs, total, limit, page, pages });
+        res.status(200).json({ data: docs, total, limit, page, pages,statusCode:'200' });
         });
     }catch(err){
-        res.status(500).json({message: err.message, status:`ERROR`});
+        res.status(500).json({message: err.message, statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -205,11 +205,11 @@ async function getPlayerById(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.Id})
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not Found"});
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
-        res.status(200).json({ savedPlayer,message: "Player  Fetched Successfully"})
+        res.status(200).json({ message: "Player  Fetched Successfully",statusCode:'200',data:savedPlayer})
     }catch(err){
-        res.status(500).json({message: err.message, status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500', status:`ERROR`});
     }
 }
 
@@ -218,18 +218,17 @@ async function DeletePlayer(req,res){
     try{
         const savedPlayer= await Player.findOne({_id:req.params.playerId})
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not Found"});
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
         await Player.deleteOne({_id:req.params.playerId})
-        res.status(200).json({ message: `Player  Deleted Successfully With ID: ${req.params.playerId}`})
+        res.status(200).json({ message: `Player  Deleted Successfully With ID: ${req.params.playerId}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,status:"ERROR" });
+        res.status(500).json({message: err.message,statusCode:'500',status:"ERROR" });
     }
 }
 
 
 async function PlayerSearchOption (req, res, next) {
-
     try {
         const query = req.query.query;
         const term = req.query.term;
@@ -248,7 +247,7 @@ async function PlayerSearchOption (req, res, next) {
         });
     } catch (err) {
         console.log(err)
-    res.status(404).json({message: err.message, status:`ERROR`});
+    res.status(500).json({message: err.message,statusCode:'500', status:`ERROR`});
     }
 };
 
@@ -263,9 +262,9 @@ async function totalPlayer(req,res){
     try{
         const player = await Player.aggregate(pipeline);
         
-        res.status(200).json({player})
+        res.status(200).json({statusCode:'200',data:player})
     }catch(err){
-        res.status(500).json({message:err.message,status:`ERROR` })
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR` })
     }
 }
 
@@ -316,10 +315,10 @@ async function totalPlayerReport(req,res){
         const isActive = await Player.aggregate(pipeline1);
         const isBlocked = await Player.aggregate(pipeline2);
 
-        let Data = [count[0],isActive[0],isBlocked[0]]
-        res.status(200).json({label:`totalPlayerReport`,Data})
+        let data = [count[0],isActive[0],isBlocked[0]]
+        res.status(200).json({statusCode:'200',label:`totalPlayerReport`,data})
     }catch(err){
-        res.status(500).json({message:err.message,status:`ERROR` })
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR` })
     }
 }
 
@@ -327,12 +326,12 @@ async function getAllPlayersNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not Found"});
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
         const message = await Notification.find({userID:req.params.userID})
-        return res.status(404).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'All Notification Fetched Successfully',statusCode:'200',count:message.length ,data:message});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -340,15 +339,15 @@ async function getPlayerNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not Found"});
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
         if (!message){
-            return res.status(404).json({message: "Message Not Found"});
+            return res.status(404).json({message: "Message Not Found",statusCode:'404'});
         }
-        return res.status(404).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'Notification Fetched Successfully',statusCode:'200',count:message.length ,data:message});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -356,16 +355,16 @@ async function deletePlayerNotification(req,res){
     try{
         const savedPlayer = await Player.findOne({_id:req.params.userID});
         if (!savedPlayer){
-            return res.status(404).json({message: "Player Not Found"});
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "Message Not Found"});
+            return res.status(404).json({message: "Message Not Found",statusCode:'404'});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
+        return res.status(200).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -383,11 +382,11 @@ async function handelPost (req,res){
         console.log('post');
         const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.AdminID});
         if (!savedTeamAdmin) {
-            return res.status(400).json({message:`Team Admin Not Found`});
+            return res.status(404).json({message:`Team Admin Not Found`,statusCode:'404'});
         }
         const savedTeam = await Team.findOne({teamName:req.params.teamName});
         if (!savedTeam) {
-            return res.status(400).json({message:`Team Not Found`});
+            return res.status(404).json({message:`Team Not Found`,statusCode:'404'});
         }
         const userObj={
             AdminID: req.params.AdminID ,
@@ -412,10 +411,10 @@ async function handelPost (req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        res.status(201).json({message:'Player Created and Added to team SuccessFully',Player:createdPlayer,Team:updatedTeam});
+        res.status(200).json({message:'Player Created and Added to team SuccessFully',statusCode:'200',data:createdPlayer,Team:updatedTeam});
     } catch (error) {
         console.log(error);
-        res.status(500).json({message: error.message,Status:`ERROR`});
+        res.status(500).json({message: error.message,statusCode:'500',Status:`ERROR`});
     }
 
 }
@@ -424,12 +423,12 @@ async function verifyNumber(req,res){
     try {
         const savedPlayer = await Player.findOne({Phone:req.query.phoneNumber});
         if (!savedPlayer) {
-            return res.status(404).json({message:`Player Not Found With This Phone Number:${req.query.phoneNumber}`});
+            return res.status(404).json({message:`Player Not Found With This Phone Number:${req.query.phoneNumber}`,statusCode:'404'});
         }
-        res.status(200).json({Status:true,access:true, message:"Player Found",savedPlayer});
+        res.status(200).json({Status:true,access:true, message:"Player Found",statusCode:'200',savedPlayer});
     } catch (error) {
         console.log(error);
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -447,10 +446,10 @@ async function setPassword(req,res){
         : savedPlayer.Password
         
         const updatedPlayer =  await savedPlayer.save();
-        res.status(201).json({message:'Password And Email updated Successfully',updatedPlayer});
+        res.status(201).json({message:'Password And Email updated Successfully',statusCode:'201',updatedPlayer});
     } catch (error) {
         console.log(error);
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 

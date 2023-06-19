@@ -33,12 +33,12 @@ async function postAssociateMember(req,res){
 
     }
     try{
-        const AssociateMemberCreated = await associateMember.create(userObj);
+        const data = await associateMember.create(userObj);
         const template = fs.readFileSync('associateMember.ejs', 'utf-8');
-        const renderedTemplate = ejs.render(template, {name: AssociateMemberCreated.fName});
+        const renderedTemplate = ejs.render(template, {name: data.fName});
         let mailOptions = {
             from: 'serviceacount.premieleague@gmail.com',
-            to: AssociateMemberCreated.email,
+            to: data.email,
             subject:'WELCOME TO THE ITCF FAMILY ' ,
             html: renderedTemplate
         };
@@ -50,13 +50,13 @@ async function postAssociateMember(req,res){
             }
         });
 
-        res.status(201).json({message:`Associate Member Created Successfully`,AssociateMemberCreated})
+        res.status(200).json({message:`Associate Member Created Successfully`,statusCode:'200',data})
     }catch(err){
         console.log(err)
         if(err.code == 11000){
-            return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+            return res.status(500).json({message: 'Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number',status:'500' })
         }
-        res.status(500).json({message:err.message,status:`ERROR`});
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR`});
     }
     
 }
@@ -66,17 +66,17 @@ async function uploadPan(req,res){
         const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
         if(!savedAssociateMember){
-            return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
+            return res.status(404).json({message:`Associate Member Not Found with ID:${req.params.id} `,statusCode:'404'});
         }
         savedAssociateMember.panCard = file != undefined
         ? file
         : savedAssociateMember.panCard
 
-        const updatedUser = await savedAssociateMember.save();
-        res.status(201).json({message:"Associate Member Pan updated",updatedUser});
+        const data = await savedAssociateMember.save();
+        res.status(201).json({message:"Associate Member Pan updated",statusCode:'201',data});
     }catch(error){
         console.log(error);
-        res.status(500).json({message:error.message,status:`ERROR`});
+        res.status(500).json({message:error.message,statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -86,17 +86,17 @@ async function uploadAdhar(req,res){
         const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
         if(!savedAssociateMember){
-            return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
+            return res.status(404).json({message:`Associate Member Not Found with ID:${req.params.id}`,statusCode:'404'});
         }
         savedAssociateMember.AdharCard = file != undefined
         ? file
         : savedAssociateMember.AdharCard
 
-        const updatedUser = await savedAssociateMember.save();
-        res.status(201).json({message:"Associate Member AdharCard updated",updatedUser});
+        const data = await savedAssociateMember.save();
+        res.status(201).json({message:"Associate Member AdharCard updated",statusCode:'201',data});
     }catch(error){
         console.log(error);
-        res.status(500).json({message:error.message,status:`ERROR`});
+        res.status(500).json({message:error.message,statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -108,17 +108,17 @@ async function uploadResidentialProof(req,res){
         
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
         if(!savedAssociateMember){
-            return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
+            return res.status(404).json({message:`Associate Member Not Found with ID:${req.params.id}`,statusCode:'404'});
         }
         savedAssociateMember.residentialProof = file != undefined
         ? file
         : savedAssociateMember.residentialProof
 
-        const updatedUser = await savedAssociateMember.save();
-        res.status(201).json({message:"Associate Member Pan updated",updatedUser});
+        const data = await savedAssociateMember.save();
+        res.status(201).json({message:"Associate Member Pan updated",statusCode:'201',data});
     }catch(error){
         console.log(error);
-        res.status(500).json({message:error.message,status:`ERROR`});
+        res.status(500).json({message:error.message,statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -130,17 +130,17 @@ async function uploadITR(req,res){
         
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
         if(!savedAssociateMember){
-            return res.status(400).json({message:`Associate Member Not Found with ID:${req.params.id} `});
+            return res.status(404).json({message:`Associate Member Not Found with ID:${req.params.id} `,statusCode:'404'});
         }
         savedAssociateMember.ITR = file!= undefined
         ? file
         : savedAssociateMember.ITR
 
-        const updatedUser = await savedAssociateMember.save();
-        res.status(201).json({message:"Associate Member Pan updated",updatedUser});
+        const data = await savedAssociateMember.save();
+        res.status(201).json({message:"Associate Member Pan updated",statusCode:'201',data});
     }catch(error){
         console.log(error);
-        res.status(500).json({message:error.message,status:`ERROR`});
+        res.status(500).json({message:error.message,statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -151,7 +151,7 @@ async function UpdateAssociateMember(req,res){
         // console.log(req.body)
         const savedAssociateMembers = await associateMember.findOne({_id:ID});
         if (!savedAssociateMembers){
-            return res.status(404).json({message: "Associate Member Not Found"});
+            return res.status(404).json({message: `Associate Member Not Found With Id:${ID}`,statusCode:'404'});
         }
         savedAssociateMembers.fName=req.body.fName ? req.body.fName : savedAssociateMembers.fName;
         savedAssociateMembers.mName=req.body.mName ? req.body.mName : savedAssociateMembers.mName;
@@ -164,14 +164,14 @@ async function UpdateAssociateMember(req,res){
         savedAssociateMembers.ResidentialAddress=req.body.ResidentialAddress ? req.body.ResidentialAddress : savedAssociateMembers.ResidentialAddress;
         savedAssociateMembers.CricketingExperience=req.body.CricketingExperience ? req.body.CricketingExperience : savedAssociateMembers.CricketingExperience;
         savedAssociateMembers.isBlocked=req.body.isBlocked ? req.body.isBlocked : savedAssociateMembers.isBlocked;
-        const updatedAssociateMembers= await savedAssociateMembers.save()
-        return res.status(202).json({ updatedAssociateMembers,message: "Associate Members  Updated Successfully"})
+        const data= await savedAssociateMembers.save()
+        return res.status(201).json({ message: "Associate Members  Updated Successfully",statusCode:'201',data})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+            return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number`,statusCode:'500' })
         }
         console.log(err)
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -182,24 +182,24 @@ async function getAllAssociateMember(req,res){
         
         associateMember.paginate({}, { page: pageNumber, limit: pageSize }, (err, result) => {
         if (err) {
-            return res.status(500).json({ message: 'Error occurred while fetching Data.' });
+            return res.status(500).json({ message: 'Error occurred while fetching Data.',statusCode:'500' });
         }
         
         const { docs, total, limit, page, pages } = result;
-        res.json({ associateMember: docs, total, limit, page, pages });
+        res.status(200).json({ data: docs, total, limit, page, pages,statusCode:'200' });
         });
     }catch(err){
-        res.status(500).json({message: err.message, status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500', status:`ERROR`});
     }
 }
 
 async function getAssociateMemberById(req,res){
     try{
-        const savedAssociateMember= await associateMember.findOne({_id:req.params.associateMemberId}) .select("-password")
-        if (!savedAssociateMember){
+        const data= await associateMember.findOne({_id:req.params.associateMemberId}) .select("-password")
+        if (!data){
             return res.status(404).json({message: "Associate Member Not Found"});
         }
-        res.status(200).json({ message: 'Associate Member  Fetched Successfully With',savedAssociateMember})
+        res.status(200).json({ message: 'Associate Member  Fetched Successfully With',data})
     }catch(err){
         res.status(500).json({message: err.message,status:"ERROR" });
     }
@@ -223,13 +223,13 @@ async function getAllAssociateMemberNotification(req,res){
 try{
     const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
     if (!savedAssociateMembers){
-        return res.status(404).json({message: "Associate Member Not Found"});
+        return res.status(404).json({message: "Associate Member Not Found",statusCode:'404'});
     }
     
     const message = await Notification.find({userID:req.params.userID})
-    return res.status(404).json({count: message.length ,Notification:message});
+    return res.status(200).json({length: message.length ,data:message,statusCode:'200'});
 }catch(err){
-    res.status(500).json({message: err.message,Status:`ERROR`});
+    res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
 }
 }
 
@@ -237,12 +237,12 @@ async function getAssociateMemberNotification(req,res){
     try{
         const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
         if (!savedAssociateMembers){
-            return res.status(404).json({message: "Associate Member Not Found"});
+            return res.status(404).json({message: "Associate Member Not Found",statusCode:'404'});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
-        return res.status(404).json({Notification:message});
+        return res.status(200).json({data:message,statusCode:'200'});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -250,16 +250,16 @@ async function deleteAssociateMemberNotification(req,res){
     try{
         const savedAssociateMembers = await associateMember.findOne({_id:req.params.userID});
         if (!savedAssociateMembers){
-            return res.status(404).json({message: "Associate Member Not Found"});
+            return res.status(404).json({message: "Associate Member Not Found",statusCode:'404'});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "message Not Found"});
+            return res.status(404).json({message: "message Not Found",statusCode:'404'});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
+        return res.status(200).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -275,14 +275,14 @@ async function AssociateMemberSearchOption (req, res, next) {
         const associateMembers = await features.query;
 
         res.status(200).json({
-        status: "success",
+        message: "success",
         statusCode: 200,
         results: associateMembers.length,
         searchData: associateMembers,
         });
     } catch (err) {
         console.log(err)
-    res.status(404).json({message: err.message, status:`ERROR`});
+    res.status(500).json({message: err.message, statusCode:'500',status:`ERROR`});
     }
 };
 
@@ -295,11 +295,11 @@ async function totalAssociateMember(req,res){
         ]
     ]
     try{
-        const totalAssociateMember = await associateMember.aggregate(pipeline);
+        const data = await associateMember.aggregate(pipeline);
         
-        res.status(200).json({message:`totalAssociateMember`,totalAssociateMember})
+        res.status(200).json({message:`totalAssociateMember`,statusCode:'200',data})
     }catch(err){
-        res.status(500).json({message:err.message,status:`ERROR` })
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR` })
     }
 }
 
@@ -350,10 +350,10 @@ async function totalAssociateMemberReport(req,res){
         const isActive = await associateMember.aggregate(pipeline1);
         const isBlocked = await associateMember.aggregate(pipeline2);
 
-        let Data = [count[0],isActive[0],isBlocked[0]]
-        res.status(200).json({label:`totalAssociateMemberReport`,Data})
+        let data = [count[0],isActive[0],isBlocked[0]]
+        res.status(200).json({label:`totalAssociateMemberReport`,statusCode:'200',data})
     }catch(err){
-        res.status(500).json({message:err.message,status:`ERROR` })
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR` })
     }
 }
 
@@ -363,7 +363,7 @@ async function updatePasswordToAssociateMember(req,res){
             // console.log(req.body)
             const savedAssociateMembers = await associateMember.findOne({_id:ID});
             if (!savedAssociateMembers){
-                return res.status(404).json({message: "Associate Member Not Found"});
+                return res.status(404).json({message: "Associate Member Not Found",statusCode:'404'});
             }
             savedAssociateMembers.password = await bcrypt.hash(req.body.password,10)
             ? await bcrypt.hash(req.body.password,10)
@@ -371,12 +371,12 @@ async function updatePasswordToAssociateMember(req,res){
             
             savedAssociateMembers.isActive = true
 
-            const updatedAssociateMembers= await savedAssociateMembers.save();
+            const data= await savedAssociateMembers.save();
             let mailOptions = {
                 from: 'serviceacount.premieleague@gmail.com',
-                to: savedAssociateMembers.email,
+                to: data.email,
                 subject:'Your Login Credential' ,
-                text: `Dear ${savedAssociateMembers.fName}, Use this password for login in to your ITFC account ${req.body.password}`
+                text: `Dear ${data.fName}, Use this password for login in to your ITFC account ${req.body.password}`
             };
             msg.sendMail(mailOptions, function(error, info){
                 if (error) {
@@ -385,13 +385,13 @@ async function updatePasswordToAssociateMember(req,res){
                 console.log('Email sent: ' + info.response);
                 }
             });
-            return res.status(202).json({ updatedAssociateMembers,message: "Associate Members  Updated Successfully"})
+            return res.status(200).json({ data,message: "Associate Members  Updated Successfully",statusCode:'200'})
         }catch(err){
             if(err.code == 11000){
-                return res.status(400).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+                return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number`,statusCode:'500'})
             }
             console.log(err)
-            res.status(500).json({message: err.message,Status:`ERROR`});
+            res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
         }
 }
 
@@ -402,7 +402,7 @@ async function postLogin(req, res, next){
         let loadedUser;
         const savedAssociateMember= await associateMember.findOne({ email: email})
             if(!savedAssociateMember){
-            return res.status(404).json({message:"Associate Member Not Found"})
+            return res.status(404).json({message:"Associate Member Not Found",statusCode:'404'})
             }
             loadedUser = savedAssociateMember;
             bcrypt.compare(password, savedAssociateMember.password)
@@ -414,15 +414,15 @@ async function postLogin(req, res, next){
                     email: loadedUser.email,
                     userId: loadedUser._id,
                 },process.env.SECRET_KEY, {expiresIn: '3h'});
-                const  postResponse={   
+                const  data={   
                     token: token,
                     userId: loadedUser._id.toString()
                 }
-                res.status(200).json({message: 'Sign In Successful',postResponse})
+                res.status(200).json({message: 'Sign In Successful',statusCode:'200',data})
             })
             .catch(error =>{
             console.log(error)
-            res.status(400).json({message: error.message, status:'error'});
+            res.status(500).json({message: error.message, statusCode:'500',status:'error'});
         })
 }
 
@@ -491,8 +491,8 @@ async function ResetPassword(req,res){
         const payload = jwt.verify(token,process.env.SECRET_KEY + user.password);
         
             user.password= bcrypt.hashSync(req.body.password, 16) ? bcrypt.hashSync(req.body.password, 16) : user.password
-        const updatedUser= await user.save(user);
-        res.status(200).send(updatedUser);
+        const data= await user.save(user);
+        res.status(200).json(data);
     }catch(error){
         console.log(error.message);
         res.send(error.message);

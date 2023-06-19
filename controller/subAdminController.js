@@ -27,6 +27,7 @@ const postSignup = async (req, res, next) => {
         if(SubAdmin){
             return res.status(400).json({
             status: false,
+            statusCode:'400',
             message: 'Sub Admin With This Email Already Exists'
         })
         }
@@ -54,15 +55,15 @@ const postSignup = async (req, res, next) => {
             });
             return createdSubAdmin ;
         }).then((result) => {
-            return res.status(201).json({message: 'Sub Admin Created Successfully!', status: '201', userId: result._id});
+            return res.status(200).json({message: 'Sub Admin Created Successfully!', status: '201', userId: result._id});
         })
     
 .catch(error =>{
     if(error.code == 11000){
-        return res.status(500).json({message: `Sub Admin With This Information Is Already Exist Please Try With Another Email Or Mobile Number` })
+        return res.status(500).json({message: `Sub Admin With This Information Is Already Exist Please Try With Another Email Or Mobile Number`,statusCode:'500'})
     }
     console.log(error)
-    return res.status(400).json({message: error.message, status:'error'});
+    return res.status(500).json({message: error.message,statusCode:'500',status:'error'});
     })
 }
 
@@ -92,11 +93,11 @@ const postLogin = async (req, res, next) => {
                 token: token,
                 userId: loadedUser._id.toString()
             }
-            res.status(200).json({message: 'Sign In Successful',postResponse})
+            res.status(200).json({message: 'Sign In Successful',statusCode:'200',data:postResponse})
         })
         .catch(error =>{
         console.log(error)
-        res.status(400).json({message: error.message, status:'error'});
+        res.status(500).json({message: error.message,statusCode:'500', status:'error'});
     })
 }
 
@@ -106,7 +107,7 @@ async function UpdateSubAdmin(req,res){
         // console.log(req.body)
         const savedSubAdmin = await subAdmin.findOne({_id:ID});
         if (!savedSubAdmin){
-            return res.status(400).json({message: "Sub Admin Not Found"});
+            return res.status(404).json({message: "Sub Admin Not Found",statusCode:'404'});
         }
         savedSubAdmin.email=req.body.email ? req.body.email : savedSubAdmin.email;  
         savedSubAdmin.Phone=req.body.Phone ? req.body.Phone : savedSubAdmin.Phone;
@@ -114,13 +115,13 @@ async function UpdateSubAdmin(req,res){
 
         const updateSubAdmin = await savedSubAdmin.save()
 
-        return res.status(200).json({ updateSubAdmin,message: "Sub Admin  Updated Successfully"})
+        return res.status(200).json({ data:updateSubAdmin,message: "Sub Admin  Updated Successfully",statusCode:'200'})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Sub Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
+            return res.status(500).json({message: `Sub Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number `,statusCode:'500' })
         }
         console.log(err)
-        res.status(500).json({message: err.message,status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -144,7 +145,7 @@ async function subAdminSearchOption (req, res, next) {
         });
     } catch (err) {
         console.log(err)
-    res.status(404).json({message: err.message, status:`ERROR`});
+    res.status(500).json({message: err.message,statusCode:'500',status:`ERROR`});
     }
 };
 
@@ -152,12 +153,12 @@ async function DeleteSubAdmin(req,res){
     try{
         const savedSubAdmin= await subAdmin.findOne({_id:req.params.subAdminId})
         if (!savedSubAdmin){
-            return res.status(400).json({message: "Sub Admin Not Found"});
+            return res.status(404).json({message: "Sub Admin Not Found",statusCode:'404'});
         }
         await subAdmin.deleteOne({_id:req.params.subAdminId})
-        res.status(200).json({ message: `Sub Admin  Deleted Successfully With ID: ${req.params.subAdminId}`})
+        res.status(200).json({ message: `Sub Admin  Deleted Successfully With ID: ${req.params.subAdminId}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,status:"ERROR" });
+        res.status(500).json({message: err.message,statusCode:'500',status:"ERROR" });
     }
 }
 
@@ -165,16 +166,16 @@ async function getAllSubAdminNotification(req,res){
     try{
         const savedSubAdmin = await subAdmin.findOne({_id:req.params.userID});
         if (!savedSubAdmin){
-            return res.status(404).json({message: "Sub Admin Not Found"});
+            return res.status(404).json({message: "Sub Admin Not Found",statusCode:'404'});
         }
         const message = await Notification.find({userID:req.params.userID});
         if(!message){
-            return res.status(400).json({message:"Message  Not Found"});
+            return res.status(404).json({message:"Message  Not Found",statusCode:'404'});
         
         }
-        return res.status(200).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'All Message fetched',statusCode:'200',length:message.length ,data:message});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
     }
     
@@ -182,16 +183,16 @@ async function getSubAdminNotification(req,res){
     try{
         const savedSubAdmin = await subAdmin.findOne({_id:req.params.userID});
         if (!savedSubAdmin){
-            return res.status(404).json({message: "Sub Admin Not Found"});
+            return res.status(404).json({message: "Sub Admin Not Found",statusCode:'404'});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
         if(!message){
-            return res.status(400).json({message:"Message  Not Found"});
+            return res.status(404).json({message:"Message  Not Found",statusCode:'404'});
         
         }
-        return res.status(404).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'Notification Fetched Successfully',statusCode:'200',length:message.length,data:message});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
     }
     
@@ -199,16 +200,16 @@ async function deleteSubAdminNotification(req,res){
     try{
         const savedSubAdmin = await subAdmin.findOne({_id:req.params.userID});
         if (!savedSubAdmin){
-            return res.status(404).json({message: "Sub Admin Not Found"});
+            return res.status(404).json({message: "Sub Admin Not Found",statusCode:'404'});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "message Not found"});
+            return res.status(404).json({message: "message Not found",statusCode:'404'});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
+        return res.status(200).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
     }
 
@@ -230,7 +231,7 @@ async function deleteSubAdminNotification(req,res){
                 }
         const admin = await TeamAdmin.findOne({email:req.body.email});
         if(admin){
-        return res.status(400).json({message: `Team Admin Already Exist With This Email Adders Please Try With Different Email Address ${req.body.email}`})
+        return res.status(400).json({message: `Team Admin Already Exist With This Email Adders Please Try With Different Email Address ${req.body.email}`,statusCode:'400'})
         }
         const TeamAdminCreated = await TeamAdmin.create(AdminUserObj)
         const postResponse={
@@ -257,13 +258,13 @@ async function deleteSubAdminNotification(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        res.status(201).json({message: `Team Admin Created Successfully UID Is Send To Your Register Email Address`,postResponse})
+        res.status(200).json({message: `Team Admin Created Successfully UID Is Send To Your Register Email Address`,statusCode:'200',data:postResponse})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Team Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number ` })
+            return res.status(500).json({message: `Team Admin With This Email Or Phone Number  Is Already Exist Please Try With Different  Email Or Phone Number `,statusCode:'500' })
         }
         console.log("Something went wrong while saving to DB", err);
-        res.status(500).json({message:err.message,status:`ERROR`})
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR`})
     }
     }
     
@@ -300,13 +301,13 @@ async function signUpAssociateMemberBySubAdmin(req,res){
             }
         });
     
-            res.status(201).json({message:`Associate Member Created Successfully`,AssociateMemberCreated})
+            res.status(200).json({message:`Associate Member Created Successfully`,statusCode:'200',data:AssociateMemberCreated})
         }catch(err){
             console.log(err)
             if(err.code == 11000){
-                return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number` })
+                return res.status(500).json({message: `Associate Member With This Information Is Already Exist Please Try With Another Name Or Mobile Number`,statusCode:'500' })
             }
-            res.status(500).json({message:err.message,status:`ERROR`});
+            res.status(500).json({message:err.message,statusCode:'500',status:`ERROR`});
         }
         
     }
@@ -323,24 +324,24 @@ async function signUpAssociateMemberBySubAdmin(req,res){
     try{
         const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
         if(!admin){
-        return res.status(400).json({message: `Team Admin UID Is Not Valid`})
+        return res.status(404).json({message: `Team Admin UID Is Not Valid`,statusCode:'404'})
         }
         const savedAdmin = await TeamAdmin.findOne({_id:teamObj.AdminID});
         if(!savedAdmin){
-        return res.status(400).json({message: `Team Admin  Is Not Valid`})
+        return res.status(404).json({message: `Team Admin  Is Not Valid`,statusCode:'404'})
         }
         const savedTeam = await Team.findOne({teamName:req.body.teamName});
         if(savedTeam){
-        return res.status(400).json({message: `Team Name Already Exist With Please Try With Different Team Name`})
+        return res.status(404).json({message: `Team Name Already Exist With Please Try With Different Team Name`,statusCode:'404'})
         }
         const TeamACreated = await Team.create(teamObj)
-        res.status(201).json({message: `Team  created Successfully `,TeamACreated})
+        res.status(200).json({message: `Team  created Successfully `,statusCode:'200',TeamACreated})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name` })
+            return res.status(500).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name`,statusCode:'500' })
         }
         console.log("Something went wrong while saving to DB", err);
-        res.status(500).json({message:err.message,status:"ERROR"})
+        res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
     }
     }
     
@@ -367,7 +368,7 @@ async function signUpAssociateMemberBySubAdmin(req,res){
         try{
             const savedUser = await subMatterEx.findOne({Phone:req.body.Phone});
             if(savedUser){
-            return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `})
+            return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `,statusCode:'400'})
             }
             const UserCreated = await subMatterEx.create(dataObj)
             let mailOptions = {
@@ -383,13 +384,13 @@ async function signUpAssociateMemberBySubAdmin(req,res){
                 console.log('Email sent: ' + info.response);
                 }
             });
-            return res.status(201).json({message: `subject Matter Expert Created Successfully`,UserCreated})
+            return res.status(200).json({message: `subject Matter Expert Created Successfully`,statusCode:'200',data:UserCreated})
         }catch(err){
             if(err.code == 11000){
-                return res.status(400).json({message: `subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
+                return res.status(500).json({message: `subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `,statusCode:'500' })
             }
             console.log("Something went wrong while saving to DB", err);
-            res.status(500).json({message:err.message,status:"ERROR"})
+            res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
         }
     } 
     
@@ -410,15 +411,15 @@ async function signUpAssociateMemberBySubAdmin(req,res){
     try{
         const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
         if(!admin){
-        return res.status(400).json({message: `Team Admin UID Is Not Valid`})
+        return res.status(400).json({message: `Team Admin UID Is Not Valid`,statusCode:'400'})
         }
         const savedAdmin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
         if(!savedAdmin){
-        return res.status(400).json({message: `Team Admin  Is Not Valid`})
+        return res.status(400).json({message: `Team Admin  Is Not Valid`,statusCode:'400'})
         }
         const savedTeam = await Team.findOne({_id:req.body.teamID});
         if(!savedTeam){
-        return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
+        return res.status(400).json({message: `Team Does Not Exist With This Team Name`,statusCode:'400'})
         }
         const playerCreated = await Player.create(playerObj)
         let mailOptions = {
@@ -434,13 +435,13 @@ async function signUpAssociateMemberBySubAdmin(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        return res.status(201).json({message: `Player Created Successfully`,playerCreated})
+        return res.status(200).json({message: `Player Created Successfully`,statusCode:'200',data:playerCreated})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Player With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
+            return res.status(500).json({message: `Player With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` ,statusCode:'500'})
         }
         console.log("Something went wrong while saving to DB", err);
-        res.status(500).json({message:err.message,status:"ERROR"})
+        res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
     }
     }
     
@@ -448,13 +449,13 @@ async function signUpAssociateMemberBySubAdmin(req,res){
         try{
             const savedNotification = await Notification.findOne({_id:req.params.notificationId});
             if(!savedNotification){
-                return res.status(404).json({message: "Message Not found"});
+                return res.status(404).json({message: "Message Not found",statusCode:'404'});
             }
             savedNotification.message=req.body.message ? req.body.message : savedNotification.message;
             const updateNotification= await savedNotification.save();
-            return res.status(202).json({ message: "Message  Updated Successfully",updateNotification})
+            return res.status(200).json({ message: "Message  Updated Successfully",statusCode:'200',data:updateNotification})
         }catch(err){
-            res.status(500).json({message: err.message,Status:`ERROR`});
+            res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
         }
     }
 
@@ -466,9 +467,9 @@ async function signUpAssociateMemberBySubAdmin(req,res){
                 message:req.body.message
             }
             const msg = await Notification.create(userObj);
-            return res.status(201).json({message: `Notification Send To User Successfully `,msg})
+            return res.status(200).json({message: `Notification Send To User Successfully `,statusCode:'200',data:msg})
         }catch(err){
-            res.status(500).json({message:err.message,status:"ERROR"})
+            res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
         }
     }
 
@@ -481,6 +482,7 @@ async function signUpAssociateMemberBySubAdmin(req,res){
         if(SubAdmin){
             return res.status(400).json({
             status: false,
+            statusCode:'400',
             message: 'Sub Admin With Email Already Exists'
             })
             }
@@ -509,15 +511,15 @@ async function signUpAssociateMemberBySubAdmin(req,res){
         });
         return createdSubAdmin ;
         }).then((result) => {
-        return res.status(201).json({message: 'Sub Admin Created Successfully!', status: '201', userId: result._id});
+        return res.status(200).json({message: 'Sub Admin Created Successfully!', status: '200', userId: result._id});
         })
     
     .catch(error =>{
         if(error.code == 11000){
-            return res.status(500).json({message: `Sub Admin With This Information Is Already Exist Please Try With Another Email Or Mobile Number` })
+            return res.status(500).json({message: `Sub Admin With This Information Is Already Exist Please Try With Another Email Or Mobile Number`,statusCode:'500'})
         }
         console.log(error)
-        return res.status(400).json({message: error.message, status:'ERROR'});
+        return res.status(500).json({message: error.message,statusCode:'500', status:'ERROR'});
         })
     }
 
@@ -527,7 +529,7 @@ async function signUpAssociateMemberBySubAdmin(req,res){
             // console.log(req.body)
             const savedSubAdmin = await subAdmin.findOne({_id:ID});
             if (!savedSubAdmin){
-                return res.status(400).json({message: "Sub Admin Not found"});
+                return res.status(404).json({message: "Sub Admin Not found",statusCode:'404'});
             }
             savedSubAdmin.email = req.body.email != undefined
             ? req.body.email
@@ -689,13 +691,13 @@ async function signUpAssociateMemberBySubAdmin(req,res){
         
             const updateSubAdmin = await savedSubAdmin.save()
     
-            return res.status(200).json({ updateSubAdmin,message: "Sub Admin  Updated Successfully"})
+            return res.status(200).json({ updateSubAdmin,message: "Sub Admin  Updated Successfully",statusCode:'200'})
         }catch(err){
             if(err.code == 11000){
-                return res.status(400).json({message: `Sub Admin With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number` })
+                return res.status(500).json({message: `Sub Admin With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number`,statusCode:'500' })
             }
             console.log(err)
-            res.status(500).json({message: err.message,status:`ERROR`});
+            res.status(500).json({message: err.message,statusCode:'500',status:`ERROR`});
         }
     }
 module.exports = {

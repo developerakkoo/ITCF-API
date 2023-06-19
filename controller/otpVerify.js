@@ -18,11 +18,13 @@ const teamAdmin = require('../models/TeamAdmin.model');
         }).then((success) => {
         
             res.status(200).json({
+                statusCode:'200',
                 status: 'success',
                 success: success,
             })
         }).catch((error) => {
             res.status(500).json({
+                statusCode:'500',
                 status: 'error',
                 error: error,
                 message: 'Something went wrong!'
@@ -40,7 +42,7 @@ const teamAdmin = require('../models/TeamAdmin.model');
         const phonenumber = req.body.phonenumber;
         const User = await teamAdmin.findOne({Phone:phonenumber})
         if(!User){
-            return res.status(401).json({message: 'user not register !'})
+            return res.status(404).json({message: 'user not register !',statusCode:'404'})
         }
         const userID = User._id
         
@@ -52,18 +54,18 @@ const teamAdmin = require('../models/TeamAdmin.model');
                 code: code
             
         }).then((success) => {
-            const postObj ={
+            const data ={
                 UserID:userID,
                 phoneNumber:success.to,
                 status:success.status,
                 Valid:success.valid
             }
             if (success.valid === true && success.status === "approved" ) {
-            return res.status(200).json({postObj});   
+            return res.status(200).json({statusCode:'200',data});   
             }
-            res.status(400).json({message:`Please Enter Valid Otp Or Mobile Number`})
+            res.status(400).json({statusCode:'400',message:`Please Enter Valid Otp Or Mobile Number`})
             
         }).catch((error) => {
-            res.status(500).json({status:'error' , message: error.message})
+            res.status(500).json({status:'error' ,statusCode:'500', message: error.message})
         })
     }
