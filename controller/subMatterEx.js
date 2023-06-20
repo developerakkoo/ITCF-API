@@ -30,7 +30,7 @@ async function postSubMatterEx(req,res){
     try{
         const savedUser = await subMatterEx.findOne({Phone:req.body.Phone});
         if(savedUser){
-        return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `})
+        return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `,statusCode:'400'})
         }
         const UserCreated = await subMatterEx.create(dataObj)
         let mailOptions = {
@@ -46,13 +46,13 @@ async function postSubMatterEx(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        return res.status(201).json({message: `Subject Matter Expert Created Successfully`,UserCreated})
+        return res.status(200).json({message: `Subject Matter Expert Created Successfully`,statusCode:'200',data:UserCreated})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number ` })
+            return res.status(500).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `,statusCode:'500' })
         }
         console.log("Something went wrong while saving to DB", err);
-        res.status(500).json({message:err.message,status:"ERROR"})
+        res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
     }
 } 
 
@@ -64,20 +64,22 @@ async function getSubMatterById(req, res){
 
         if(user){
             res.status(200).json({
-                user,
-                message: "User Fetched successfully"
+                data:user,
+                message: "User Fetched successfully",
+                statusCode:'200'
+
             })
         }
         else{
             res.status(404).json({
                 message:"User Not Found",
-
+                statusCode:'404'
             })
         }
 
     }catch(error){
         console.log(error);
-        res.status(500).json({message:error.message,status:`ERROR`});
+        res.status(500).json({message:error.message,statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -94,16 +96,16 @@ async function postSubMatterExDoc(req,res){
         try{
             const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.id});
             if(!savedSubMatterEx){
-            return res.status(400).json({message: `Subject Matter Not Found With This ID:${req.params.id} `});
+            return res.status(404).json({message: `Subject Matter Not Found With This ID:${req.params.id} `,statusCode:'404'});
             }
             savedSubMatterEx.Documents = Documents != undefined
             ? Documents
             : savedSubMatterEx.Documents
             const updatedSubMatterEx = await savedSubMatterEx.save();
-            res.status(201).json({message:"Subject Matter Expert",updatedSubMatterEx});
+            res.status(201).json({message:"Subject Matter Expert",statusCode:'201',data:updatedSubMatterEx});
         }catch(error){
             console.log(error);
-            res.status(500).json({message:error.message,status:`ERROR`});
+            res.status(500).json({message:error.message,statusCode:'500',status:`ERROR`});
         }
 }
 
@@ -114,7 +116,7 @@ async function UpdateSubMatterEx(req,res){
         // console.log(req.body)
         const savedSubMatterEx = await subMatterEx.findOne({_id:ID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "Subject Matter Expert Not Found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found",statusCode:'404'});
         }
         savedSubMatterEx.Name=req.body.Name ? req.body.Name : savedSubMatterEx.Name;
         savedSubMatterEx.Specialization=req.body.Specialization ? req.body.Specialization : savedSubMatterEx.Specialization;
@@ -134,13 +136,13 @@ async function UpdateSubMatterEx(req,res){
         // }
         
         const updateSubMatterEx= await savedSubMatterEx.save()
-        return res.status(202).json({ updateSubMatterEx,message: "Subject Matter Expert  Updated Successfully"})
+        return res.status(201).json({ updateSubMatterEx,message: "Subject Matter Expert  Updated Successfully",statusCode:'201'})
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number` })
+            return res.status(500).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number`,statusCode:'500' })
         }
         console.log(err)
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -151,14 +153,14 @@ async function getAllSubMatterEx(req,res){
         
         subMatterEx.paginate({}, { page: pageNumber, limit: pageSize }, (err, result) => {
         if (err) {
-            return res.status(500).json({ message: 'Error occurred while fetching Data.' });
+            return res.status(500).json({ message: 'Error occurred while fetching Data.',statusCode:'500' });
         }
         
         const { docs, total, limit, page, pages } = result;
-        res.json({ subMatterEx: docs, total, limit, page, pages });
+        res.json({ data: docs, total, limit, page, pages });
         });
     }catch(err){
-        res.status(500).json({message: err.message, status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -167,12 +169,12 @@ async function DeleteSubMatterEx(req,res){
     try{
         const savedSubMatterEx= await subMatterEx.findOne({_id:req.params.subMatterExId})
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "Subject Matter Expert Not Found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found",statusCode:'404'});
         }
         await subMatterEx.deleteOne({_id:req.params.subMatterExId})
-        res.status(200).json({ message: `Subject Matter Expert  Deleted Successfully With ID: ${req.params.subMatterExId}`})
+        res.status(200).json({ message: `Subject Matter Expert  Deleted Successfully With ID: ${req.params.subMatterExId}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,status:"ERROR" });
+        res.status(500).json({message: err.message,statusCode:'500',status:"ERROR" });
     }
 }
 
@@ -197,7 +199,7 @@ async function subMatterExSearchOption (req, res, next) {
         });
     } catch (err) {
         console.log(err)
-    res.status(404).json({message: err.message, status:`ERROR`});
+    res.status(404).json({message: err.message, statusCode:'404',status:`ERROR`});
     }
 };
 
@@ -212,9 +214,9 @@ async function totalSubMatterEx(req,res){
     try{
         const totalSubMatterEx = await subMatterEx.aggregate(pipeline);
         
-        res.status(200).json({totalSubMatterEx})
+        res.status(200).json({message:'Data Fetched Successfully',statusCode:'200',data:totalSubMatterEx})
     }catch(err){
-        res.status(500).json({message:err.message,status:`ERROR` })
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR` })
     }
 }
 
@@ -266,9 +268,9 @@ async function totalSubMatterExReport(req,res){
         const isBlocked = await subMatterEx.aggregate(pipeline2);
 
         let Data = [count[0],isActive[0],isBlocked[0]]
-        res.status(200).json({label:`totalSubMatterExReport`,Data})
+        res.status(200).json({message:'Data Fetched Successfully',statusCode:'200',label:`totalSubMatterExReport`,Data})
     }catch(err){
-        res.status(500).json({message:err.message,status:`ERROR` })
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR` })
     }
 }
 
@@ -276,12 +278,12 @@ async function getAllSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "Subject Matter Expert Not Found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found",statusCode:'404'});
         }
         const message = await Notification.find({userID:req.params.userID})
-        return res.status(404).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'Notification Fetched Successfully ',length:message.length ,data:message});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -289,12 +291,12 @@ async function getSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "Subject Matter Expert Not Found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found",statusCode:'404'});
         }
         const message = await Notification.findOne({_id:req.params.msgID})
-        return res.status(404).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'Sub Admin Fetched Successfully',statusCode:'200',length:message.length ,data:message});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -302,16 +304,16 @@ async function deleteSubMatterExNotification(req,res){
     try{
         const savedSubMatterEx = await subMatterEx.findOne({_id:req.params.userID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "Subject Matter Expert Not Found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found",statusCode:'404'});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "Message Not Found"});
+            return res.status(404).json({message: "Message Not Found",statusCode:'404'});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
+        return res.status(200).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -322,7 +324,7 @@ async function updatePasswordToSubMatterEx(req,res){
         // console.log(req.body)
         const savedSubMatterEx = await subMatterEx.findOne({_id:ID});
         if (!savedSubMatterEx){
-            return res.status(404).json({message: "Subject Matter Expert Not Found"});
+            return res.status(404).json({message: "Subject Matter Expert Not Found",statusCode:'404'});
         }
         savedSubMatterEx.password = await bcrypt.hash(req.body.password,10)
         ? await bcrypt.hash(req.body.password,10)
@@ -344,10 +346,10 @@ async function updatePasswordToSubMatterEx(req,res){
             console.log('Email sent: ' + info.response);
             }
         });
-        return res.status(202).json({ updatedSubMatterEx,message: "Subject Matter Expert Updated Successfully"})
+        return res.status(201).json({ data:updatedSubMatterEx,message: "Subject Matter Expert Updated Successfully",statusCode:'201'})
     }catch(err){
         console.log(err)
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -358,13 +360,13 @@ async function postLogin(req, res, next){
     let loadedUser;
     const savedSubMatterEx= await subMatterEx.findOne({ email: email})
         if(!savedSubMatterEx){
-            return res.status(404).json({message:`Subject Matter Expert Not Found With This Email ${req.body.email}`});
+            return res.status(404).json({message:`Subject Matter Expert Not Found With This Email ${req.body.email}`,statusCode:'404'});
         }
         loadedUser = savedSubMatterEx;
         bcrypt.compare(password, savedSubMatterEx.password)
         .then(doMatch => {
             if(!doMatch){
-                return res.status(401).json({message:'Password Do Not Match'});
+                return res.status(401).json({message:'Password Do Not Match',statusCode:'401'});
             }
             const token = jwt.sign({
                 email: loadedUser.email,
@@ -374,11 +376,11 @@ async function postLogin(req, res, next){
                 token: token,
                 userId: loadedUser._id.toString()
             }
-            res.status(200).json({message: 'Sign In Successful',postResponse})
+            res.status(200).json({message: 'Sign In Successful',statusCode:'200',data:postResponse})
         })
         .catch(error =>{
         console.log(error)
-        res.status(400).json({message: error.message, status:'error'});
+        res.status(500).json({message: error.message, statusCode:'500',status:'error'});
     })
 }
 
@@ -448,7 +450,7 @@ try{
     
         user.password= bcrypt.hashSync(req.body.password, 16) ? bcrypt.hashSync(req.body.password, 16) : user.password
     const updatedUser= await user.save(user);
-    res.status(200).send(updatedUser);
+    res.status(200).json({message:'Password Updated Successfully',statusCode:'200',data:updatedUser});
 }catch(error){
     console.log(error.message);
     res.send(error.message);

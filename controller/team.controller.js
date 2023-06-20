@@ -18,24 +18,24 @@ const teamObj ={
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
-    return res.status(400).json({message: `Team Admin UID Is Not Valid`})
+    return res.status(404).json({message: `Team Admin UID Is Not Valid`,statusCode:'404'})
     }
     const savedAdmin = await TeamAdmin.findOne({_id:teamObj.AdminID});
     if(!savedAdmin){
-    return res.status(400).json({message: `Team Admin  Is Not Valid`})
+    return res.status(404).json({message: `Team Admin  Is Not Valid`,statusCode:'404'})
     }
     const savedTeam = await Team.findOne({teamName:req.body.teamName});
     if(savedTeam){
-    return res.status(400).json({message: `Team Name Already Exist  Please Try With Different Team Name`})
+    return res.status(404).json({message: `Team Name Already Exist  Please Try With Different Team Name`,statusCode:'404'})
     }
     const TeamACreated = await Team.create(teamObj)
-    res.status(201).json({message: `Team  Created Successfully `,TeamACreated})
+    res.status(200).json({message: `Team  Created Successfully `,statusCode:'200',data:TeamACreated})
 }catch(err){
     if(err.code == 11000){
-        return res.status(400).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name` })
+        return res.status(500).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name`,statusCode:'500' })
     }
     console.log("Something went wrong while saving to DB", err);
-    res.status(500).json({message:err.message,status:"ERROR"})
+    res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
     }
 }
 
@@ -45,17 +45,17 @@ async function postTeamLogo(req,res){
         const path = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
         const savedTeam = await Team.findOne({_id:req.params.teamId});
         if(!savedTeam){
-        return res.status(404).json({message:`Team Not Found With This TeamId: ${req.params.teamId}`});
+        return res.status(404).json({message:`Team Not Found With This TeamId: ${req.params.teamId}`,statusCode:'404'});
         }
         savedTeam.teamLogo = path != undefined
         ? path
         : savedTeam.teamLogo
     
         const updatedTeam = await savedTeam.save();
-        res.status(201).json({message:'teamLogo Uploaded Successfully',updatedTeam})
+        res.status(200).json({message:'teamLogo Uploaded Successfully',statusCode:'200',data:updatedTeam})
     } catch (error) {
         console.log(error);
-        res.status(500).json({message: error.message,status:"ERROR" });
+        res.status(500).json({message: error.message,statusCode:'500',status:"ERROR" });
     }
 }
 
@@ -75,13 +75,13 @@ async function UpdateTeam(req,res){
         
         const updateTeam = await savedTeam.save()
 
-        return res.status(202).json({ updateTeam,message: "Team  Updated Successfully"})
+        return res.status(201).json({ data:updateTeam,statusCode:'201',message: "Team  Updated Successfully"});
     }catch(err){
         if(err.code == 11000){
-            return res.status(400).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name` })
+            return res.status(500).json({message: `Team With This Team Name Is Already Exist Please Try With Different  Team Name`,statusCode:'500' });
         }
         console.log(err)
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
@@ -92,14 +92,14 @@ async function getAllTeam(req,res){
         
         Team.paginate({}, { page: pageNumber, limit: pageSize }, (err, result) => {
         if (err) {
-            return res.status(500).json({ message: 'Error occurred while fetching Data.' });
+            return res.status(500).json({ message: 'Error occurred while fetching Data.' ,statusCode:'500'});
         }
         
         const { docs, total, limit, page, pages } = result;
-        res.json({ Team: docs, total, limit, page, pages });
+        res.status(200).json({ data: docs, total, limit, page, pages,statusCode:'200' });
         });
     }catch(err){
-        res.status(500).json({message: err.message, status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500', status:`ERROR`});
     }
 }
 
@@ -107,11 +107,11 @@ async function getTeamById(req,res){
     try{
         const savedTeam= await Team.findOne({_id:req.params.teamId})
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not Found"});
+            return res.status(404).json({message: "Team Not Found",statusCode:'404'});
         }
-        res.status(200).json({ savedTeam,message: "Team Fetched Successfully"})
+        res.status(200).json({data: savedTeam,message: "Team Fetched Successfully",statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message, status:`ERROR`});
+        res.status(500).json({message: err.message, statusCode:'500',status:`ERROR`});
     }
 }
 
@@ -120,12 +120,12 @@ async function DeleteTeam(req,res){
     try{
         const savedTeam= await Team.findOne({_id:req.params.teamId})
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not Found"});
+            return res.status(404).json({message: "Team Not Found",statusCode:'404'});
         }
         await Team.deleteOne({_id:req.params.teamId})
-        res.status(200).json({ message: `Team  Deleted Successfully with ID: ${req.params.teamId}`})
+        res.status(200).json({ message: `Team  Deleted Successfully with ID: ${req.params.teamId}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,status:"ERROR" });
+        res.status(500).json({message: err.message,statusCode:'500',status:"ERROR" });
     }
 }
 
@@ -149,7 +149,7 @@ async function teamSearchOption (req, res, next) {
         });
     } catch (err) {
         console.log(err)
-    res.status(404).json({message: err.message, status:`ERROR`});
+    res.status(404).json({message: err.message, statusCode:'404',status:`ERROR`});
     }
 };
 
@@ -163,9 +163,9 @@ async function totalTeamCount (req, res){
     ]
     try{
         const count = await Team.aggregate(pipeline);
-        res.status(200).json({label:`totalTeam`,count})
+        res.status(200).json({statusCode:'200',label:`totalTeam`,data:count})
     }catch(err){
-        res.status(500).json({message:err.message,status:'ERROR'})
+        res.status(500).json({message:err.message,statusCode:'500',status:'ERROR'})
     }
 }
 
@@ -217,9 +217,9 @@ async function totalTeamReport(req,res){
         const isBlocked = await Team.aggregate(pipeline2);
 
         let Data = [count[0],isActive[0],isBlocked[0]]
-        res.status(200).json({label:`totalTeamReport`,Data})
+        res.status(200).json({statusCode:'200',label:`totalTeamReport`,data:Data})
     }catch(err){
-        res.status(500).json({message:err.message,status:`ERROR` })
+        res.status(500).json({message:err.message,statusCode:'500',status:`ERROR` })
     }
 }
 
@@ -227,12 +227,12 @@ async function getAllTeamNotification(req,res){
     try{
         const savedTeam = await Team.findOne({_id:req.params.userID});
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not Found"});
+            return res.status(404).json({message: "Team Not Found",statusCode:'404'});
         }
         const message = await Notification.find({userID:req.params.userID})
-        return res.status(404).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'Notification Fetched Successfully',statusCode:'200',length:message.length ,data:message});
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
     
@@ -240,10 +240,10 @@ async function getTeamNotification(req,res){
     try{
         const savedTeam = await Team.findOne({_id:req.params.userID});
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not Found"});
+            return res.status(404).json({message: "Team Not Found",statusCode:'404'});
         }
         const message = await Notification.find({_id:req.params.msgID})
-        return res.status(404).json({count:message.length ,messages:message});
+        return res.status(200).json({message:'Notification Fetched Successfully',length:message.length,statusCode:'200' ,data:message});
     }catch(err){
         res.status(500).json({message: err.message,Status:`ERROR`});
     }
@@ -253,16 +253,16 @@ async function deleteTeamNotification(req,res){
     try{
         const savedTeam = await Team.findOne({_id:req.params.userID});
         if (!savedTeam){
-            return res.status(404).json({message: "Team Not Found"});
+            return res.status(404).json({message: "Team Not Found",statusCode:'404'});
         }
         const savedNotification = await Notification.findOne({_id:req.params.msgID})
         if (!savedNotification){
-            return res.status(404).json({message: "Message Not Found"});
+            return res.status(404).json({message: "Message Not Found",statusCode:'404'});
         }
         await savedNotification.deleteOne({_id:req.params.msgID});
-        return res.status(202).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`})
+        return res.status(200).json({ message: `Notification  Deleted Successfully With Notification ID: ${req.params.msgID}`,statusCode:'200'})
     }catch(err){
-        res.status(500).json({message: err.message,Status:`ERROR`});
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
