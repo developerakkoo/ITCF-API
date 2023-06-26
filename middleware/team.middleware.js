@@ -6,7 +6,10 @@ const validateTeam =(req,res,next)=>{
         AdminID: req.body.AdminID,
         teamName: req.body.teamName,
         teamCity: req.body.teamCity,
-        address: req.body.address
+        addressLine1: req.body.addressLine1,
+        pinCode:req.body.pinCode,
+        city:req.body.city,
+        state:req.body.state
     }
     if (!teamObj.teamAdminUID ){
         return res.status(403).send({
@@ -21,14 +24,25 @@ const validateTeam =(req,res,next)=>{
         return res.status(403).send({
             message: "teamName   is require"
         })
-    }else if (!teamObj.teamCity ){
+    }
+    
+    else if (!teamObj.addressLine1  ){
+        return res.status(403).send({
+            message: "addressLine1   is require"
+        })
+    }else if (!teamObj.pinCode ){
+        return res.status(403).send({
+            message: "pinCode  is require"
+        })
+    }
+    else if (!teamObj.teamCity ){
         return res.status(403).send({
             message: "teamCity  is require"
         })
     }
-    else if (!teamObj.address){
+    else if (!teamObj.state){
         return res.status(403).send({
-            message: "address is require"
+            message: "state is require"
         })
     }
     else{

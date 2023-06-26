@@ -3,6 +3,7 @@ const express= require('express');
 const cors = require('cors');
 require('dotenv').config();
 const inviteLink = require('./controller/player.controller');
+const {RejectLinkHandelGet,RejectLinkHandelPost} =require('./controller/TeamAdmin.controller')
 const {TeamAdminRoutes,TeamRoutes,paymentRoutes,OTPRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
 const path= require('path');
 const app = express();
@@ -33,7 +34,7 @@ app.use(OTPRoutes);
 
 app.route('/inviteLink/:AdminID/:teamName/:teamAdminUID').get(inviteLink.handelGet).post(inviteLink.handelPost)
 
-
+app.route('/Reject-Link/:AdminID/:teamId').get(RejectLinkHandelGet).post(RejectLinkHandelPost)
 
 app.all("*", (req, res, next) => {
     res.status(404).json({

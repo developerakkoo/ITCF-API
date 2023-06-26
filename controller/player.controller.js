@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 require('dotenv').config();
 const ejs = require('ejs');
-const { log } = require('console');
+
 
 
 
@@ -418,6 +418,10 @@ async function handelPost (req,res){
     }
 
 }
+
+
+
+
 
 async function verifyNumber(req,res){
     try {

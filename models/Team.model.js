@@ -33,7 +33,22 @@ teamCity:{
     type:String,
     required:true
 },
-address:{
+addressLine1:{
+    type:String
+},
+addressLine1:{
+    type:String
+},
+addressLine1:{
+    type:String
+},
+pinCode:{
+    type:Number
+},
+city:{
+    type:String
+},
+state:{
     type:String
 },
 teamMembers:{

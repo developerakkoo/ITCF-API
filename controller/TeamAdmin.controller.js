@@ -328,16 +328,20 @@ async function PlayerBulkCreate(req,res){
         }
         //player creation
         const createPlayers = [];
-        const players =  JSON.parse(req.body.Players);
+        // console.log(req.body.Players);
+        // const players =  JSON.parse(req.body.Players); //production
+        const players =  req.body.Players //test
         console.log(players);
         console.log(typeof(players));
         if ( players.length == 0) {
             return res.status(400).json({message:"Please Provide Player Data",statusCode:'400'})
         }
         let playerIds = []
+        let playerPhoneNo = []
         for (const player of players) {
             console.log(player.Name + "---");
             console.log(player.Phone + "---");
+            playerPhoneNo.push.apply(player.Phone)
             const playerCreated=await Player.create({
             AdminID: player.AdminID,
             Name: player.Name,
@@ -345,6 +349,10 @@ async function PlayerBulkCreate(req,res){
             });
             
             playerIds.push( playerCreated._id)
+            const AcceptLink ="appLink "
+            let temp = "Reject-Link"+"/"+req.params.TeamAdminId+"/"+savedTeam._id
+            const rejectLink =req.protocol +"://"+req.hostname +":8000/"+temp.replace(/\\/g, "/");
+            console.log(playerCreated.Phone,`accept link:${AcceptLink} ", rejectLink: ${rejectLink}`);
         }
 
 /**********************************************************************/
@@ -588,7 +596,61 @@ async function ResetUID(req,res){
     }
 }
 
+async function RejectLinkHandelGet (req,res){
+    res.render('inviteRejectLink');
+}
 
+async function RejectLinkHandelPost (req,res){
+    try {
+        let updatedTeam
+        // console.log(req.body);
+        console.log('post',req.params);
+        const Id =  req.params.teamId 
+        const savedTeam = await Team.findById({_id:Id})
+        // console.log(typeof(req.params.teamId));
+        if (!savedTeam)  {
+            return res.status(404).json({message:`Team Not Found`,statusCode:'404'});
+        }
+        const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.AdminID});
+        console.log(savedTeam);
+        if (!savedTeamAdmin) {
+            return res.status(404).json({message:`Team Admin Not Found`,statusCode:'404'});
+        }
+
+        const savedPlayer = await Player.findOne({Phone:req.body.Phone})
+
+        let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: savedTeamAdmin.email,
+            subject:'Update' ,
+            text:`Player ${savedPlayer.Name}, Rejected Invite Player Give this reason for rejecting invite: ${req.body.Description}`
+        };
+        msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+            console.log('Email sent: ' + info.response);
+            }
+        });
+        const result = savedTeam.teamMembers.filter(word => word._id.toString() === savedPlayer._id.toString());
+        if(result.length==0){
+        return res.status(404).json({msg:`User Not Found With This Phone Number:${req.body.Phone}`})
+        }
+    console.log(result);
+    let itemToBeRemoved =result.toString()
+    await Player.deleteOne({_id:itemToBeRemoved})
+    savedTeam.teamMembers.splice(savedTeam.teamMembers.findIndex(a => a.id === itemToBeRemoved) , 1);
+
+    updatedTeam = await savedTeam.save();
+
+
+        res.status(200).json({message:'Player Created and Added to team SuccessFully',data:updatedTeam});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: error.message,statusCode:'500',Status:`ERROR`});
+    }
+
+}
 
 module.exports={
     getResetUID,
@@ -612,6 +674,8 @@ module.exports={
     getAllTeamAdminNotification,
     getTeamAdminNotification,
     deleteTeamAdminNotification,
+    RejectLinkHandelGet,
+    RejectLinkHandelPost,
     PlayerCreate
     
 }
