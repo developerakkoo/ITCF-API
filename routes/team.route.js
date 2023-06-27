@@ -26,4 +26,6 @@ routes.get('/get/team/notification/:userID/:msgID',TeamController.getTeamNotific
 routes.delete('/delete/team/notification/:userID/:msgID',TeamController.deleteTeamNotification);
 
 
+routes.get('/getByPlayerId/team/:PlayerId',TeamController.getTeamByPlayerId);
+
 module.exports = {TeamRoutes : routes}

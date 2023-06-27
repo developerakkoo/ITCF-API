@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const express= require('express');
 const cors = require('cors');
 require('dotenv').config();
+// require('./tempCodeRunnerFile');
+require('./controller/cron');
 const inviteLink = require('./controller/player.controller');
 const {RejectLinkHandelGet,RejectLinkHandelPost} =require('./controller/TeamAdmin.controller')
 const {TeamAdminRoutes,TeamRoutes,paymentRoutes,OTPRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
@@ -15,6 +17,7 @@ app.use(express.urlencoded({extended:false}));
 app.use( express.static('public'));
 app.use("/public", express.static(path.join(__dirname, "public")));
 // app.use(express.static(path.join(__dirname, 'public')));
+
 
 
 

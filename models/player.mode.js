@@ -1,9 +1,10 @@
+const moment = require('moment/moment');
 const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
+// const mongoosePaginate = require('mongoose-paginate');
 
-const Schema = mongoose.Schema;
 
-const PlayerSchema = new Schema({
+
+const PlayerSchema = mongoose.Schema({
 superAdminID:{
     type: mongoose.Types.ObjectId,
     ref: "superAdmin"
@@ -18,11 +19,11 @@ teamAdminUID:{
     type:String,
 },
 AdminID:{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: "TeamAdmin"
 },
 teamID:{
-    type:Schema.Types.ObjectId,
+    type:mongoose.Types.ObjectId,
     ref: "Team"
 },
 Name:{
@@ -79,6 +80,24 @@ isBlocked: {
     default : false
 
 },
+isAcceptInvite: {
+    type : Boolean,
+    default : false
+
+},
+notify: {
+    type : Boolean,
+    default : false
+
+},
+notifyDate:{
+    type:String,
+    default:moment().add(5,'day').format('DD-MM-YYYY')
+},
+deleteDate:{
+    type:String,
+    default:moment().add(7,'day').format('DD-MM-YYYY')
+},
 createdAt: {
     type: Date,
     default: () => Date.now()
@@ -89,5 +108,5 @@ updatedAt: {
 },
 },);
 
-PlayerSchema.plugin(mongoosePaginate);
+// PlayerSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model("Player",PlayerSchema);

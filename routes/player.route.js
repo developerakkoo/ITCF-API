@@ -4,15 +4,19 @@ const playerController = require('../controller/player.controller');
 const Validate = require('../middleware/player.middleware');
 const Upload = require('../middleware/upload');
 
-
-
-routes.post('/player',Validate.validatePlayer,playerController.postPlayer);
+//logIn
 
 routes.get('/plyer/phoneNo/verify/',playerController.verifyNumber);
 
-routes.put('/set/password',playerController.setPassword);
+routes.post('/player/:playerId',Validate.validatePlayer,playerController.postPlayer);
 
 routes.put('/upload/image/player/:playerId',Upload.single("file"),playerController.postPlayerImage);
+
+routes.put('/set/password',playerController.setPassword);
+
+routes.post('/player-registered/notify-admin',playerController.sendSmSToAdmin);
+
+//
 
 routes.get('/player/search',playerController.PlayerSearchOption);
 

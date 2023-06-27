@@ -10,9 +10,9 @@ require('dotenv').config();
 const ejs = require('ejs');
 
 
-
-
 let msg = nodemailer.createTransport({
+
+
     service: 'gmail',
     auth: {
     user: process.env.EMAIL,
@@ -21,72 +21,7 @@ let msg = nodemailer.createTransport({
 });
 
 
-async function  postPlayer(req,res){
-    // console.log(">>>>>>",req.body)
-const playerObj ={
-    Name: req.body.Name,
-    age: req.body.age,
-    DOB: req.body.DOB,
-    email: req.body.email,
-    Phone: req.body.Phone,
-    Skills: req.body.Skills,
-}
-try{
-    // const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
-    // if(!admin){
-    // return res.status(400).json({message: `Team Admin UID Is Not Valid`})
-    // }
-    // const savedAdmin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
-    // if(!savedAdmin){
-    // return res.status(400).json({message: `Team Admin  Is Not Valid`})
-    // }
-    // const savedTeam = await Team.findOne({_id:req.body.teamID});
-    // if(!savedTeam){
-    // return res.status(400).json({message: `Team Does Not Exist With This Team Name`})
-    // }
-    const data = await Player.create(playerObj); 
-    let mailOptions = {
-        from: 'serviceacount.premieleague@gmail.com',
-        to: data.email,
-        subject:' WELCOME TO THE ITCF FAMILY ' ,
-        text:"Successfully register as player "
-    };
-    msg.sendMail(mailOptions, function(error, info){
-        if (error) {
-        console.log(error);
-        } else {
-        console.log('Email sent: ' + info.response);
-        }
-    });
-    return res.status(200).json({message: `Player Created Successfully`,statusCode:'200',data})
-}catch(err){
-    if(err.code == 11000){
-        return res.status(500).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'500'})
-    }
-    console.log("Something went wrong while saving to DB", err);
-    res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
-}
-}
 
-async function postPlayerImage(req,res){
-try {
-
-    const path = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
-    const savedPlayer = await Player.findOne({_id:req.params.playerId});
-    if(!savedPlayer){
-    return res.status(404).json({message:`Player Not Found With This Player Id: ${req.params.playerId}`,statusCode:'404'});
-    }
-    savedPlayer.image = path != undefined
-    ? path
-    : savedPlayer.image
-
-    const data = await savedPlayer.save();
-    res.status(201).json({message:'Image Uploaded Successfully',data,statusCode:'201'})
-} catch (error) {
-    console.log(error);
-    res.status(500).json({message: error.message,statusCode:'500',status:"ERROR" });
-}
-}
 
 async function UpdatePlayer(req,res){
     try{
@@ -185,17 +120,12 @@ async function proPlayer(req,res){
 
 async function getAllPlayer(req,res){
     try{
-        const pageNumber = req.query.page || 1; // Get the current page number from the query parameters
-        const pageSize = 10; // Number of items per page
-        
-        Player.paginate({}, { page: pageNumber, limit: pageSize }, (err, result) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error Occurred While Fetching Data.',statusCode:'500' });
+        const savedPlayer = await Player.find();
+        if (savedPlayer.length == 0) {
+            return res.status(404).json({message:'Players Not Found',statusCode:404});
         }
-        
-        const { docs, total, limit, page, pages } = result;
-        res.status(200).json({ data: docs, total, limit, page, pages,statusCode:'200' });
-        });
+        res.status(200).json({message:'Players Fetched SuccessFully',statusCode:200,length:savedPlayer.length,data:savedPlayer});
+
     }catch(err){
         res.status(500).json({message: err.message, statusCode:'500',status:`ERROR`});
     }
@@ -421,21 +351,127 @@ async function handelPost (req,res){
 
 
 
-
+// log in
 
 async function verifyNumber(req,res){
     try {
         const savedPlayer = await Player.findOne({Phone:req.query.phoneNumber});
         if (!savedPlayer) {
-            return res.status(404).json({message:`Player Not Found With This Phone Number:${req.query.phoneNumber}`,statusCode:'404'});
+            return res.status(404).json({message:`Player Not Found With This Phone Number:${req.query.phoneNumber}`,statusCode:'404',status:false});
         }
-        res.status(200).json({Status:true,access:true, message:"Player Found",statusCode:'200',savedPlayer});
+        res.status(200).json({Status:true,access:true, message:"Player Found",statusCode:'200',status:true,savedPlayer});
     } catch (error) {
         console.log(error);
         res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
     }
 }
 
+async function  postPlayer(req,res){
+    // console.log(">>>>>>",req.body)
+// const playerObj ={
+//     Name: req.body.Name,
+//     age: req.body.age,
+//     DOB: req.body.DOB,
+//     email: req.body.email,
+//     Phone: req.body.Phone,
+//     Skills: req.body.Skills,
+// }
+try{
+  // console.log(req.body)
+    const ID = req.params.playerId;
+    const savedPlayer = await Player.findOne({_id:ID});
+    if (!savedPlayer){
+        return res.status(404).json({message: "Player Not Found",statusCode:'404'});
+    }
+    savedPlayer.Name = req.body.Name = undefined
+    ? req.body.Name 
+    : savedPlayer.Name;
+    
+    savedPlayer.age = req.body.age != undefined
+    ? req.body.age 
+    : savedPlayer.age;
+    
+    savedPlayer.DOB = req.body.DOB != undefined
+    ? req.body.DOB 
+    : savedPlayer.DOB;
+    
+    savedPlayer.email = req.body.email != undefined
+    ? req.body.email 
+    : savedPlayer.email;  
+    
+    savedPlayer.Phone = req.body.Phone != undefined
+    ? req.body.Phone 
+    : savedPlayer.Phone;
+    
+    savedPlayer.Skills = req.body.Skills != undefined
+    ? req.body.Skills 
+    : savedPlayer.Skills;
+    
+    savedPlayer.isAcceptInvite = true != undefined
+    ? true
+    : savedPlayer.isBlocked
+    
+    const data= await savedPlayer.save(); 
+    let mailOptions = {
+        from: 'serviceacount.premieleague@gmail.com',
+        to: data.email,
+        subject:' WELCOME TO THE ITCF FAMILY ' ,
+        text:"Successfully register as player "
+    };
+    msg.sendMail(mailOptions, function(error, info){
+        if (error) {
+        console.log(error);
+        } else {
+        console.log('Email sent: ' + info.response);
+        }
+    });
+    return res.status(200).json({message: `Player Created Successfully`,statusCode:'200',data})
+}catch(err){
+    if(err.code == 11000){
+        return res.status(500).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'500'})
+    }
+    console.log("Something went wrong while saving to DB", err);
+    res.status(500).json({message:err.message,statusCode:'500',status:"ERROR"})
+}
+}
+
+async function postPlayerImage(req,res){
+try {
+
+    const path = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+    const savedPlayer = await Player.findOne({_id:req.params.playerId});
+    if(!savedPlayer){
+    return res.status(404).json({message:`Player Not Found With This Player Id: ${req.params.playerId}`,statusCode:'404'});
+    }
+    savedPlayer.image = path != undefined
+    ? path
+    : savedPlayer.image
+
+    const data = await savedPlayer.save();
+    res.status(201).json({message:'Image Uploaded Successfully',data,statusCode:'201'})
+} catch (error) {
+    console.log(error);
+    res.status(500).json({message: error.message,statusCode:'500',status:"ERROR" });
+}
+}
+
+async function sendSmSToAdmin(req,res){
+    try {
+        const savedPlayer = await Player.findOne({Phone:req.body.phoneNumber});
+        if (!savedPlayer) {
+            return res.status(404).json({message:`Player Not Found With This Phone Number:${req.query.phoneNumber}`,statusCode:'404',status:false});
+        }
+        if (req.body.paymentStatus == true) {
+            console.log(`message:Send to admin :${savedPlayer.Name}`);
+            return res.status(200).json({message:`Player Completed There Registration And Payment :${req.query.phoneNumber}`,statusCode:'200',status:true});
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
+    }
+}
+
+//
 async function setPassword(req,res){
     try {
         
@@ -457,6 +493,9 @@ async function setPassword(req,res){
     }
 }
 
+
+
+
 module.exports={
     postPlayer,
     postPlayerImage,
@@ -475,5 +514,6 @@ module.exports={
     getAllPlayersNotification,
     deletePlayerNotification,
     getPlayerNotification,
+    sendSmSToAdmin,
     get
 }
