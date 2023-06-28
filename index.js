@@ -6,7 +6,7 @@ require('dotenv').config();
 require('./controller/cron');
 const inviteLink = require('./controller/player.controller');
 const {RejectLinkHandelGet,RejectLinkHandelPost} =require('./controller/TeamAdmin.controller')
-const {TeamAdminRoutes,TeamRoutes,paymentRoutes,OTPRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
+const {TeamAdminRoutes,TeamRoutes,RqsToProMemberRoutes,paymentRoutes,OTPRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
 const path= require('path');
 const app = express();
 app.use(cors());
@@ -32,6 +32,7 @@ app.use(associateMemberRoutes);
 app.use(superAdminRoutes);
 app.use(subAdminRoutes);
 app.use(OTPRoutes);
+app.use(RqsToProMemberRoutes);
 
 
 

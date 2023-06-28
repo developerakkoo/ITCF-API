@@ -22,7 +22,7 @@ routes.get('/player/search',playerController.PlayerSearchOption);
 
 routes.put('/update/player/:playerId',playerController.UpdatePlayer);
 
-routes.put('/proMember/player/:playerId',playerController.proPlayer);
+
 
 routes.get('/getAll/player',playerController.getAllPlayer);
 
@@ -41,6 +41,11 @@ routes.delete('/delete/player/notification/:userID/:msgID',playerController.dele
 routes.get('/get',playerController.get)
 
 
+//pro player
+
+routes.put('/proMember/player/:playerId',playerController.proPlayer);
+
+routes.post('/proMember/player/req/:playerId',playerController.requestToProPlayer);
 
 
 

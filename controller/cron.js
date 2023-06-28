@@ -16,7 +16,7 @@ let msg = nodemailer.createTransport({
 cron.schedule('* * * * *',async () =>{
     try{
             console.log('>>');
-            const date = '02-07-2023'//moment().format('DD-MM-YYYY');
+            const date = '03-07-2023'//moment().format('DD-MM-YYYY');
         const savedPlayer = await Player.find({
             isAcceptInvite: false,
             notify:false,
@@ -55,7 +55,7 @@ cron.schedule('* * * * *',async () =>{
         console.log(error);
     }
 })
-let D = '04-07-2023'
+let D = '05-07-2023'
 cron.schedule('* * * * *',async () =>{
     try{
         console.log('here>>');
@@ -95,7 +95,7 @@ cron.schedule('* * * * *',async () =>{
 
             // await Player.delete({_id:player._id})
         }
-        console.log(`Count of unsent notification: ${savedPlayer.length}`)
+        console.log(`Count of undeleted Player: ${savedPlayer.length}`)
         // console.log(`unsent notification: ${savedPlayer}`)
     }catch(error){
     }

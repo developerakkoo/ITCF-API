@@ -3,6 +3,7 @@ const Notification = require('../models/Notification.model');
 const Team =  require('../models/Team.model');
 const APIFeatures = require('../utils/ApiFeature');
 const TeamAdmin = require('../models/TeamAdmin.model');
+const Req =  require('../models/proPlayerReq.model');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
@@ -75,6 +76,43 @@ async function UpdatePlayer(req,res){
     }
 }
 
+async function requestToProPlayer(req,res){
+    try{
+        const ID = req.params.playerId;
+        // console.log(req.body)
+        const savedPlayer = await Player.findOne({_id:ID});
+        if (!savedPlayer){
+            return res.status(404).json({message: "Player Not Found",statusCode:'404'});
+        }
+        const ceratedReq = await Req.create({playerID:savedPlayer._id})
+        const template = fs.readFileSync('proMemberTemplate.ejs', 'utf-8');
+        const renderedTemplate = ejs.render(template, {name: savedPlayer.Name});
+        let mailOptions = {
+            from: 'serviceacount.premieleague@gmail.com',
+            to: savedPlayer.email,
+            subject:' WELCOME TO THE ITCF FAMILY ' ,
+            html: renderedTemplate
+        };
+        msg.sendMail(mailOptions, function(error, info){
+            if (error) {
+            console.log(error);
+            } else {
+            console.log('Email sent: ' + info.response); 
+            }
+        });
+
+        return res.status(200).json({ message: "Request To Pro Player Sent Successfully",statusCode:'200',data:ceratedReq})
+    // }
+    // return res.status(200).json({ message: "Player  Updated To Pro Player Successfully",statusCode:'200',data:updatePlayer})
+    }catch(err){
+        if(err.code == 11000){
+            return res.status(500).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number`,statusCode:'500'})
+        }
+        console.log(err)
+        res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
+    }
+}
+
 async function proPlayer(req,res){
     try{
         const ID = req.params.playerId;
@@ -86,7 +124,7 @@ async function proPlayer(req,res){
         savedPlayer.isProfessionalMember = req.body.isProfessionalMember != undefined
         ? req.body.isProfessionalMember
         : savedPlayer.isProfessionalMember
-        
+        await Req.deleteOne({_id:savedPlayer._id});
         const updatePlayer= await savedPlayer.save();
         if(updatePlayer.isProfessionalMember === true){
         const template = fs.readFileSync('proMemberTemplate.ejs', 'utf-8');
@@ -504,6 +542,7 @@ module.exports={
     handelGet,
     handelPost,
     UpdatePlayer,
+    requestToProPlayer,
     proPlayer,
     getAllPlayer,
     getPlayerById,
