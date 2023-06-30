@@ -14,7 +14,7 @@ const teamObj ={
     addressLine1: req.body.addressLine1,
     addressLine2: req.body.addressLine2,
     addressLine3: req.body.addressLine3,
-    pinCode: req.body.pincode,
+    pinCode: req.body.pinCode,
 
     temp:"inviteLink"+"/"+req.body.AdminID+"/"+req.body.teamName+"/"+req.body.teamAdminUID,
 }
