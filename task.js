@@ -58,26 +58,37 @@
 //     .create({body: `accept:${'AppLink'} rejectLink:${'1234'}`, from: '+15416232876', to: '+91'+userNo})
 //     .then(message => console.log(message.sid,'Message send.!'));
 
-const Player = require('./controller/player.controller');
-const moment = require('moment');
-(async ()=>{
-    try{
-        console.log('>>');
-        const date = moment().format('DD-MM-YYYY')
-        console.log('>1>');
+// const Player = require('./controller/player.controller');
+// const moment = require('moment');
+// (async ()=>{
+//     try{
+//         console.log('>>');
+//         const date = moment().format('DD-MM-YYYY')
+//         console.log('>1>');
     
-    const savedPlayer = await Player.find()
-        // isAcceptInvite: false,
-        // notifyDate:moment().format('DD-MM-YYYY')
-        console.log('her>>e');
-    if (savedPlayer == 0){
-        console.log("Players Not Found");
-    }
+//     const savedPlayer = await Player.find()
+//         // isAcceptInvite: false,
+//         // notifyDate:moment().format('DD-MM-YYYY')
+//         console.log('her>>e');
+//     if (savedPlayer == 0){
+//         console.log("Players Not Found");
+//     }
     
-    console.log(`Count of unsent notification: ${savedPlayer.length}`)
-    console.log(`unsent notification: ${savedPlayer}`)
-    }catch(error){
-        console.log('error',error);
-    }
-})()
-console.log("hii");
+//     console.log(`Count of unsent notification: ${savedPlayer.length}`)
+//     console.log(`unsent notification: ${savedPlayer}`)
+//     }catch(error){
+//         console.log('error',error);
+//     }
+// })()
+// console.log("hii");
+const accountSid = 'AC3d2a984af8fb85d9e453ebb54477de6c';
+const authToken = '27ca415096e985abfb2a5474fa518b20';
+const client = require('twilio')(accountSid, authToken);
+
+client.messages
+    .create({
+        body: 'Your appointment is coming up on July 21 at 3PM',
+        from: 'whatsapp:+15416232876',
+        to: 'whatsapp:+919028851449'
+    })
+    .then(message => console.log(message))

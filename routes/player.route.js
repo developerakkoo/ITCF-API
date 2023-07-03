@@ -6,7 +6,7 @@ const Upload = require('../middleware/upload');
 
 //logIn
 
-routes.get('/plyer/phoneNo/verify/',playerController.verifyNumber);
+routes.get('/plyer/phoneNo/verify',playerController.verifyNumber);
 
 routes.post('/player/:playerId',Validate.validatePlayer,playerController.postPlayer);
 

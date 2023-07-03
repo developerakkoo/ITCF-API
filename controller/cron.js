@@ -13,10 +13,10 @@ let msg = nodemailer.createTransport({
 }); 
 
 
-cron.schedule('* * * * *',async () =>{
+cron.schedule('0 12 * * *',async () =>{               // every day at 12
     try{
             console.log('>>');
-            const date = '03-07-2023'//moment().format('DD-MM-YYYY');
+            const date = moment().format('DD-MM-YYYY');
         const savedPlayer = await Player.find({
             isAcceptInvite: false,
             notify:false,
@@ -55,14 +55,14 @@ cron.schedule('* * * * *',async () =>{
         console.log(error);
     }
 })
-let D = '05-07-2023'
-cron.schedule('* * * * *',async () =>{
+let Date = moment().format('DD-MM-YYYY')
+cron.schedule('0 12 * * *',async () =>{   // every day at 12
     try{
         console.log('here>>');
         const savedPlayer = await Player.find({
             isAcceptInvite: false,
             notify:true,
-            deleteDate: D//moment().format('DD-MM-YYYY')
+            deleteDate: Date
         })
         if (savedPlayer.length == 0){
             console.log("Players Not Found");
