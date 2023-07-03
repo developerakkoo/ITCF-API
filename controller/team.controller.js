@@ -11,10 +11,14 @@ const teamObj ={
     AdminID: req.body.AdminID,
     teamName: req.body.teamName,
     teamCity: req.body.teamCity,
-    address: req.body.address,
+    addressLine1: req.body.addressLine1,
+    addressLine2: req.body.addressLine2,
+    addressLine3: req.body.addressLine3,
+    pinCode: req.body.pinCode,
+
     temp:"inviteLink"+"/"+req.body.AdminID+"/"+req.body.teamName+"/"+req.body.teamAdminUID,
 }
-    teamObj. inviteLink =req.protocol +"://"+req.hostname +"/"+teamObj.temp.replace(/\\/g, "/");
+    teamObj. inviteLink =req.protocol +"://"+req.hostname +":8000"+"/"+teamObj.temp.replace(/\\/g, "/");
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){

@@ -31,15 +31,14 @@ teamName:{
 },
 teamCity:{
     type:String,
-    required:true
 },
 addressLine1:{
     type:String
 },
-addressLine1:{
+addressLine2:{
     type:String
 },
-addressLine1:{
+addressLine3:{
     type:String
 },
 pinCode:{
