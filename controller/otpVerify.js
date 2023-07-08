@@ -1,8 +1,8 @@
 require('dotenv').config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
-
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const verifySid = process.env.TWILIO_VERIFY_SID;
-const client = require('twilio')(accountSid,'edbbe84cd5c2c75be66701dd09c42ece');
+const client = require('twilio')(accountSid,authToken);
 
 
 const teamAdmin = require('../models/TeamAdmin.model');

@@ -7,9 +7,9 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const accountSid = 'AC3d2a984af8fb85d9e453ebb54477de6c';
-const authToken = process.env.auth_Token;
-const client = require('twilio')(accountSid, 'd6dc7d11530e4f99be7c2741f6f8144b');
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid,authToken);
 
 
 let msg = nodemailer.createTransport({
@@ -362,7 +362,9 @@ async function PlayerBulkCreate(req,res){
                     from: '+15416232876',
                     to: '+91'+playerCreated.Phone
                 })
-                .then(message => console.log(message.sid))
+                .then(message => console.log(message.sid)).catch(error=>{
+                    console.log({message: error.message,statusCode:'500',Status:`ERROR`});;
+                })
         }
 
 /**********************************************************************/
