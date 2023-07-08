@@ -18,7 +18,7 @@ const teamObj ={
 
     temp:"inviteLink"+"/"+req.body.AdminID+"/"+req.body.teamName+"/"+req.body.teamAdminUID,
 }
-    teamObj. inviteLink =req.protocol +"://"+req.hostname +":8000"+"/"+teamObj.temp.replace(/\\/g, "/");
+    teamObj. inviteLink =req.protocol +"://"+req.hostname+"/"+teamObj.temp.replace(/\\/g, "/");
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
@@ -272,7 +272,8 @@ async function deleteTeamNotification(req,res){
 
 async function getTeamByPlayerId(req,res){
     try{
-        const savedTeam= await Team.find({teamMembers:req.params.PlayerId})
+        let Id =req.params.PlayerId
+        const savedTeam= await Team.find({teamMembers:Id})
         if (savedTeam.length == 0){
             return res.status(404).json({message: "Team Not Found With This User",statusCode:'404'});
         }

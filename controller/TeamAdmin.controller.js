@@ -6,8 +6,11 @@ const APIFeatures = require('../utils/ApiFeature')
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
 require('dotenv').config();
+const accountSid = 'AC3d2a984af8fb85d9e453ebb54477de6c';
+const authToken = process.env.auth_Token;
+const client = require('twilio')(accountSid, 'd6dc7d11530e4f99be7c2741f6f8144b');
+
 
 let msg = nodemailer.createTransport({
     service: 'gmail',
@@ -320,7 +323,7 @@ async function PlayerBulkCreate(req,res){
     try {
         const savedTeamAdmin = await TeamAdmin.findOne({_id:req.params.TeamAdminId});
         if (!savedTeamAdmin) {
-            return res.status(404).json({message:`Team Admin Not Found With Id:${req.params.Id}`,statusCode:'404'});
+            return res.status(404).json({message:`Team Admin Not Found With Id:${req.params.TeamAdminId}`,statusCode:'404'});
         }
         const savedTeam = await Team.findOne({_id:req.params.TeamId});
         if (!savedTeam) {
@@ -329,8 +332,8 @@ async function PlayerBulkCreate(req,res){
         //player creation
         const createPlayers = [];
         // console.log(req.body.Players);
-        const players =  JSON.parse(req.body.Players); //production
-        // const players =  req.body.Players //test
+        // const players =  JSON.parse(req.body.Players); //production
+        const players =  req.body.Players //test
         console.log(players);
         console.log(typeof(players));
         if ( players.length == 0) {
@@ -351,8 +354,15 @@ async function PlayerBulkCreate(req,res){
             playerIds.push( playerCreated._id)
             const AcceptLink ="appLink "
             let temp = "Reject-Link"+"/"+req.params.TeamAdminId+"/"+savedTeam._id
-            const rejectLink =req.protocol +"://"+req.hostname +":8000/"+temp.replace(/\\/g, "/");
+            const rejectLink =req.protocol +"://"+req.hostname+"/"+temp.replace(/\\/g, "/");
             console.log(playerCreated.Phone,`accept link:${AcceptLink} ", rejectLink: ${rejectLink}`);
+            client.messages
+                .create({
+                    body: `accept link:${AcceptLink} ", rejectLink: ${rejectLink}`,
+                    from: '+15416232876',
+                    to: '+91'+playerCreated.Phone
+                })
+                .then(message => console.log(message.sid))
         }
 
 /**********************************************************************/
@@ -618,26 +628,21 @@ async function RejectLinkHandelPost (req,res){
         }
 
         const savedPlayer = await Player.findOne({Phone:req.body.Phone})
-
-        let mailOptions = {
-            from: 'serviceacount.premieleague@gmail.com',
-            to: savedTeamAdmin.email,
-            subject:'Update' ,
-            text:`Player ${savedPlayer.Name}, Rejected Invite Player Give this reason for rejecting invite: ${req.body.Description}`
-        };
-        msg.sendMail(mailOptions, function(error, info){
-            if (error) {
-            console.log(error);
-            } else {
-            console.log('Email sent: ' + info.response);
-            }
-        });
+        client.messages
+        .create({
+            body: `Player Name: ${savedPlayer.Name}, Rejection Reason: ${req.body.Description}`,
+            from: '+15416232876',
+            to: '+91'+savedTeamAdmin.Phone
+        })
+        .then(message => console.log(message.sid))
         const result = savedTeam.teamMembers.filter(word => word._id.toString() === savedPlayer._id.toString());
+        console.log(result);
         if(result.length==0){
         return res.status(404).json({msg:`User Not Found With This Phone Number:${req.body.Phone}`})
         }
     console.log(result);
     let itemToBeRemoved =result.toString()
+    console.log(itemToBeRemoved);
     await Player.deleteOne({_id:itemToBeRemoved})
     savedTeam.teamMembers.splice(savedTeam.teamMembers.findIndex(a => a.id === itemToBeRemoved) , 1);
 
