@@ -17,7 +17,7 @@ const client = require('twilio')(accountSid, authToken);
 // }); 
 
 
-cron.schedule('* * * * *',async () =>{               // every day at 12// 0 12 * * *
+cron.schedule('0 12 * * *',async () =>{               // every day at 12// 0 12 * * *
     try{
             console.log('>>');
             const date = moment().format('DD-MM-YYYY');
@@ -69,7 +69,7 @@ cron.schedule('* * * * *',async () =>{               // every day at 12// 0 12 *
     }
 })
 let Date = moment().format('DD-MM-YYYY')
-cron.schedule('* * * * *',async () =>{   // every day at 12
+cron.schedule('0 12 * * *',async () =>{   // every day at 12
     try{
         console.log('here>>');
         const savedPlayer = await Player.find({
