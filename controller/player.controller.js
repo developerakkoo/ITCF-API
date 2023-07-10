@@ -394,6 +394,9 @@ async function handelPost (req,res){
         res.status(200).json({message:'Player Created and Added to team SuccessFully',statusCode:'200',data:createdPlayer,Team:updatedTeam});
     } catch (error) {
         console.log(error);
+        if(err.code == 11000){
+            return res.status(500).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'500'})
+        }
         res.status(500).json({message: error.message,statusCode:'500',Status:`ERROR`});
     }
 
