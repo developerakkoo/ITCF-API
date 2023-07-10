@@ -63,7 +63,7 @@ async function postAssociateMember(req,res){
 
 async function uploadPan(req,res){
     try{
-        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+        const file = req.protocol +"://"+req.hostname +":8000/"+ req.file.path.replace(/\\/g, "/");
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
         if(!savedAssociateMember){
             return res.status(404).json({message:`Associate Member Not Found with ID:${req.params.id} `,statusCode:'404'});
@@ -83,7 +83,7 @@ async function uploadPan(req,res){
 
 async function uploadAdhar(req,res){
     try{
-        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+        const file = req.protocol +"://"+req.hostname +":8000/"+ req.file.path.replace(/\\/g, "/");
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
         if(!savedAssociateMember){
             return res.status(404).json({message:`Associate Member Not Found with ID:${req.params.id}`,statusCode:'404'});
@@ -103,7 +103,7 @@ async function uploadAdhar(req,res){
 async function uploadResidentialProof(req,res){
     try{
 
-        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/");
+        const file = req.protocol +"://"+req.hostname +":8000/"+ req.file.path.replace(/\\/g, "/");
         
         
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
@@ -125,7 +125,7 @@ async function uploadResidentialProof(req,res){
 async function uploadITR(req,res){
     try{
         
-        const file = req.protocol +"://"+req.hostname +"/"+ req.file.path.replace(/\\/g, "/")
+        const file = req.protocol +"://"+req.hostname +":8000/"+ req.file.path.replace(/\\/g, "/")
         
         
         const savedAssociateMember =  await associateMember.findOne({_id:req.params.id});
