@@ -89,7 +89,7 @@ async function postSubMatterExDoc(req,res){
         let links = [];
         
         for (let docNo=0; docNo <=doc.length-1;docNo++){
-            let url = req.protocol +"://"+req.hostname +"/"+doc[docNo].path.replace(/\\/g, "/")
+            let url = req.protocol +"://"+req.hostname +":8000/"+doc[docNo].path.replace(/\\/g, "/")
             links.push(url)
         }
         const Documents =links 
