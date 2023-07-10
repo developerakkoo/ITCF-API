@@ -6,6 +6,8 @@ const mongoosePaginate = require('mongoose-paginate');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const ejs = require('ejs');
 let msg = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -33,11 +35,13 @@ async function postSubMatterEx(req,res){
         return res.status(400).json({message: `Subject Matter Expert With This Email Or Phone Number Is Already Exist Please Try With Different  Email Or Phone Number `,statusCode:'400'})
         }
         const UserCreated = await subMatterEx.create(dataObj)
+        const template = fs.readFileSync('subExpert.ejs', 'utf-8');
+        const renderedTemplate = ejs.render(template, {name: UserCreated.Name});
         let mailOptions = {
             from: 'serviceacount.premieleague@gmail.com',
             to: UserCreated.email,
             subject:'welcome ' ,
-            text:`welcome ${UserCreated.Name} account created successfully`
+            html:renderedTemplate
         };
         msg.sendMail(mailOptions, function(error, info){
             if (error) {
