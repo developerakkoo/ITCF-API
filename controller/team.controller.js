@@ -18,7 +18,7 @@ const teamObj ={
 
     temp:"inviteLink"+"/"+req.body.AdminID+"/"+req.body.teamName+"/"+req.body.teamAdminUID,
 }
-    teamObj. inviteLink =req.protocol +"://"+req.hostname+"/"+teamObj.temp.replace(/\\/g, "/");
+    teamObj. inviteLink =req.protocol +":8000//"+req.hostname+"/"+teamObj.temp.replace(/\\/g, "/");
 try{
     const admin = await TeamAdmin.findOne({UID:req.body.teamAdminUID});
     if(!admin){
