@@ -405,8 +405,18 @@ try {
     }
     const createdPlayer = await Player.create(playerObj); 
 
+
     savedTeam.teamMembers.push(createdPlayer._id);
     const UpdatedTeam =  await savedTeam.save();
+    client.messages
+    .create({
+        body: `Player created And Added In To Team:${UpdatedTeam.teamName} Successfully`,
+        from: '+15416232876',
+        to: '+91'+createdPlayer.Phone
+    })
+    .then(message => console.log(message.sid)).catch(error=>{
+        console.log({message: error.message,statusCode:'500',Status:`ERROR`});;
+    })
     res.status(201).json({message:'Player created And Added In To Team Successfully',statusCode:'201',data:UpdatedTeam.teamMembers});
 } catch (error) {
     res.status(500).json({message:error.message,statusCode:'500',status:'ERROR'})
