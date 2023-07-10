@@ -388,9 +388,9 @@ async function handelPost (req,res){
         });
         client.messages
         .create({
-            body: `accept link:${AcceptLink} ", rejectLink: ${rejectLink}`,
+            body: `Successfully register as player  and Added in to The Team ${req.params.teamName} `,
             from: '+15416232876',
-            to: '+91'+playerCreated.Phone
+            to: '+91'+createdPlayer.Phone
         })
         .then(message => console.log(message.sid)).catch(error=>{
             console.log({message: error.message,statusCode:'500',Status:`ERROR`});;
