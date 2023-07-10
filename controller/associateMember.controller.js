@@ -376,7 +376,7 @@ async function updatePasswordToAssociateMember(req,res){
                 from: 'serviceacount.premieleague@gmail.com',
                 to: data.email,
                 subject:'Your Login Credential' ,
-                text: `Dear ${data.fName}, Use this password for login in to your ITFC account ${req.body.password}`
+                text: `Dear ${data.fName}, Use this credential email:${data.email} password:${req.body.password} for login in to your ITFC account `
             };
             msg.sendMail(mailOptions, function(error, info){
                 if (error) {
