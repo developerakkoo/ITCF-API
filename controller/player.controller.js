@@ -366,6 +366,10 @@ async function handelPost (req,res){
             email: req.body.Email,
             Password:await bcrypt.hash(req.body.Password,10)
         }
+        const savedPlayer = await Player.findOne({Phone:req.body.Phone});
+        if (savedPlayer){
+            return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'400'});
+        }
         const createdPlayer = await Player.create(userObj);
         savedTeam.teamMembers.push(createdPlayer._id);
         const updatedTeam = await savedTeam.save();
