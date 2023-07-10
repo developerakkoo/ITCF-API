@@ -104,7 +104,7 @@ async function requestToProPlayer(req,res){
             }
         });
 
-        return res.status(200).json({ message: "Request To Pro Player Sent Successfully",statusCode:'200',data:ceratedReq})
+        return res.status(200).json({ message: "Request To Pro Player Sent Successfully",statusCode:'200',data:ceratedReq,status:true})
     // }
     // return res.status(200).json({ message: "Player  Updated To Pro Player Successfully",statusCode:'200',data:updatePlayer})
     }catch(err){
@@ -146,7 +146,7 @@ async function proPlayer(req,res){
             }
         });
 
-        return res.status(200).json({ message: "Player  Updated To Pro Player Successfully",statusCode:'200',data:updatePlayer})
+        return res.status(200).json({ message: "Player  Updated To Pro Player Successfully",statusCode:'200',data:updatePlayer,status:true})
     }
     return res.status(200).json({ message: "Player  Updated To Pro Player Successfully",statusCode:'200',data:updatePlayer})
     }catch(err){

@@ -334,8 +334,8 @@ async function PlayerBulkCreate(req,res){
         // console.log(req.body.Players);
         const players =  JSON.parse(req.body.Players); //production
         // const players =  req.body.Players //test
-        console.log(players);
-        console.log(typeof(players));
+        console.log("req.body",players);
+        console.log("Type",typeof(players));
         if ( players.length == 0) {
             return res.status(400).json({message:"Please Provide Player Data",statusCode:'400'})
         }
@@ -344,7 +344,7 @@ async function PlayerBulkCreate(req,res){
         for (const player of players) {
             console.log(player.Name + "---");
             console.log(player.Phone + "---");
-            playerPhoneNo.push.apply(player.Phone)
+            playerPhoneNo.push(player.Phone)
             const playerCreated=await Player.create({
             AdminID: player.AdminID,
             Name: player.Name,
