@@ -332,8 +332,8 @@ async function PlayerBulkCreate(req,res){
         //player creation
         const createPlayers = [];
         // console.log(req.body.Players);
-        // const players =  JSON.parse(req.body.Players); //production
-        const players =  req.body.Players //test
+        const players =  JSON.parse(req.body.Players); //production
+        // const players =  req.body.Players //test
         console.log(players);
         console.log(typeof(players));
         if ( players.length == 0) {
