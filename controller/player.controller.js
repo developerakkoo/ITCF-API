@@ -420,7 +420,7 @@ async function verifyNumber(req,res){
         if (!savedPlayer) {
             return res.status(404).json({message:`Player Not Found With This Phone Number:${req.query.phoneNumber}`,statusCode:'404',status:false});
         }
-        res.status(200).json({Status:true,access:true, message:"Player Found",statusCode:'200',status:true,userId:savedPlayer._id,isFeePaid:user.isFeePaid});
+        res.status(200).json({Status:true,access:true, message:"Player Found",statusCode:'200',status:true,userId:savedPlayer._id,isFeePaid:savedPlayer.isFeePaid});
     } catch (error) {
         console.log(error);
         res.status(500).json({message: err.message,statusCode:'500',Status:`ERROR`});
