@@ -9,6 +9,9 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 require('dotenv').config();
 const ejs = require('ejs');
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid,authToken);
 
 
 let msg = nodemailer.createTransport({
@@ -379,6 +382,15 @@ async function handelPost (req,res){
             console.log('Email sent: ' + info.response);
             }
         });
+        client.messages
+        .create({
+            body: `accept link:${AcceptLink} ", rejectLink: ${rejectLink}`,
+            from: '+15416232876',
+            to: '+91'+playerCreated.Phone
+        })
+        .then(message => console.log(message.sid)).catch(error=>{
+            console.log({message: error.message,statusCode:'500',Status:`ERROR`});;
+        })
         res.status(200).json({message:'Player Created and Added to team SuccessFully',statusCode:'200',data:createdPlayer,Team:updatedTeam});
     } catch (error) {
         console.log(error);
