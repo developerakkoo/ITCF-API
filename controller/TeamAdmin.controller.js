@@ -354,7 +354,7 @@ async function PlayerBulkCreate(req,res){
             playerIds.push( playerCreated._id)
             const AcceptLink ="appLink "
             let temp = "Reject-Link"+"/"+req.params.TeamAdminId+"/"+savedTeam._id
-            const rejectLink =req.protocol +":8000//"+req.hostname+"/"+temp.replace(/\\/g, "/");
+            const rejectLink =req.protocol +"://"+req.hostname+":8000/"+temp.replace(/\\/g, "/");
             console.log(playerCreated.Phone,`accept link:${AcceptLink} ", rejectLink: ${rejectLink}`);
             client.messages
                 .create({
