@@ -371,10 +371,10 @@ async function handelPost (req,res){
             return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'400'});
         }
         const createdPlayer = await Player.create(userObj);
-        createdPlayer. isAcceptInvite:true != undefined
+        createdPlayer. isAcceptInvite = true != undefined
         ? true
         :createdPlayer.isAcceptInvite
-        const player await createdPlayer.save()
+        const player = await createdPlayer.save()
         savedTeam.teamMembers.push(createdPlayer._id);
         const updatedTeam = await savedTeam.save();
         let mailOptions = {
