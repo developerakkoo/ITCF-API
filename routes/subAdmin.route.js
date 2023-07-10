@@ -88,7 +88,9 @@ routes.get('/subAdmin/totalTeamReport/:Id',[Validate.isSubAdmin],TeamAController
 
 routes.post('/subAdmin/post/associateMember/:Id',Validate.isSubAdmin,Validate.canCreateAssociateMember,Upload.fields([{name:'PANCard',maxCount: 1},{name:'ADHARCard',maxCount: 1},{name:'residentialProof',maxCount: 1},{name:'ITR',maxCount: 1}]),ValidateAssociateMember.associateMember,subAdminController.signUpAssociateMemberBySubAdmin);
 
-routes.put('/subAdmin/add/Credential/associateMember/:Id',Validate.isSubAdmin,Validate.canAssignPassword,associateMemberController.updatePasswordToAssociateMember);
+routes.put('/subAdmin/add/Credential/associateMember',Validate.canAssignPassword,associateMemberController.updatePasswordToAssociateMember);
+
+// routes.put('/subAdmin/add/Credential/associateMember/:Id',Validate.isSubAdmin,Validate.canAssignPassword,associateMemberController.updatePasswordToAssociateMember);
 
 routes.get('/subAdmin/associateMember/search/:Id',[Validate.isSubAdmin,Validate.canGetAssociateMember],associateMemberController.AssociateMemberSearchOption);
 
