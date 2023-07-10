@@ -399,7 +399,8 @@ async function handelPost (req,res){
         .then(message => console.log(message.sid)).catch(error=>{
             console.log({message: error.message,statusCode:'500',Status:`ERROR`});;
         })
-        res.status(200).json({message:'Player Created and Added to team SuccessFully',statusCode:'200',data:player,Team:updatedTeam});
+        res.render('submit')
+        // res.status(200).json({message:'Player Created and Added to team SuccessFully',statusCode:'200',data:player,Team:updatedTeam});
     } catch (error) {
         console.log(error);
         if(err.code == 11000){

@@ -661,7 +661,7 @@ async function RejectLinkHandelPost (req,res){
     updatedTeam = await savedTeam.save();
 
 
-        res.status(200).json({message:'Player Created and Added to team SuccessFully',data:updatedTeam});
+        res.render('submit')
     } catch (error) {
         console.log(error);
         res.status(500).json({message: error.message,statusCode:'500',Status:`ERROR`});
