@@ -364,13 +364,17 @@ async function handelPost (req,res){
             Name: req.body.Name,
             Phone: req.body.Phone,
             email: req.body.Email,
-            Password:await bcrypt.hash(req.body.Password,10)
+            Password:await bcrypt.hash(req.body.Password,10),
         }
         const savedPlayer = await Player.findOne({Phone:req.body.Phone});
         if (savedPlayer){
             return res.status(400).json({message: `Player With This Information Is Already Exist Please Try With Another Name Or Mobile Number` ,statusCode:'400'});
         }
         const createdPlayer = await Player.create(userObj);
+        createdPlayer. isAcceptInvite:true != undefined
+        ? true
+        :createdPlayer.isAcceptInvite
+        const player await createdPlayer.save()
         savedTeam.teamMembers.push(createdPlayer._id);
         const updatedTeam = await savedTeam.save();
         let mailOptions = {
@@ -395,7 +399,7 @@ async function handelPost (req,res){
         .then(message => console.log(message.sid)).catch(error=>{
             console.log({message: error.message,statusCode:'500',Status:`ERROR`});;
         })
-        res.status(200).json({message:'Player Created and Added to team SuccessFully',statusCode:'200',data:createdPlayer,Team:updatedTeam});
+        res.status(200).json({message:'Player Created and Added to team SuccessFully',statusCode:'200',data:player,Team:updatedTeam});
     } catch (error) {
         console.log(error);
         if(err.code == 11000){
