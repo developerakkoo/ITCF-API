@@ -71,8 +71,8 @@ async function UpdateTeam(req,res){
         if (!savedTeam){
             return res.status(404).json({message: "Team Not Found"});
         }
-        savedTeam.teamName=req.body.name ? req.body.name : savedTeam.teamName;
-        savedTeam.teamCity=req.body.city ? req.body.city : savedTeam.teamCity;
+        savedTeam.teamName=req.body.name != undefined ? req.body.name : savedTeam.teamName;
+        savedTeam.teamCity=req.body.city != undefined ? req.body.city : savedTeam.teamCity;
         savedTeam.isBlocked = req.body.isBlocked != undefined
         ? req.body.isBlocked
         : savedTeam.isBlocked

@@ -158,7 +158,6 @@ const subAdminSchema = new Schema({
         type: Boolean,
         default: false
     },
-
     /*AssociateMember  Access*/
     canCreateAssociateMember:{
         type: Boolean,

@@ -6,7 +6,20 @@ require('dotenv').config();
 require('./controller/cron');
 const inviteLink = require('./controller/player.controller');
 const {RejectLinkHandelGet,RejectLinkHandelPost} =require('./controller/TeamAdmin.controller')
-const {TeamAdminRoutes,TeamRoutes,RqsToProMemberRoutes,paymentRoutes,OTPRoutes,associateMemberRoutes,subAdminRoutes,superAdminRoutes,subMatterExRoutes,playerRoutes}= require ('./routes/index.routes');
+const {
+    TeamAdminRoutes,
+    TeamRoutes,
+    RqsToProMemberRoutes,
+    paymentRoutes,
+    OTPRoutes,
+    associateMemberRoutes,
+    subAdminRoutes,
+    superAdminRoutes,
+    subMatterExRoutes,
+    playerRoutes,
+    matchesRoutes,
+    teamLeaderDashRoutes
+    }= require ('./routes/index.routes');
 const path= require('path');
 const app = express();
 app.use(cors());
@@ -33,6 +46,8 @@ app.use(superAdminRoutes);
 app.use(subAdminRoutes);
 app.use(OTPRoutes);
 app.use(RqsToProMemberRoutes);
+app.use(matchesRoutes);
+app.use(teamLeaderDashRoutes);
 
 
 
@@ -63,3 +78,9 @@ console.log('Running at localhost:8000 🚀'));
 
 // player log in akk route take a number true   put  email and password login 
 
+
+
+
+
+
+//https://www.figma.com/file/A6wmwbf97TVC79IegV3QQK/ITCF?type=whiteboard&node-id=0-1&t=yy3nISDFLg1kC5cu-0

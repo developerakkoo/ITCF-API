@@ -31,9 +31,13 @@ teamName:{
 },
 teamCity:{
     type:String,
+    required: true,
+
 },
 addressLine1:{
-    type:String
+    type:String,
+    required: true,
+
 },
 addressLine2:{
     type:String
@@ -42,13 +46,19 @@ addressLine3:{
     type:String
 },
 pinCode:{
-    type:Number
+    type:Number,
+    required: true,
+
 },
 city:{
-    type:String
+    type:String,
+    required: true,
+
 },
 state:{
-    type:String
+    type:String,
+    required: true,
+
 },
 teamMembers:{
     type:[mongoose.Types.ObjectId],

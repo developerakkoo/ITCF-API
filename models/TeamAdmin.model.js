@@ -47,6 +47,7 @@ Phone:{
 },
 Skills: {
     type: String,
+    default:"-"
 },
 isActive: {
     type: Boolean,

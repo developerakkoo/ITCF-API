@@ -15,8 +15,6 @@ const client = require('twilio')(accountSid,authToken);
 
 
 let msg = nodemailer.createTransport({
-
-
     service: 'gmail',
     auth: {
     user: process.env.EMAIL,
@@ -35,19 +33,19 @@ async function UpdatePlayer(req,res){
         if (!savedPlayer){
             return res.status(404).json({message: "Player Not Found",statusCode:'404'});
         }
-        savedPlayer.Name = req.body.Name = undefined
+        savedPlayer.Name = req.body.Name != undefined
         ? req.body.Name 
         : savedPlayer.Name;
         
-        savedPlayer.age = req.body.age = undefined
+        savedPlayer.age = req.body.age != undefined
         ? req.body.age 
         : savedPlayer.age;
         
-        savedPlayer.DOB = req.body.DOB = undefined
+        savedPlayer.DOB = req.body.DOB != undefined
         ? req.body.DOB 
         : savedPlayer.DOB;
         
-        savedPlayer.email = req.body.email = undefined
+        savedPlayer.email = req.body.email != undefined
         ? req.body.email 
         : savedPlayer.email;  
         
@@ -55,7 +53,7 @@ async function UpdatePlayer(req,res){
         ? req.body.Phone 
         : savedPlayer.Phone;
 
-        savedPlayer.Skills = req.body.Skills = undefined
+        savedPlayer.Skills = req.body.Skills != undefined
         ? req.body.Skills 
         : savedPlayer.Skills;
 

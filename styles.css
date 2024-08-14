@@ -1,0 +1,84 @@
+/* Reset some default styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Container for the wagon wheel */
+.wagon-wheel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust the height as needed */
+}
+
+/* Cricket ground container */
+.ground {
+    position: relative;
+}
+
+/* Style the ground image */
+.ground img {
+    width: 160vh;
+    height: 90vh; /* Adjust the max-width as needed */
+}
+
+/* Shots container */
+.shots {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Style individual shot locations */
+.shot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: red; /* Red color, adjust as needed */
+    border-radius: 50%;
+}
+
+.shot1 {
+    top: 51%;
+    left: 35%;
+}
+
+.shot2 {
+    top: 50%;
+    left: 55%;
+}
+
+.shot3 {
+    top: 30%;
+    left: 40%;
+}
+
+.shot4 {
+    top: 35%;
+    left: 60%;
+}
+
+.shot5 {
+    top: 21%;
+    left: 51%;
+}
+
+.shot6 {
+    top: 75%;
+    left: 50%;
+}
+
+.shot7 {
+    top: 65%;
+    left: 40%;
+}
+
+.shot8 {
+    top: 70%;
+    left: 60%;
+}
+/* Add more shot styles and positions as needed */

@@ -8,6 +8,9 @@ const{subAdminRoutes} = require('./subAdmin.route');
 const {paymentRoutes} = require('./payment.route');
 const {OTPRoutes} = require('./otpVerify.route');
 const {RqsToProMemberRoutes} = require('./proPlayerReq.route');
+const {matchesRoutes} = require('./matches.route');
+const{teamLeaderDashRoutes} = require('./teamLeadDash.route')
+
 module.exports={
     TeamAdminRoutes,
     TeamRoutes,
@@ -18,5 +21,7 @@ module.exports={
     subAdminRoutes,
     paymentRoutes,
     OTPRoutes,
-    RqsToProMemberRoutes
+    RqsToProMemberRoutes,
+    matchesRoutes,
+    teamLeaderDashRoutes
 }
